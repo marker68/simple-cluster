@@ -44,11 +44,11 @@
 // by a type.  Remember to derive it from testing::Test.
 template <typename T>
 class FooTest : public testing::Test {
- public:
-  ...
-  typedef std::list<T> List;
-  static T shared_;
-  T value_;
+public:
+	...
+	typedef std::list<T> List;
+	static T shared_;
+	T value_;
 };
 
 // Next, associate a list of types with the test case, which will be
@@ -64,23 +64,23 @@ TYPED_TEST_CASE(FooTest, MyTypes);
 // Then, use TYPED_TEST() instead of TEST_F() to define as many typed
 // tests for this test case as you want.
 TYPED_TEST(FooTest, DoesBlah) {
-  // Inside a test, refer to TypeParam to get the type parameter.
-  // Since we are inside a derived class template, C++ requires use to
-  // visit the members of FooTest via 'this'.
-  TypeParam n = this->value_;
+	// Inside a test, refer to TypeParam to get the type parameter.
+	// Since we are inside a derived class template, C++ requires use to
+	// visit the members of FooTest via 'this'.
+	TypeParam n = this->value_;
 
-  // To visit static members of the fixture, add the TestFixture::
-  // prefix.
-  n += TestFixture::shared_;
+	// To visit static members of the fixture, add the TestFixture::
+	// prefix.
+	n += TestFixture::shared_;
 
-  // To refer to typedefs in the fixture, add the "typename
-  // TestFixture::" prefix.
-  typename TestFixture::List values;
-  values.push_back(n);
-  ...
+	// To refer to typedefs in the fixture, add the "typename
+	// TestFixture::" prefix.
+	typename TestFixture::List values;
+	values.push_back(n);
+	...
 }
 
-TYPED_TEST(FooTest, HasPropertyA) { ... }
+TYPED_TEST(FooTest, HasPropertyA) {...}
 
 #endif  // 0
 
@@ -104,7 +104,7 @@ TYPED_TEST(FooTest, HasPropertyA) { ... }
 // by a type.  Remember to derive it from testing::Test.
 template <typename T>
 class FooTest : public testing::Test {
-  ...
+	...
 };
 
 // Next, declare that you will define a type-parameterized test case
@@ -115,19 +115,19 @@ TYPED_TEST_CASE_P(FooTest);
 // Then, use TYPED_TEST_P() to define as many type-parameterized tests
 // for this type-parameterized test case as you want.
 TYPED_TEST_P(FooTest, DoesBlah) {
-  // Inside a test, refer to TypeParam to get the type parameter.
-  TypeParam n = 0;
-  ...
+	// Inside a test, refer to TypeParam to get the type parameter.
+	TypeParam n = 0;
+	...
 }
 
-TYPED_TEST_P(FooTest, HasPropertyA) { ... }
+TYPED_TEST_P(FooTest, HasPropertyA) {...}
 
 // Now the tricky part: you need to register all test patterns before
 // you can instantiate them.  The first argument of the macro is the
 // test case name; the rest are the names of the tests in this test
 // case.
 REGISTER_TYPED_TEST_CASE_P(FooTest,
-                           DoesBlah, HasPropertyA);
+		DoesBlah, HasPropertyA);
 
 // Finally, you are free to instantiate the pattern with the types you
 // want.  If you put the above code in a header file, you can #include

@@ -12,13 +12,12 @@
 using namespace std;
 
 namespace cluster {
-double simple-k-means(KmeansType type, size_t N, size_t k,int iterations,
+double simple_k_means(KmeansType type, size_t N, size_t k, int iterations,
 		vector<double> data, vector<double> centroids,
 		vector<vector<double>> clusters, vector<double> seeds) {
-	if(type == KmeansType::RANDOM_SEEDS) {
+	if (type == KmeansType::RANDOM_SEEDS) {
 
 	}
 }
 }
-
 

@@ -38,19 +38,19 @@
 #include "gtest/gtest.h"
 
 int main(int argc, char** argv) {
-  testing::InitGoogleTest(&argc, argv);
+	testing::InitGoogleTest(&argc, argv);
 
-  // We want to ensure that people can use Google Test assertions in
-  // other testing frameworks, as long as they initialize Google Test
-  // properly and set the thrown-on-failure mode.  Therefore, we don't
-  // use Google Test's constructs for defining and running tests
-  // (e.g. TEST and RUN_ALL_TESTS) here.
+	// We want to ensure that people can use Google Test assertions in
+	// other testing frameworks, as long as they initialize Google Test
+	// properly and set the thrown-on-failure mode.  Therefore, we don't
+	// use Google Test's constructs for defining and running tests
+	// (e.g. TEST and RUN_ALL_TESTS) here.
 
-  // In the throw-on-failure mode with exceptions disabled, this
-  // assertion will cause the program to exit with a non-zero code.
-  EXPECT_EQ(2, 3);
+	// In the throw-on-failure mode with exceptions disabled, this
+	// assertion will cause the program to exit with a non-zero code.
+	EXPECT_EQ(2, 3);
 
-  // When not in the throw-on-failure mode, the control will reach
-  // here.
-  return 0;
+	// When not in the throw-on-failure mode, the control will reach
+	// here.
+	return 0;
 }

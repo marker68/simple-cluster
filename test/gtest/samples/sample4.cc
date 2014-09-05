@@ -37,10 +37,10 @@
 
 // Returns the current counter value, and increments it.
 int Counter::Increment() {
-  return counter_++;
+	return counter_++;
 }
 
 // Prints the current counter value to STDOUT.
 void Counter::Print() const {
-  printf("%d", counter_);
+	printf("%d", counter_);
 }

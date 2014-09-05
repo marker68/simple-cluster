@@ -21,12 +21,21 @@ namespace cluster {
  * Types of the k-means seeding
  */
 enum class KmeansType {
-	RANDOM_SEEDS,
-	KMEANS_PLUS_SEEDS, // k-means++
+	RANDOM_SEEDS, KMEANS_PLUS_SEEDS, // k-means++
 	USER_SEEDS
 };
 
-double simple-k-means(KmeansType, size_t, size_t, int, vector<double>, vector<double>, vector<vector<double>>, vector<double>);
+/**
+ * Random seeding method
+ */
+void random_seeds(size_t, size_t, vector<double>, vector<double>);
+/**
+ * K-means++ seeding method
+ */
+void kmeans_pp_seeds(size_t, size_t, vector<double>, vector<double>);
+
+double simple_k_means(KmeansType, size_t, size_t, int, vector<double>,
+		vector<double>, vector<vector<double>>, vector<double>);
 }
 
 #endif /* K_MEANS_H_ */

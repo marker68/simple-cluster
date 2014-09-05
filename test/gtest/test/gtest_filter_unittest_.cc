@@ -44,14 +44,14 @@ namespace {
 
 // Test case FooTest.
 
-class FooTest : public testing::Test {
+class FooTest: public testing::Test {
 };
 
 TEST_F(FooTest, Abc) {
 }
 
 TEST_F(FooTest, Xyz) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 // Test case BarTest.
@@ -66,17 +66,17 @@ TEST(BarTest, TestThree) {
 }
 
 TEST(BarTest, DISABLED_TestFour) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 TEST(BarTest, DISABLED_TestFive) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 // Test case BazTest.
 
 TEST(BazTest, TestOne) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 TEST(BazTest, TestA) {
@@ -86,39 +86,39 @@ TEST(BazTest, TestB) {
 }
 
 TEST(BazTest, DISABLED_TestC) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 // Test case HasDeathTest
 
 TEST(HasDeathTest, Test1) {
-  EXPECT_DEATH_IF_SUPPORTED(exit(1), ".*");
+	EXPECT_DEATH_IF_SUPPORTED(exit(1), ".*");
 }
 
 // We need at least two death tests to make sure that the all death tests
 // aren't on the first shard.
 TEST(HasDeathTest, Test2) {
-  EXPECT_DEATH_IF_SUPPORTED(exit(1), ".*");
+	EXPECT_DEATH_IF_SUPPORTED(exit(1), ".*");
 }
 
 // Test case FoobarTest
 
 TEST(DISABLED_FoobarTest, Test1) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 TEST(DISABLED_FoobarTest, DISABLED_Test2) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 // Test case FoobarbazTest
 
 TEST(DISABLED_FoobarbazTest, TestA) {
-  FAIL() << "Expected failure.";
+	FAIL()<< "Expected failure.";
 }
 
 #if GTEST_HAS_PARAM_TEST
-class ParamTest : public testing::TestWithParam<int> {
+class ParamTest: public testing::TestWithParam<int> {
 };
 
 TEST_P(ParamTest, TestX) {
@@ -134,7 +134,7 @@ INSTANTIATE_TEST_CASE_P(SeqQ, ParamTest, testing::Values(5, 6));
 }  // namespace
 
 int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
+	::testing::InitGoogleTest(&argc, argv);
 
-  return RUN_ALL_TESTS();
+	return RUN_ALL_TESTS();
 }

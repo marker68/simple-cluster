@@ -61,7 +61,7 @@ TEST(Abc, Def) {
 TEST(FooBar, Baz) {
 }
 
-class FooTest : public testing::Test {
+class FooTest: public testing::Test {
 };
 
 TEST_F(FooTest, Test1) {
@@ -79,7 +79,7 @@ TEST(FooDeathTest, Test1) {
 }  // namespace
 
 int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
+	::testing::InitGoogleTest(&argc, argv);
 
-  return RUN_ALL_TESTS();
+	return RUN_ALL_TESTS();
 }

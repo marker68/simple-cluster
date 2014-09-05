@@ -45,8 +45,8 @@
 #include "gtest/gtest.h"
 
 int main(int argc, char** argv) {
-  testing::InitGoogleTest(&argc, argv);
-  RUN_ALL_TESTS();  // This line shouldn't compile.
+	testing::InitGoogleTest(&argc, argv);
+	RUN_ALL_TESTS();  // This line shouldn't compile.
 }
 
 #elif defined(TEST_USER_CANNOT_INCLUDE_GTEST_INTERNAL_INL_H)
@@ -61,8 +61,8 @@ int main(int argc, char** argv) {
 #include "gtest/gtest.h"
 
 class MyTest : public testing::Test {
- protected:
-  void Setup() {}
+protected:
+	void Setup() {}
 };
 
 #elif defined(TEST_CATCHES_CALLING_SETUP_IN_TEST_WITH_TYPO)
@@ -72,10 +72,10 @@ class MyTest : public testing::Test {
 #include "gtest/gtest.h"
 
 class MyTest : public testing::Test {
- protected:
-  virtual void SetUp() {
-    testing::Test::Setup();  // Tries to call SetUp() in the parent class.
-  }
+protected:
+	virtual void SetUp() {
+		testing::Test::Setup();  // Tries to call SetUp() in the parent class.
+	}
 };
 
 #elif defined(TEST_CATCHES_DECLARING_SETUP_IN_ENVIRONMENT_WITH_TYPO)
@@ -85,8 +85,8 @@ class MyTest : public testing::Test {
 #include "gtest/gtest.h"
 
 class MyEnvironment : public testing::Environment {
- public:
-  void Setup() {}
+public:
+	void Setup() {}
 };
 
 #elif defined(TEST_CATCHES_CALLING_SETUP_IN_ENVIRONMENT_WITH_TYPO)
@@ -96,11 +96,11 @@ class MyEnvironment : public testing::Environment {
 #include "gtest/gtest.h"
 
 class MyEnvironment : public testing::Environment {
- protected:
-  virtual void SetUp() {
-    // Tries to call SetUp() in the parent class.
-    testing::Environment::Setup();
-  }
+protected:
+	virtual void SetUp() {
+		// Tries to call SetUp() in the parent class.
+		testing::Environment::Setup();
+	}
 };
 
 #elif defined(TEST_CATCHES_WRONG_CASE_IN_TYPED_TEST_P)
@@ -201,16 +201,16 @@ static bool dummy = testing::StaticAssertTypeEq<int, const int>();
 
 template <typename T>
 class Helper {
- public:
-  // Tests that StaticAssertTypeEq<T1, T2> works in a class.
-  Helper() { testing::StaticAssertTypeEq<int, T>(); }
+public:
+	// Tests that StaticAssertTypeEq<T1, T2> works in a class.
+	Helper() {testing::StaticAssertTypeEq<int, T>();}
 
-  void DoSomething() {}
+	void DoSomething() {}
 };
 
 void Test() {
-  Helper<bool> h;
-  h.DoSomething();  // To avoid the "unused variable" warning.
+	Helper<bool> h;
+	h.DoSomething();  // To avoid the "unused variable" warning.
 }
 
 #elif defined(TEST_STATIC_ASSERT_TYPE_EQ_WORKS_IN_FUNCTION)
@@ -218,8 +218,8 @@ void Test() {
 #include "gtest/gtest.h"
 
 void Test() {
-  // Tests that StaticAssertTypeEq<T1, T2> works inside a function.
-  testing::StaticAssertTypeEq<const int, int>();
+	// Tests that StaticAssertTypeEq<T1, T2> works inside a function.
+	testing::StaticAssertTypeEq<const int, int>();
 }
 
 #else
@@ -228,7 +228,7 @@ void Test() {
 #include "gtest/gtest.h"
 
 int main() {
-  return RUN_ALL_TESTS();
+	return RUN_ALL_TESTS();
 }
 
 #endif
