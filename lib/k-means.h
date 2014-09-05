@@ -34,6 +34,9 @@ void random_seeds(size_t, size_t, vector<double>, vector<double>);
  */
 void kmeans_pp_seeds(size_t, size_t, vector<double>, vector<double>);
 
+/**
+ * The k-means algorithm
+ */
 double simple_k_means(KmeansType, size_t, size_t, int, vector<double>,
 		vector<double>, vector<vector<double>>, vector<double>);
 }
