@@ -1,12 +1,17 @@
-Simple k-means implementation
+Simple Clustering
 ===============================
 
 ## What is this?
 
 This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
-The implementations based on many papers that are mentioned below. You can use the source code in your project but
+The implementations based on many papers that are mentioned below. You can use the source code in your project just for private use as it will be stated in the license statement.
 
 ## References
+
+[1] S. P. Lloyd, `"Least squares quantization in PCM",  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982
+   
+
+[2] D. Arthur et al., "k-means++: the advantages of careful seeding",  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007
 
 ## Usage
 
@@ -35,7 +40,10 @@ I will build a document for this one soon. Please find it inside `doc/` folder.
 
 ## Contribution
 
-We are welcoming any contributions: coding, testing, building documentation, .etc... Also if you found any bugs or problems, please let us know by reporting an issue.
+We are welcoming any contributions: coding, testing, building documentation, .etc... 
+Also if you found any bugs or problems, please let us know by reporting an issue.
+Finally, if you make some changes in the source code, please create a new branch and after
+committed your contribution to your new branch, just push the new branch and let us know by create a new pull request ;)
 
 ## License
 ```
