@@ -20,9 +20,9 @@ namespace SimpleCluster {
  * @param d
  * @return the distance between x and y in d dimensional space
  */
-double distance(d_vector x, d_vector y, int d) {
+long long double distance(d_vector x, d_vector y, int d) {
 	int i;
-	double dis = 0.0, tmp = 0.0;
+	long long double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = x[i] - y[i];
 		dis += tmp * tmp;
@@ -38,9 +38,9 @@ double distance(d_vector x, d_vector y, int d) {
  * @param d
  * @return the square of distance between x and y in d dimensional space
  */
-double distance_square(d_vector x, d_vector y, int d) {
+long long double distance_square(d_vector x, d_vector y, int d) {
 	int i;
-	double dis = 0.0, tmp = 0.0;
+	long long double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = x[i] - y[i];
 		dis += tmp * tmp;

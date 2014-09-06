@@ -29,7 +29,8 @@ namespace SimpleCluster {
  */
 void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector> seeds) {
 	seeds.clear();
-	int tmp[k], i, size = static_cast<int>(data.size()), j;
+	int tmp[k], i, j;
+	int size = static_cast<int>(data.size());
 	for(i = 0; i < k; i++)
 		tmp[k] = k;
 	for(i = k; i < size; i++) {
@@ -52,7 +53,44 @@ void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_
  * @return this method return nothing
  */
 void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector> seeds) {
-
+	seeds.clear();
+	int size = static_cast<int>(data.size());
+	int tmp = rand() % size;
+	d_vector d_tmp = data[tmp];
+	seeds.push_back(d_tmp);
+	d_vector distances;
+	distances.reserve(size);
+	int i, j;
+	for(i = 0; i < size; i++) {
+		distances[i] = SimpleCluster::distance_square(data[i],d_tmp,d);
+	}
+	while(seeds.size() < k) {
+		long long double sum = 0.0;
+		for(i = 0; i < size; i++)
+			sum += distances[i];
+		long long double pivot = (rand() / RAND_MAX) * sum;
+		sum = 0.0;
+		for(i = 0; i < size - 1; i++) {
+			sum += distances[i];
+			if(sum < pivot && pivot <= sum + distances[i+1])
+				break;
+		}
+		seeds.push_back(data[i+1]);
+		// Update the distances
+		for(i = 0; i < size; i++) {
+			d_tmp = data[i];
+			long long double d_min = SimpleCluster::distance_square(d_tmp,seeds[0],d);
+			long long double tmp2;
+			for(j = 1; j < seeds.size(); j++) {
+				tmp2 = SimpleCluster::distance_square(d_tmp,seeds[j],d);
+				if(tmp2 < d_min) {
+					d_min = tmp2;
+				}
+			}
+			distances[i] = d_min;
+			d_tmp.clear();
+		}
+	}
 }
 
 /**
