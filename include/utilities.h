@@ -20,10 +20,10 @@ typedef vector<int> i_vector;
 /**
  * Calculate the distance between two vectors
  */
-long long double distance(d_vector, d_vector, int);
-long long double distance_square(d_vector, d_vector, int);
-void allocate(vector<i_vector>, int);
-d_vector mean_vector(vector<d_vector>, i_vector, int);
+double distance(d_vector, d_vector, size_t);
+double distance_square(d_vector, d_vector, size_t);
+void allocate(vector<i_vector>, size_t);
+d_vector mean_vector(vector<d_vector>, i_vector, size_t);
 }
 
 

@@ -20,9 +20,9 @@ namespace SimpleCluster {
  * @param d
  * @return the distance between x and y in d dimensional space
  */
-long long double distance(d_vector x, d_vector y, int d) {
-	int i;
-	long long double dis = 0.0, tmp = 0.0;
+double distance(d_vector x, d_vector y, size_t d) {
+	size_t i;
+	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = x[i] - y[i];
 		dis += tmp * tmp;
@@ -38,9 +38,9 @@ long long double distance(d_vector x, d_vector y, int d) {
  * @param d
  * @return the square of distance between x and y in d dimensional space
  */
-long long double distance_square(d_vector x, d_vector y, int d) {
-	int i;
-	long long double dis = 0.0, tmp = 0.0;
+double distance_square(d_vector x, d_vector y, size_t d) {
+	size_t i;
+	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = x[i] - y[i];
 		dis += tmp * tmp;
@@ -49,8 +49,8 @@ long long double distance_square(d_vector x, d_vector y, int d) {
 	return dis;
 }
 
-void allocate(vector<i_vector> ivec, int size) {
-	int i;
+void allocate(vector<i_vector> ivec, size_t size) {
+	size_t i;
 	i_vector tmp;
 	for(i = 0; i < size; i++) {
 		ivec.push_back(tmp);
@@ -62,10 +62,10 @@ void allocate(vector<i_vector> ivec, int size) {
  * @param data
  * @param index
  * @param d
- * @return the mean point of a cluster
+ * @return the mean posize_t of a cluster
  */
-d_vector mean_vector(vector<d_vector> data, i_vector index, int d) {
-	int i, j, size  = index.size();
+d_vector mean_vector(vector<d_vector> data, i_vector index, size_t d) {
+	size_t i, j, size  = index.size();
 	d_vector tmp, d_tmp;
 	tmp.reserve(d);
 

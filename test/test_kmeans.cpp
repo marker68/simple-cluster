@@ -47,3 +47,12 @@ public:
 };
 
 int * KmeansTest::size = NULL;
+
+TEST_F(KmeansTest, test1) {
+	cout << "Hello Test!" << endl;
+}
+
+/*int main(int argc, char * argv[]) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}*/
