@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <sys/time.h>
 #include "utilities.h"
 
 using namespace std;
@@ -39,6 +40,12 @@ double distance(d_vector x, d_vector y, size_t d) {
  * @return the square of distance between x and y in d dimensional space
  */
 double distance_square(d_vector x, d_vector y, size_t d) {
+	if(x.size() < d || y.size() < d) {
+		cerr << "Your vector have not enough dimensions!" << endl;
+		cerr << "x has " << x.size() << " dimensions!" << endl;
+		cerr << "y has " << y.size() << " dimensions!" << endl;
+		exit(1);
+	}
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
@@ -49,14 +56,6 @@ double distance_square(d_vector x, d_vector y, size_t d) {
 	return dis;
 }
 
-void allocate(vector<i_vector> ivec, size_t size) {
-	size_t i;
-	i_vector tmp;
-	for(i = 0; i < size; i++) {
-		ivec.push_back(tmp);
-	}
-}
-
 /**
  * Calculate the mean of a cluster
  * @param data
@@ -64,10 +63,13 @@ void allocate(vector<i_vector> ivec, size_t size) {
  * @param d
  * @return the mean posize_t of a cluster
  */
-d_vector mean_vector(vector<d_vector> data, i_vector index, size_t d) {
+d_vector mean_vector(vector<d_vector> data, i_vector index, size_t d, d_vector centroid) {
 	size_t i, j, size  = index.size();
-	d_vector tmp, d_tmp;
-	tmp.reserve(d);
+	if(size <= 0) {
+		return centroid;
+	}
+	d_vector d_tmp;
+	double tmp[d];
 
 	for(i = 0; i < d; i++)
 		tmp[i] = 0.0;
@@ -82,8 +84,29 @@ d_vector mean_vector(vector<d_vector> data, i_vector index, size_t d) {
 
 	for(i = 0; i < d; i++)
 		tmp[i] /= static_cast<double>(size);
+	d_tmp.clear();
+	for(i = 0; i < d; i++)
+		d_tmp.push_back(tmp[i]);
+	return d_tmp;
+}
 
-	return tmp;
+/**
+ * Get system time in milliseconds
+ */
+unsigned long get_millisecond_time() {
+  struct timeval tv;
+  if(gettimeofday(&tv, NULL) != 0) return 0;
+  return (unsigned long)((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
+}
+
+void print_vector(vector<d_vector> data, size_t d) {
+	size_t i, j, size = data.size();
+	for(i = 0; i < size; i++) {
+		cout << "Data point " << i << ":";
+		for(j = 0; j < d; j++)
+			cout << data[i][j] << " ";
+		cout << endl;
+	}
 }
 }
 

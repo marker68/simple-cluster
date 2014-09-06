@@ -45,9 +45,9 @@ enum class KmeansType {
  * @param k the number of clusters
  * @param data the data
  * @param seeds seeds will be stored here
- * @return this method return nothing
+ * @return the seeds
  */
-void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector> seeds);
+vector<d_vector> random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data);
 
 /**
  * K-means++'s seeding method
@@ -56,9 +56,9 @@ void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_
  * @param k the number of clusters
  * @param data the data
  * @param seeds seeds will be stored here
- * @return this method return nothing
+ * @return the seeds
  */
-void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector> seeds);
+vector<d_vector> kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data);
 
 /**
  * Assign the data points to clusters
@@ -85,8 +85,8 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<d_vector> d
  * @param seeds seeds will be stored here.
  */
 void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
-		vector<d_vector> data, vector<d_vector> centroids,
-		vector<i_vector> clusters, vector<d_vector> seeds);
+		vector<d_vector> data, vector<d_vector>& centroids,
+		vector<i_vector>& clusters, vector<d_vector> seeds);
 
 /**
  * Calculate the distortion of a set of clusters

@@ -24,11 +24,10 @@ namespace SimpleCluster {
  * @param N the number of data
  * @param k the number of clusters
  * @param data the data
- * @param seeds seeds will be stored here
  * @return this method return nothing
  */
-void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector> seeds) {
-	seeds.clear();
+vector<d_vector> random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data) {
+	vector<d_vector> seeds;
 	size_t i, j;
 	int tmp[k];
 	size_t size = static_cast<size_t>(data.size());
@@ -42,6 +41,8 @@ void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_
 
 	for(i = 0; i < k; i++)
 		seeds.push_back(data[i]);
+
+	return seeds;
 }
 
 /**
@@ -53,8 +54,8 @@ void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_
  * @param seeds seeds will be stored here
  * @return this method return nothing
  */
-void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector> seeds) {
-	seeds.clear();
+vector<d_vector> kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data) {
+	vector<d_vector> seeds;
 	size_t size = static_cast<size_t>(data.size());
 	size_t tmp = rand() % size;
 	d_vector d_tmp = data[tmp];
@@ -92,6 +93,8 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector
 			d_tmp.clear();
 		}
 	}
+
+	return seeds;
 }
 
 /**
@@ -102,11 +105,18 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector
  * @param k the number of clusters
  * @param data the data
  * @param centroids
- * @param clusters
+ * @return the clusters
  */
-void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<d_vector> data,
-		vector<d_vector> centroids, vector<i_vector> clusters) {
+vector<i_vector> assign_to_closest_centroid(size_t d, size_t N, size_t k,
+		vector<d_vector> data, vector<d_vector> centroids) {
+	vector<i_vector> clusters;
 	size_t i, j, tmp;
+	i_vector i_tmp;
+	for(i = 0; i < k; i++) {
+		clusters.push_back(i_tmp);
+		i_tmp.clear();
+	}
+
 	double min = 0.0, temp = 0.0;
 	d_vector d_tmp;
 
@@ -117,14 +127,16 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<d_vector> d
 		tmp = 0;
 		for(j = 1; j < k; j++) {
 			temp = SimpleCluster::distance(d_tmp,centroids[j],d);
-			if(min > temp) {
+			if(min < temp) {
 				min = temp;
 				tmp = j;
 			}
 		}
-		// Assign the data[i] size_to cluster j
-		clusters[j].push_back(static_cast<int>(i));
+		// Assign the data[i] into cluster tmp
+		clusters[tmp].push_back(static_cast<int>(i));
 	}
+
+	return clusters;
 }
 
 /**
@@ -139,9 +151,9 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<d_vector> d
  * @param clusters the clusters that labeled by the centers' indices.
  * @param seeds seeds will be stored here.
  */
-void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
-		vector<d_vector> data, vector<d_vector> centroids,
-		vector<i_vector> clusters, vector<d_vector> seeds) {
+void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria, size_t d,
+		vector<d_vector> data, vector<d_vector>& centroids,
+		vector<i_vector>& clusters, vector<d_vector> seeds) {
 	// Pre-check conditions
 	if (N < k) {
 		cerr << "There will be some empty clusters!" << endl;
@@ -150,23 +162,24 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	// Seeding
 	if (type == KmeansType::RANDOM_SEEDS) {
-		random_seeds(d,N,k,data,seeds);
+		seeds.clear();
+		seeds = random_seeds(d,N,k,data);
 	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
-		kmeans_pp_seeds(d,N,k,data,seeds);
+		seeds.clear();
+		seeds = kmeans_pp_seeds(d,N,k,data);
 	}
 
-	if(seeds.size() < k)
-		kmeans_pp_seeds(d,N,k,data,seeds);
+	if(seeds.size() < k) {
+		seeds.clear();
+		seeds = kmeans_pp_seeds(d,N,k,data);
+	}
 
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0;
-	double error = criteria.accuracy, e = 0.0;
+	double error = criteria.accuracy, e = error + 1.0;
 
-	// Clear all vectors before doing anything
-	centroids.clear();
-	clusters.clear();
-	SimpleCluster::allocate(clusters, k);
 	vector<d_vector> c_tmp;
+	d_vector d_tmp;
 	double tmp = 0.0;
 
 	// Initialize the centers
@@ -174,17 +187,15 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	while (i < iters && e > error) {
 		// Clear the last clusters contents
-		for(size_t j = 0; j < k; j++)
-			clusters[j].clear();
+		clusters.clear();
 		// Assign the data posize_ts to clusters
-		assign_to_closest_centroid(d,N,k,data,centroids,clusters);
-
+		clusters = assign_to_closest_centroid(d,N,k,data,centroids);
 		// Recalculate the centroids
 		c_tmp.clear();
 		for(size_t j = 0; j < k; j++) {
-			c_tmp.push_back(SimpleCluster::mean_vector(data,clusters[j],d));
+			d_tmp = SimpleCluster::mean_vector(data,clusters[j],d,centroids[j]);
+			c_tmp.push_back(d_tmp);
 		}
-
 		// Calculate the distortion
 		e = 0.0;
 		for(size_t j = 0; j < k; j++) {
@@ -196,6 +207,8 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 		centroids = c_tmp;
 		i++;
 	}
+
+	cout << "Finished clustering with error is " << e << endl;
 }
 
 /**
@@ -209,6 +222,12 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
  */
 double distortion(size_t d, size_t N, size_t k,
 		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector> clusters) {
+	if(centroids.size() < k || clusters.size() < k) {
+		cerr << "You don't have enough clusters!" << endl;
+		cerr << "You have " << centroids.size() << " centroids" << endl;
+		cerr << "You have " << clusters.size() << " clusters" << endl;
+		exit(1);
+	}
 	double e = 0.0;
 	size_t i;
 	d_vector d_tmp;

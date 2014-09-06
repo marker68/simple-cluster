@@ -22,8 +22,12 @@ typedef vector<int> i_vector;
  */
 double distance(d_vector, d_vector, size_t);
 double distance_square(d_vector, d_vector, size_t);
-void allocate(vector<i_vector>, size_t);
-d_vector mean_vector(vector<d_vector>, i_vector, size_t);
+d_vector mean_vector(vector<d_vector>, i_vector, size_t, d_vector);
+/**
+ * Get system time in milliseconds
+ */
+unsigned long get_millisecond_time();
+void print_vector(vector<d_vector>, size_t);
 }
 
 
