@@ -33,6 +33,10 @@ to generate the binaries.
 
 I will build a document for this one soon. Please find it inside `doc/` folder.
 
+## Contribution
+
+We are welcoming any contributions: coding, testing, building documentation, .etc... Also if you found any bugs or problems, please let us know by reporting an issue.
+
 ## License
 ```
 The MIT License (MIT)
