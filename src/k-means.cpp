@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 #include <stdlib.h>
 #include <math.h>
 #include "k-means.h"
@@ -30,11 +31,17 @@ vector<d_vector> random_seeds(size_t d, size_t N, size_t k, vector<d_vector> dat
 	vector<d_vector> seeds;
 	size_t i, j;
 	int tmp[k];
+
+	// For generating random numbers
+	random_device rd;
+	mt19937 gen(rd());
+
 	size_t size = static_cast<size_t>(data.size());
 	for(i = 0; i < k; i++)
 		tmp[i] = static_cast<int>(i);
 	for(i = k; i < size; i++) {
-		j = rand() % i;
+		uniform_int_distribution<> int_dis(i,size-1);
+		j = int_dis(gen);
 		if(j < k)
 			tmp[j] = static_cast<int>(i);
 	}
@@ -57,7 +64,14 @@ vector<d_vector> random_seeds(size_t d, size_t N, size_t k, vector<d_vector> dat
 vector<d_vector> kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data) {
 	vector<d_vector> seeds;
 	size_t size = static_cast<size_t>(data.size());
-	size_t tmp = rand() % size;
+
+	// For generating random numbers
+	random_device rd;
+	mt19937 gen(rd());
+
+	uniform_int_distribution<> int_dis(0,size-1);
+	size_t tmp = int_dis(gen);
+
 	d_vector d_tmp = data[tmp];
 	seeds.push_back(d_tmp);
 	d_vector distances;
@@ -66,11 +80,13 @@ vector<d_vector> kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> 
 	for(i = 0; i < size; i++) {
 		distances[i] = SimpleCluster::distance_square(data[i],d_tmp,d);
 	}
+
 	while(seeds.size() < k) {
 		double sum = 0.0;
 		for(i = 0; i < size; i++)
 			sum += distances[i];
-		double pivot = (rand() / RAND_MAX) * sum;
+		uniform_real_distribution<> real_dis(0, sum);
+		double pivot = real_dis(gen);
 		sum = 0.0;
 		for(i = 0; i < size - 1; i++) {
 			sum += distances[i];

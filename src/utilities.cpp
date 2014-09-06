@@ -22,6 +22,12 @@ namespace SimpleCluster {
  * @return the distance between x and y in d dimensional space
  */
 double distance(d_vector x, d_vector y, size_t d) {
+	if(x.size() < d || y.size() < d) {
+		cerr << "Your vector have not enough dimensions!" << endl;
+		cerr << "x has " << x.size() << " dimensions!" << endl;
+		cerr << "y has " << y.size() << " dimensions!" << endl;
+		exit(1);
+	}
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {

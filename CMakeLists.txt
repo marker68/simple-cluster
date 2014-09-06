@@ -15,6 +15,9 @@ set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 include_directories("${PROJECT_INCLUDE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}")
 
+# Check for OpenCV, just for comparing with our methods
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(OpenCV)
 
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
@@ -38,4 +41,4 @@ add_dependencies(${PROJECT_NAME} gtest_main)
 # Make some tests
 set(CMAKE_CXX_FLAGS "-L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a -lgtest -pthread")
 add_executable(test_kmeans ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp ${PROJECT_SRCS})
-add_dependencies(test_kmeans ${PROJECT_NAME})
+add_dependencies(test_kmeans gtest_main)
