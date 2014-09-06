@@ -17,7 +17,9 @@ using namespace std;
 namespace SimpleCluster {
 
 /**
- * Random seeding method
+ * Random seeding method.
+ * Just pick up randomly k distinctive points from the input data.
+ * We use the Reservoir sampling algorithm for this implementation.
  * @param d the number of dimensions
  * @param N the number of data
  * @param k the number of clusters
@@ -26,7 +28,18 @@ namespace SimpleCluster {
  * @return this method return nothing
  */
 void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector> seeds) {
+	seeds.clear();
+	int tmp[k], i, size = static_cast<int>(data.size()), j;
+	for(i = 0; i < k; i++)
+		tmp[k] = k;
+	for(i = k; i < size; i++) {
+		j = rand() % i;
+		if(j < k)
+			tmp[j] = i;
+	}
 
+	for(i = 0; i < k; i++)
+		seeds.push_back(data[i]);
 }
 
 /**
@@ -76,7 +89,8 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<d_vector> d
 }
 
 /**
- * The k-means method
+ * The k-means method: a description of the method can be found at
+ * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
  * @param N the number of data
  * @param k the number of clusters
  * @param criteria the term of accuracy and maximum of iterations.
@@ -101,6 +115,9 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
 		kmeans_pp_seeds(d,N,k,data,seeds);
 	}
+
+	if(seeds.size() < k)
+		kmeans_pp_seeds(d,N,k,data,seeds);
 
 	// Criteria's setup
 	int iters = criteria.iterations, i = 0;
@@ -143,7 +160,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 }
 
 /**
- * Calculate the distortion of a set of clusters
+ * Calculate the distortion of a set of clusters.
  * @param d the number of dimensions
  * @param N the number of data
  * @param k the number of clusters
