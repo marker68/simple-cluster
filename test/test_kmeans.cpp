@@ -30,7 +30,7 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 1024;
+		N = 10000;
 		d = 128;
 		k = 256;
 		int i, j, scale;
@@ -40,7 +40,7 @@ protected:
 		// For generating random numbers
 		random_device rd;
 		mt19937 gen(rd());
-		uniform_real_distribution<> real_dis(0, N);
+		uniform_real_distribution<double> real_dis(0.0, static_cast<double>(N));
 
 		for(i = 0; i < N; i++) {
 			for(j = 0; j < d; j++) {
@@ -80,10 +80,10 @@ int KmeansTest::k;
 TEST_F(KmeansTest, test1) {
 	vector<d_vector> centroids, seeds;
 	vector<i_vector> clusters;
-	KmeansCriteria criteria = {1.0,10};
+	KmeansCriteria criteria = {1.0,100};
 	unsigned long int t1, t2;
 	t1 = get_millisecond_time();
-	simple_k_means(KmeansType::RANDOM_SEEDS,N,k,criteria,d,data,centroids,clusters,seeds);
+	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,N,k,criteria,d,data,centroids,clusters,seeds);
 	t2 = get_millisecond_time();
 	cout << "Finished in " << t2-t1 << "[ms]" << endl;
 	cout << "The distortion is " << distortion(d,N,k,data,centroids,clusters) << endl;

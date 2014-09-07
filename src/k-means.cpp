@@ -27,8 +27,7 @@ namespace SimpleCluster {
  * @param data the data
  * @return this method return nothing
  */
-vector<d_vector> random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data) {
-	vector<d_vector> seeds;
+void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector>& seeds) {
 	size_t i, j;
 	int tmp[k];
 
@@ -48,8 +47,6 @@ vector<d_vector> random_seeds(size_t d, size_t N, size_t k, vector<d_vector> dat
 
 	for(i = 0; i < k; i++)
 		seeds.push_back(data[i]);
-
-	return seeds;
 }
 
 /**
@@ -61,56 +58,54 @@ vector<d_vector> random_seeds(size_t d, size_t N, size_t k, vector<d_vector> dat
  * @param seeds seeds will be stored here
  * @return this method return nothing
  */
-vector<d_vector> kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data) {
-	vector<d_vector> seeds;
-	size_t size = static_cast<size_t>(data.size());
+void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector>& seeds) {
+	size_t size = data.size();
 
 	// For generating random numbers
 	random_device rd;
 	mt19937 gen(rd());
 
-	uniform_int_distribution<> int_dis(0,size-1);
+	uniform_int_distribution<size_t> int_dis(0, size - 1);
 	size_t tmp = int_dis(gen);
 
 	d_vector d_tmp = data[tmp];
 	seeds.push_back(d_tmp);
 	d_vector distances;
-	distances.reserve(size);
+	d_vector sum_distances;
 	size_t i, j;
 	for(i = 0; i < size; i++) {
-		distances[i] = SimpleCluster::distance_square(data[i],d_tmp,d);
+		distances.push_back(SimpleCluster::distance_square(data[i], d_tmp, d));
+		sum_distances.push_back(0.0);
 	}
 
+	double sum, tmp2, sum1, sum2, pivot;
 	while(seeds.size() < k) {
-		double sum = 0.0;
-		for(i = 0; i < size; i++)
-			sum += distances[i];
-		uniform_real_distribution<> real_dis(0, sum);
-		double pivot = real_dis(gen);
 		sum = 0.0;
-		for(i = 0; i < size - 1; i++) {
+		for(i = 0; i < size; i++) {
 			sum += distances[i];
-			if(sum < pivot && pivot <= sum + distances[i+1])
+			sum_distances[i] = sum;
+		}
+		uniform_real_distribution<double> real_dis(0, sum);
+		pivot = real_dis(gen);
+		for(i = 0; i < size - 1; i++) {
+			sum1 = sum_distances[i];
+			sum2 = sum_distances[i + 1];
+			if(sum1 < pivot && pivot <= sum2)
 				break;
 		}
-		seeds.push_back(data[i+1]);
+		d_tmp = data[i + 1];
+		seeds.push_back(d_tmp);
 		// Update the distances
-		for(i = 0; i < size; i++) {
-			d_tmp = data[i];
-			double d_min = SimpleCluster::distance_square(d_tmp,seeds[0],d);
-			double tmp2;
-			for(j = 1; j < seeds.size(); j++) {
-				tmp2 = SimpleCluster::distance_square(d_tmp,seeds[j],d);
-				if(tmp2 < d_min) {
-					d_min = tmp2;
-				}
+		if(seeds.size() < k) {
+			for(i = 0; i < size; i++) {
+				tmp2 = SimpleCluster::distance_square(d_tmp,data[i],d);
+				if(distances[i] > tmp2) distances[i] = tmp2;
 			}
-			distances[i] = d_min;
-			d_tmp.clear();
 		}
 	}
-
-	return seeds;
+	d_tmp.clear();
+	distances.clear();
+	sum_distances.clear();
 }
 
 /**
@@ -123,14 +118,12 @@ vector<d_vector> kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> 
  * @param centroids
  * @return the clusters
  */
-vector<i_vector> assign_to_closest_centroid(size_t d, size_t N, size_t k,
-		vector<d_vector> data, vector<d_vector> centroids) {
-	vector<i_vector> clusters;
+void assign_to_closest_centroid(size_t d, size_t N, size_t k,
+		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector>& clusters) {
 	size_t i, j, tmp;
 	i_vector i_tmp;
 	for(i = 0; i < k; i++) {
-		clusters.push_back(i_tmp);
-		i_tmp.clear();
+		clusters[i].clear();
 	}
 
 	double min = 0.0, temp = 0.0;
@@ -151,8 +144,6 @@ vector<i_vector> assign_to_closest_centroid(size_t d, size_t N, size_t k,
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
 	}
-
-	return clusters;
 }
 
 /**
@@ -177,35 +168,34 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 	}
 
 	// Seeding
+	// In case of defective seeds from users, we should overwrite it by kmeans++ seeds
 	if (type == KmeansType::RANDOM_SEEDS) {
 		seeds.clear();
-		seeds = random_seeds(d,N,k,data);
-	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
+		random_seeds(d,N,k,data,seeds);
+	} else if(type == KmeansType::KMEANS_PLUS_SEEDS ||
+			(type == KmeansType::USER_SEEDS && seeds.size() < k)) {
 		seeds.clear();
-		seeds = kmeans_pp_seeds(d,N,k,data);
-	}
-
-	if(seeds.size() < k) {
-		seeds.clear();
-		seeds = kmeans_pp_seeds(d,N,k,data);
+		kmeans_pp_seeds(d,N,k,data,seeds);
 	}
 
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0;
-	double error = criteria.accuracy, e = error + 1.0;
+	double error = criteria.accuracy, e = error + 1.0, e_prev = 0.0;
 
 	vector<d_vector> c_tmp;
 	d_vector d_tmp;
+	i_vector i_tmp;
+	for(i = 0; i < k; i++)
+		clusters.push_back(i_tmp);
+	i = 0;
 	double tmp = 0.0;
 
-	// Initialize the centers
+	// Initialize the centroids
 	centroids = seeds;
 
-	while (i < iters && e > error) {
-		// Clear the last clusters contents
-		clusters.clear();
+	while (i < iters && (e - e_prev > error || e - e_prev < -error)) {
 		// Assign the data posize_ts to clusters
-		clusters = assign_to_closest_centroid(d,N,k,data,centroids);
+		assign_to_closest_centroid(d,N,k,data,centroids,clusters);
 		// Recalculate the centroids
 		c_tmp.clear();
 		for(size_t j = 0; j < k; j++) {
@@ -213,6 +203,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 			c_tmp.push_back(d_tmp);
 		}
 		// Calculate the distortion
+		e_prev = e;
 		e = 0.0;
 		for(size_t j = 0; j < k; j++) {
 			tmp = SimpleCluster::distance_square(centroids[j],c_tmp[j],d);
