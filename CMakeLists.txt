@@ -34,20 +34,15 @@ ${PROJECT_SOURCE_DIR}/src/utilities.cpp
 # Some of the features need C++ 11
 list(APPEND CMAKE_CXX_FLAGS "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs -lm")
 
-# Create a .so file
+# Create a shared library file
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 add_dependencies(${PROJECT_NAME} gtest_main)
 
 # Make some tests
-set(OPENCV_LIBS "")
-foreach(lib ${OpenCV_LIBRARIES})
-    set(OPENCV_LIBS "-l${lib} ${OPENCV_LIBS}")
-endforeach(lib)
 set(OPENCV_INCLUDES "")
 foreach(dir ${OpenCV_INCLUDE_DIRS})
     set(OPENCV_INCLUDES "-I${dir} ${OPENCV_INCLUDES}")
 endforeach(dir)
-message(STATUS "${OpenCV_LIBS}")
 set(CMAKE_CXX_FLAGS "${OPENCV_INCLUDES} -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a")
 add_executable(test_kmeans ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp ${PROJECT_SRCS})
 set(OpenCV_FOR_TEST
