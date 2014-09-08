@@ -21,13 +21,7 @@ namespace SimpleCluster {
  * @param d
  * @return the distance between x and y in d dimensional space
  */
-double distance(d_vector x, d_vector y, size_t d) {
-	if(x.size() < d || y.size() < d) {
-		cerr << "distance: Your vector have not enough dimensions!" << endl;
-		cerr << "x has " << x.size() << " dimensions!" << endl;
-		cerr << "y has " << y.size() << " dimensions!" << endl;
-		exit(1);
-	}
+double distance(double * x, double * y, size_t d) {
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
@@ -45,13 +39,7 @@ double distance(d_vector x, d_vector y, size_t d) {
  * @param d
  * @return the square of distance between x and y in d dimensional space
  */
-double distance_square(d_vector x, d_vector y, size_t d) {
-	if(x.size() < d || y.size() < d) {
-		cerr << "distance_square: Your vector have not enough dimensions!" << endl;
-		cerr << "x has " << x.size() << " dimensions!" << endl;
-		cerr << "y has " << y.size() << " dimensions!" << endl;
-		exit(1);
-	}
+double distance_square(double * x, double * y, size_t d) {
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
@@ -69,13 +57,19 @@ double distance_square(d_vector x, d_vector y, size_t d) {
  * @param d
  * @return the mean posize_t of a cluster
  */
-d_vector mean_vector(vector<d_vector> data, i_vector index, size_t d, d_vector centroid) {
-	size_t i, j, size  = index.size();
+double * mean_vector(vector<double *> data, const int * index, size_t d, size_t size, double * centroid) {
+	size_t i, j;
 	if(size <= 0) {
 		return centroid;
 	}
-	d_vector d_tmp;
-	double tmp[d];
+	double * d_tmp = (double *)malloc(d * sizeof(double));
+	double * tmp = (double *)malloc(d * sizeof(double));
+	if(d_tmp == NULL || tmp == NULL) {
+		cerr << "Cannot allocate memory" << endl;
+		delete d_tmp;
+		delete tmp;
+		exit(1);
+	}
 
 	for(i = 0; i < d; i++)
 		tmp[i] = 0.0;
@@ -90,9 +84,8 @@ d_vector mean_vector(vector<d_vector> data, i_vector index, size_t d, d_vector c
 
 	for(i = 0; i < d; i++)
 		tmp[i] /= static_cast<double>(size);
-	d_tmp.clear();
 	for(i = 0; i < d; i++)
-		d_tmp.push_back(tmp[i]);
+		d_tmp[i] = tmp[i];
 	return d_tmp;
 }
 
@@ -108,7 +101,7 @@ unsigned long get_millisecond_time() {
 /**
  * Utilities for printing vector
  */
-void print_vector(vector<d_vector> data, size_t d) {
+void print_vector(vector<double *> data, size_t d) {
 	size_t i, j, size = data.size();
 	for(i = 0; i < size; i++) {
 		cout << "Data point " << i << ":";

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
+#include <math.h>
 #include "utilities.h"
 #include "kd-tree.h"
 
@@ -16,20 +17,34 @@ using namespace std;
 namespace SimpleCluster {
 
 double distance(KDNode * _a, KDNode * _b) {
-	d_vector _av = _a->data;
-	d_vector _bv = _b->data;
-	if(_av.size() != _bv.size()) {
+	double * _av = _a->data;
+	double * _bv = _b->data;
+	if(_a->dim != _b->dim) {
 		cerr << "Your vectors have some problems." << endl;
+		cerr << "a has " << _a->dim << " dimensions" << endl;
+		cerr << "b has " << _b->dim << " dimensions" << endl;
+		delete _a;
+		delete _b;
+		delete _av;
+		delete _bv;
 		exit(1);
 	}
-	size_t d = _av.size();
-	return distance(_av,_bv,d);
+	size_t d = _a->dim;
+	double tmp = 0.0, res = 0.0;
+	for(size_t i = 0; i < d; i++) {
+		tmp = _av[i] - _bv[i];
+		res += tmp * tmp;
+	}
+
+	return sqrt(res);
 }
 
 KDNode * make_tree(KDNode * data, size_t N, size_t id, size_t d) {
 	KDNode * root;
-	if(N <= 1)
+	if(N == 1)
 		return data;
+	if(N < 1)
+		return NULL;
 
 	if((root = &data[N >> 1])) {
 		id = (id + 1) % d;
@@ -41,12 +56,14 @@ KDNode * make_tree(KDNode * data, size_t N, size_t id, size_t d) {
 }
 
 void find_nearest(KDNode * root, KDNode * node, KDNode ** best,
-		double * best_dist, size_t id, size_t d) {
+		double * best_dist, size_t id) {
 	double tmp, tmp2, tmp3;
 	if(!root) return;
 	tmp = distance(root,node);
-	d_vector _rv = root->data;
-	d_vector _nv = node->data;
+	double * _rv = root->data;
+	double * _nv = node->data;
+	size_t d = node->dim;
+
 	tmp2 = _rv[id] - _nv[id];
 	tmp3 = tmp2 * tmp2;
 
@@ -58,10 +75,10 @@ void find_nearest(KDNode * root, KDNode * node, KDNode ** best,
 	if(!*best_dist) return;
 	if(++id >= d) id = 0;
 	find_nearest(tmp2 > 0?root->left:root->right,
-			node,best,best_dist,id,d);
+			node,best,best_dist,id);
 	if(tmp3 >= *best_dist) return;
 	find_nearest(tmp2 > 0?root->right:root->left,
-			node,best,best_dist,id,d);
+			node,best,best_dist,id);
 }
 }
 

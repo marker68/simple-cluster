@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 #include <random>
+#include <cstring>
 #include <stdlib.h>
 #include <float.h>
 #include <math.h>
@@ -20,6 +21,12 @@ using namespace std;
 
 namespace SimpleCluster {
 
+
+/*
+ * Global variables
+ */
+size_t * range;
+
 /**
  * Random seeding method.
  * Just pick up randomly k distinctive posize_ts from the input data.
@@ -30,7 +37,7 @@ namespace SimpleCluster {
  * @param data the data
  * @return this method return nothing
  */
-void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector>& seeds) {
+void random_seeds(size_t d, size_t N, size_t k, vector<double *> data, vector<double *>& seeds) {
 	size_t i, j;
 	int tmp[k];
 
@@ -61,7 +68,7 @@ void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_
  * @param seeds seeds will be stored here
  * @return this method return nothing
  */
-void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector>& seeds) {
+void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<double *> data, vector<double *>& seeds) {
 	size_t size = data.size();
 
 	// For generating random numbers
@@ -71,11 +78,11 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector
 	uniform_int_distribution<size_t> int_dis(0, size - 1);
 	size_t tmp = int_dis(gen);
 
-	d_vector d_tmp = data[tmp];
+	double * d_tmp = data[tmp];
 	seeds.push_back(d_tmp);
-	d_vector distances;
-	d_vector sum_distances;
-	size_t i, j;
+	vector<double> distances;
+	vector<double> sum_distances;
+	size_t i;
 	for(i = 0; i < size; i++) {
 		distances.push_back(SimpleCluster::distance_square(data[i], d_tmp, d));
 		sum_distances.push_back(0.0);
@@ -106,9 +113,6 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector
 			}
 		}
 	}
-	d_tmp.clear();
-	distances.clear();
-	sum_distances.clear();
 }
 
 /**
@@ -122,15 +126,23 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector
  * @return
  */
 void assign_to_closest_centroid(size_t d, size_t N, size_t k,
-		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector>& clusters) {
+		vector<double *> data, vector<double *> centroids, vector<int *>& clusters) {
 	size_t i, j, tmp;
 	i_vector i_tmp;
 	for(i = 0; i < k; i++) {
-		clusters[i].clear();
+		clusters[i] = new int();
 	}
 
 	double min = 0.0, temp = 0.0;
-	d_vector d_tmp;
+	double * d_tmp = (double *)malloc(d * sizeof(double));
+	if(d_tmp == NULL) {
+		cerr << "Cannot allocate memory" << endl;
+		delete d_tmp;
+		exit(1);
+	}
+//	memset(range, 0, k);
+	for(i = 0; i < k; i++)
+		range[i] = 0;
 
 	for(i = 0; i < N; i++) {
 		d_tmp = data[i];
@@ -145,15 +157,26 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 			}
 		}
 		// Assign the data[i] into cluster tmp
-		clusters[tmp].push_back(static_cast<int>(i));
+		clusters[tmp][range[tmp]++] = static_cast<int>(i);
 	}
 }
 
-KDNode * convert_data_to_kd_nodes(vector<d_vector> data, size_t N) {
+KDNode * convert_data_to_kd_nodes(vector<double *> data, size_t N, size_t d) {
+	if(data.size() < N) {
+		cerr << "Defective data" << endl;
+		exit(1);
+	}
 	KDNode * tree = (KDNode *)malloc(N * sizeof(KDNode));
+	if(!tree) {
+		cerr << "Cannot allocate memory" << endl;
+		delete tree;
+		exit(1);
+	}
+
 	size_t i;
 	for(i = 0; i < N; i++) {
 		tree[i].data = data[i];
+		tree[i].dim = d;
 	}
 
 	return tree;
@@ -170,28 +193,35 @@ KDNode * convert_data_to_kd_nodes(vector<d_vector> data, size_t N) {
  * @return
  */
 void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
-		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector>& clusters) {
-	size_t i, j, tmp;
-	KDNode * tree = convert_data_to_kd_nodes(centroids,k);
+		vector<double *> data, vector<double *> centroids, vector<int *>& clusters) {
+	size_t i, tmp;
+	KDNode * tree = convert_data_to_kd_nodes(centroids,k,d);
 	KDNode * root = make_tree(tree,k,0,d);
 	KDNode node, * found = new KDNode();
 	for(i = 0; i < k; i++) {
-		clusters[i].clear();
+		clusters[i] = new int();
 	}
 
-	double min = DBL_MAX, temp = 0.0;
-	d_vector d_tmp;
+	double min = DBL_MAX;
+	double * d_tmp = (double *)malloc(d * sizeof(double));
+	if(d_tmp == NULL) {
+		cerr << "Cannot allocate memory" << endl;
+		delete d_tmp;
+		exit(1);
+	}
+//	memset(range, 0, k);
+	for(i = 0; i < k; i++)
+		range[i] = 0;
 
 	for(i = 0; i < N; i++) {
 		d_tmp = data[i];
 		// Find the minimum distances between d_tmp and a centroid
 		node.data = d_tmp;
-//		cout << i << endl;
-		find_nearest(root,&node,&found,&min,0,d);
+		node.dim = d;
+		find_nearest(root,&node,&found,&min,0);
 		tmp = found - tree;
-//		cout << tmp << endl;
 		// Assign the data[i] into cluster tmp
-		clusters[tmp].push_back(static_cast<int>(i));
+		clusters[tmp][range[tmp]++] = static_cast<int>(i);
 	}
 }
 
@@ -208,8 +238,8 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
  * @param seeds seeds will be stored here.
  */
 void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria, size_t d,
-		vector<d_vector> data, vector<d_vector>& centroids,
-		vector<i_vector>& clusters, vector<d_vector> seeds) {
+		vector<double *> data, vector<double *>& centroids,
+		vector<int *>& clusters, vector<double *> seeds) {
 	// Pre-check conditions
 	if (N < k) {
 		cerr << "There will be some empty clusters!" << endl;
@@ -231,24 +261,29 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 	size_t iters = criteria.iterations, i = 0;
 	double error = criteria.accuracy, e = error, e_prev = 0.0;
 
-	vector<d_vector> c_tmp;
-	d_vector d_tmp;
-	i_vector i_tmp;
-	for(i = 0; i < k; i++)
-		clusters.push_back(i_tmp);
-	i = 0;
+	vector<double *> c_tmp;
+	double * d_tmp = (double *)malloc(d * sizeof(double));
+	range = (size_t *)malloc(k * sizeof(size_t));
+	if(d_tmp == NULL || range == NULL) {
+		cerr << "Cannot allocate memory" << endl;
+		delete d_tmp;
+		delete range;
+		exit(1);
+	}
+
+	clusters.reserve(k);
 	double tmp = 0.0;
 
 	// Initialize the centroids
 	centroids = seeds;
 
-	while (i < iters && (e - e_prev >= error || e - e_prev <= -error)) {
-		// Assign the data posize_ts to clusters
+	while (1) {
+		// Assign the data points to clusters
 		assign_to_closest_centroid_2(d,N,k,data,centroids,clusters);
 		// Recalculate the centroids
 		c_tmp.clear();
 		for(size_t j = 0; j < k; j++) {
-			d_tmp = SimpleCluster::mean_vector(data,clusters[j],d,centroids[j]);
+			d_tmp = SimpleCluster::mean_vector(data,clusters[j],d,range[j],centroids[j]);
 			c_tmp.push_back(d_tmp);
 		}
 		// Calculate the distortion
@@ -262,9 +297,11 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 		centroids = c_tmp;
 		i++;
+		if(i >= iters ||
+				(e - e_prev < error && e - e_prev > -error)) break;
 	}
 
-	cout << "Finished clustering with error is " << e << endl;
+	cout << "Finished clustering with error is " << e << " after " << i << " iterations." << endl;
 }
 
 /**
@@ -277,29 +314,30 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
  * @param clusters
  */
 double distortion(size_t d, size_t N, size_t k,
-		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector> clusters) {
-	if(centroids.size() < k || clusters.size() < k) {
+		vector<double *> data, vector<double *> centroids, vector<int *> clusters) {
+	if(centroids.size() < k) {
 		cerr << "You don't have enough clusters!" << endl;
 		cerr << "You have " << centroids.size() << " centroids" << endl;
 		cerr << "You have " << clusters.size() << " clusters" << endl;
 		exit(1);
 	}
 	double e = 0.0;
-	size_t i;
-	d_vector d_tmp;
-	i_vector i_tmp;
+	size_t i, j = 0;
+	double * d_tmp = (double *)malloc(d * sizeof(double));
+	if(d_tmp == NULL) {
+		cerr << "Cannot allocate memory" << endl;
+		delete d_tmp;
+		exit(1);
+	}
+	int * i_tmp;
 
 	for(i = 0; i < k; i++) {
 		i_tmp = clusters[i];
 		d_tmp = centroids[i];
-		i_vector::iterator it = i_tmp.begin();
-		i_vector::iterator ie = i_tmp.end();
-		while(it != ie) {
-			e += SimpleCluster::distance_square(d_tmp, data[(*it)], d);
-			++it;
+		while(j < range[i]) {
+			e += SimpleCluster::distance_square(d_tmp, data[j], d);
+			++j;
 		}
-		d_tmp.clear();
-		i_tmp.clear();
 	}
 
 	return sqrt(e);

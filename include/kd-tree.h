@@ -17,13 +17,15 @@ namespace SimpleCluster {
 typedef vector<double> d_vector;
 
 typedef struct kd_node {
-	d_vector data;
+	double * data;
+	size_t dim;
 	struct kd_node * left, * right;
 } KDNode;
 
 double distance(KDNode *, KDNode *);
 KDNode * make_tree(KDNode *, size_t, size_t, size_t);
-void find_nearest(KDNode *, KDNode *, KDNode **, double *, size_t, size_t);
+void find_nearest(KDNode *, KDNode *, KDNode **,
+		double *, size_t);
 }
 
 #endif /* KD_TREE_H_ */

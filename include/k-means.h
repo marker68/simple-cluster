@@ -47,7 +47,7 @@ enum class KmeansType {
  * @param seeds seeds will be stored here
  * @return
  */
-void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector>& seeds);
+void random_seeds(size_t d, size_t N, size_t k, vector<double *> data, vector<double *>& seeds);
 
 /**
  * K-means++'s seeding method
@@ -58,7 +58,7 @@ void random_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_
  * @param seeds seeds will be stored here
  * @return
  */
-void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector<d_vector>& seeds);
+void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<double *> data, vector<double *>& seeds);
 
 /**
  * Assign the data points to clusters
@@ -70,8 +70,10 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector
  * @param centroids
  * @param clusters
  */
-void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<d_vector> data,
-		vector<d_vector> centroids, vector<i_vector>& clusters);
+void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<double *> data,
+		vector<double *> centroids, vector<int *>& clusters);
+void assign_to_closest_centroid_2(size_t d, size_t N, size_t k, vector<double *> data,
+		vector<double *> centroids, vector<int *>& clusters);
 
 /**
  * The k-means method
@@ -85,8 +87,8 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<d_vector> d
  * @param seeds seeds will be stored here.
  */
 void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
-		vector<d_vector> data, vector<d_vector>& centroids,
-		vector<i_vector>& clusters, vector<d_vector> seeds);
+		vector<double *> data, vector<double *>& centroids,
+		vector<int *>& clusters, vector<double *> seeds);
 
 /**
  * Calculate the distortion of a set of clusters
@@ -98,7 +100,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
  * @param clusters
  */
 double distortion(size_t d, size_t N, size_t k,
-		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector> clusters);
+		vector<double *> data, vector<double *> centroids, vector<int *> clusters);
 }
 
 #endif /* K_MEANS_H_ */
