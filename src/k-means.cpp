@@ -6,9 +6,11 @@
  */
 
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <random>
 #include <stdlib.h>
+#include <float.h>
 #include <math.h>
 #include "k-means.h"
 #include "utilities.h"
@@ -151,7 +153,7 @@ KDNode * convert_data_to_kd_nodes(vector<d_vector> data, size_t N) {
 	KDNode * tree = (KDNode *)malloc(N * sizeof(KDNode));
 	size_t i;
 	for(i = 0; i < N; i++) {
-		tree[i].set_data(data[i]);
+		tree[i].data = data[i];
 	}
 
 	return tree;
@@ -170,29 +172,27 @@ KDNode * convert_data_to_kd_nodes(vector<d_vector> data, size_t N) {
 void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector>& clusters) {
 	size_t i, j, tmp;
-	KDNode * tree = convert_data_to_kd_nodes(data,N);
-	KDNode * root = make_tree(tree,N,0,d);
-	KDNode * node, * found;
-	i_vector i_tmp;
+	KDNode * tree = convert_data_to_kd_nodes(centroids,k);
+	KDNode * root = make_tree(tree,k,0,d);
+	KDNode node, * found = new KDNode();
 	for(i = 0; i < k; i++) {
 		clusters[i].clear();
 	}
 
-	double min = 0.0, temp = 0.0;
+	double min = DBL_MAX, temp = 0.0;
 	d_vector d_tmp;
 
 	for(i = 0; i < N; i++) {
 		d_tmp = data[i];
 		// Find the minimum distances between d_tmp and a centroid
-		node->set_data(d_tmp);
-		find_nearest(root,node,&found,&min,0,d);
-		tmp = node - tree;
+		node.data = d_tmp;
+//		cout << i << endl;
+		find_nearest(root,&node,&found,&min,0,d);
+		tmp = found - tree;
+//		cout << tmp << endl;
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
 	}
-
-	delete tree;
-	delete root;
 }
 
 /**

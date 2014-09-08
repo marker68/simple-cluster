@@ -16,22 +16,26 @@ using namespace std;
 namespace SimpleCluster {
 typedef vector<double> d_vector;
 
-class KDNode {
-private:
+typedef struct kd_node {
 	d_vector data;
-	size_t compare_dim;
-public:
-	KDNode *left, *right;
-	KDNode() {
-		left = right = NULL;
-		compare_dim = 0;
-	}
-	virtual ~KDNode() {}
-	d_vector get_data() const;
-	void set_data(d_vector);
-	size_t get_compare_dim() const;
-	void set_compare_dim(size_t);
-};
+	struct kd_node * left, * right;
+} KDNode;
+//class KDNode {
+//private:
+//	d_vector data;
+//	size_t id;
+//public:
+//	KDNode *left, *right;
+//	KDNode() {
+//		left = right = NULL;
+//		id = 0;
+//	}
+//	virtual ~KDNode() {}
+//	d_vector get_data() const;
+//	void set_data(d_vector);
+//	size_t get_id() const;
+//	void set_id(size_t);
+//};
 
 double distance(KDNode *, KDNode *);
 KDNode * make_tree(KDNode *, size_t, size_t, size_t);
