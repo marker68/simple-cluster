@@ -29,9 +29,10 @@ include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 set(PROJECT_SRCS 
 ${PROJECT_SOURCE_DIR}/src/k-means.cpp 
 ${PROJECT_SOURCE_DIR}/src/utilities.cpp
+${PROJECT_SOURCE_DIR}/src/kd-tree.cpp 
 )
 
-# Some of the features need C++ 11
+# Some of the features need C++ 11 and math library
 list(APPEND CMAKE_CXX_FLAGS "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs -lm")
 
 # Create a shared library file

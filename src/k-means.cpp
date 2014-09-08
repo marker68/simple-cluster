@@ -12,6 +12,7 @@
 #include <math.h>
 #include "k-means.h"
 #include "utilities.h"
+#include "kd-tree.h"
 
 using namespace std;
 
@@ -132,7 +133,7 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 	for(i = 0; i < N; i++) {
 		d_tmp = data[i];
 		// Find the minimum distances between d_tmp and a centroid
-		min = SimpleCluster::distance(d_tmp, centroids[0],d);
+		min = SimpleCluster::distance(d_tmp,centroids[0],d);
 		tmp = 0;
 		for(j = 1; j < k; j++) {
 			temp = SimpleCluster::distance(d_tmp,centroids[j],d);
@@ -144,6 +145,54 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
 	}
+}
+
+KDNode * convert_data_to_kd_nodes(vector<d_vector> data, size_t N) {
+	KDNode * tree = (KDNode *)malloc(N * sizeof(KDNode));
+	size_t i;
+	for(i = 0; i < N; i++) {
+		tree[i].set_data(data[i]);
+	}
+
+	return tree;
+}
+
+/**
+ * Assign the data posize_ts to clusters
+ * The execution time would be O(N*k*d)
+ * @param d the number of dimensions
+ * @param N the number of data
+ * @param k the number of clusters
+ * @param data the data
+ * @param centroids
+ * @return
+ */
+void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
+		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector>& clusters) {
+	size_t i, j, tmp;
+	KDNode * tree = convert_data_to_kd_nodes(data,N);
+	KDNode * root = make_tree(tree,N,0,d);
+	KDNode * node, * found;
+	i_vector i_tmp;
+	for(i = 0; i < k; i++) {
+		clusters[i].clear();
+	}
+
+	double min = 0.0, temp = 0.0;
+	d_vector d_tmp;
+
+	for(i = 0; i < N; i++) {
+		d_tmp = data[i];
+		// Find the minimum distances between d_tmp and a centroid
+		node->set_data(d_tmp);
+		find_nearest(root,node,&found,&min,0,d);
+		tmp = node - tree;
+		// Assign the data[i] into cluster tmp
+		clusters[tmp].push_back(static_cast<int>(i));
+	}
+
+	delete tree;
+	delete root;
 }
 
 /**
@@ -195,7 +244,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	while (i < iters && (e - e_prev >= error || e - e_prev <= -error)) {
 		// Assign the data posize_ts to clusters
-		assign_to_closest_centroid(d,N,k,data,centroids,clusters);
+		assign_to_closest_centroid_2(d,N,k,data,centroids,clusters);
 		// Recalculate the centroids
 		c_tmp.clear();
 		for(size_t j = 0; j < k; j++) {
