@@ -14,21 +14,6 @@
 using namespace std;
 
 namespace SimpleCluster {
-//d_vector KDNode::get_data() const {
-//	return data;
-//}
-//
-//void KDNode::set_data(d_vector _data) {
-//	data = _data;
-//}
-//
-//size_t KDNode::get_id() const {
-//	return id;
-//}
-//
-//void KDNode::set_id(size_t _id) {
-//	id = _id;
-//}
 
 double distance(KDNode * _a, KDNode * _b) {
 	d_vector _av = _a->data;
