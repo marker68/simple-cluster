@@ -47,6 +47,13 @@ set(OPENCV_INCLUDES "")
 foreach(dir ${OpenCV_INCLUDE_DIRS})
     set(OPENCV_INCLUDES "-I${dir} ${OPENCV_INCLUDES}")
 endforeach(dir)
-set(CMAKE_CXX_FLAGS "${OPENCV_INCLUDES} -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a -lgtest -pthread -L/opt/local/lib ${OPENCV_LIBS}")
+message(STATUS "${OpenCV_LIBS}")
+set(CMAKE_CXX_FLAGS "${OPENCV_INCLUDES} -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a")
 add_executable(test_kmeans ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp ${PROJECT_SRCS})
+set(OpenCV_FOR_TEST
+gtest
+pthread
+${OpenCV_LIBRARIES}
+)
+target_link_libraries(test_kmeans ${OpenCV_FOR_TEST})
 add_dependencies(test_kmeans gtest_main)
