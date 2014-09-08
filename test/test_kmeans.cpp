@@ -22,6 +22,39 @@ using namespace cv;
 using namespace SimpleCluster;
 
 /**
+ * A converter that converts vector to Mat
+ */
+void convert_dvector_mat(d_vector _f, Mat& _t) {
+	_t.release();
+	d_vector::iterator it = _f.begin();
+	d_vector::iterator ie = _f.end();
+	while(it != ie) {
+		_t.push_back(*it);
+		++it;
+	}
+	_t.reshape(0,1);
+}
+
+/**
+ * Another converter
+ */
+void convert_vector_mat(vector<d_vector> _f, Mat& _t) {
+	_t.release();
+	vector<d_vector>::iterator it = _f.begin();
+	vector<d_vector>::iterator ie = _f.end();
+	while(it != ie) {
+		d_vector::iterator idt = (*it).begin();
+		d_vector::iterator ide = (*it).end();
+		while(idt != ide) {
+			_t.push_back(*idt);
+			++idt;
+		}
+		++it;
+	}
+	_t = _t.reshape(0,_f.size());
+}
+
+/**
  * Customized test case for testing
  */
 class KmeansTest : public ::testing::Test {
@@ -30,7 +63,7 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 10000;
+		N = 1000;
 		d = 128;
 		k = 256;
 		int i, j, scale;
@@ -80,13 +113,25 @@ int KmeansTest::k;
 TEST_F(KmeansTest, test1) {
 	vector<d_vector> centroids, seeds;
 	vector<i_vector> clusters;
-	KmeansCriteria criteria = {1.0,100};
+	KmeansCriteria criteria = {1.0,10};
+	cout << "Our method:" << endl;
 	unsigned long int t1, t2;
 	t1 = get_millisecond_time();
 	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,N,k,criteria,d,data,centroids,clusters,seeds);
 	t2 = get_millisecond_time();
 	cout << "Finished in " << t2-t1 << "[ms]" << endl;
 	cout << "The distortion is " << distortion(d,N,k,data,centroids,clusters) << endl;
+	cout << "=======================" << endl;
+	cout << "OpenCV method:" << endl;
+	Mat _data;
+	convert_vector_mat(data,_data);
+	_data.convertTo(_data,CV_32F);
+	Mat _labels, _centers(k, 1, _data.type());
+	TermCriteria opencv_criteria {CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 1.0};
+	t1 = get_millisecond_time();
+	kmeans(_data, k, _labels, opencv_criteria, 3, KMEANS_PP_CENTERS, _centers);
+	t2 = get_millisecond_time();
+	cout << "Finished in " << t2-t1 << "[ms]" << endl;
 }
 
 /*int main(int argc, char * argv[]) {

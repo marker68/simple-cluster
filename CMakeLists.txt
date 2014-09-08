@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Project's name
-project(simple_cluster)
+project(simplecluster)
  
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
  
@@ -39,6 +39,14 @@ add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 add_dependencies(${PROJECT_NAME} gtest_main)
 
 # Make some tests
-set(CMAKE_CXX_FLAGS "-L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a -lgtest -pthread")
+set(OPENCV_LIBS "")
+foreach(lib ${OpenCV_LIBRARIES})
+    set(OPENCV_LIBS "-l${lib} ${OPENCV_LIBS}")
+endforeach(lib)
+set(OPENCV_INCLUDES "")
+foreach(dir ${OpenCV_INCLUDE_DIRS})
+    set(OPENCV_INCLUDES "-I${dir} ${OPENCV_INCLUDES}")
+endforeach(dir)
+set(CMAKE_CXX_FLAGS "${OPENCV_INCLUDES} -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a -lgtest -pthread -L/opt/local/lib ${OPENCV_LIBS}")
 add_executable(test_kmeans ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp ${PROJECT_SRCS})
 add_dependencies(test_kmeans gtest_main)

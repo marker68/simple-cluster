@@ -397,7 +397,7 @@ IF (LINK_LIB_CVCAM)
   ENDIF(OPENCV_INCLUDE_DIR_CVCAM)
 ENDIF(LINK_LIB_CVCAM)
 
-#MESSAGE("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
+# MESSAGE(STATUS "DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
 
 # libcxcore does not seem to be always required (different distribution behave 
 # differently)
@@ -549,4 +549,4 @@ INCLUDE(FindPackageHandleStandardArgs)
 # FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenCV "OpenCV not found" OpenCV_LIBRARIES OpenCV_INCLUDE_DIRS)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenCV "OpenCV not found" OpenCV_LIBRARIES)
 
-
+# message(STATUS "${OpenCV_INCLUDE_DIRS}")

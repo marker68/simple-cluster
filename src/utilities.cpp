@@ -23,7 +23,7 @@ namespace SimpleCluster {
  */
 double distance(d_vector x, d_vector y, size_t d) {
 	if(x.size() < d || y.size() < d) {
-		cerr << "Your vector have not enough dimensions!" << endl;
+		cerr << "distance: Your vector have not enough dimensions!" << endl;
 		cerr << "x has " << x.size() << " dimensions!" << endl;
 		cerr << "y has " << y.size() << " dimensions!" << endl;
 		exit(1);
@@ -47,7 +47,7 @@ double distance(d_vector x, d_vector y, size_t d) {
  */
 double distance_square(d_vector x, d_vector y, size_t d) {
 	if(x.size() < d || y.size() < d) {
-		cerr << "Your vector have not enough dimensions!" << endl;
+		cerr << "distance_square: Your vector have not enough dimensions!" << endl;
 		cerr << "x has " << x.size() << " dimensions!" << endl;
 		cerr << "y has " << y.size() << " dimensions!" << endl;
 		exit(1);

@@ -116,7 +116,7 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<d_vector> data, vector
  * @param k the number of clusters
  * @param data the data
  * @param centroids
- * @return the clusters
+ * @return
  */
 void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 		vector<d_vector> data, vector<d_vector> centroids, vector<i_vector>& clusters) {
@@ -180,7 +180,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0;
-	double error = criteria.accuracy, e = error + 1.0, e_prev = 0.0;
+	double error = criteria.accuracy, e = error, e_prev = 0.0;
 
 	vector<d_vector> c_tmp;
 	d_vector d_tmp;
@@ -193,7 +193,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 	// Initialize the centroids
 	centroids = seeds;
 
-	while (i < iters && (e - e_prev > error || e - e_prev < -error)) {
+	while (i < iters && (e - e_prev >= error || e - e_prev <= -error)) {
 		// Assign the data posize_ts to clusters
 		assign_to_closest_centroid(d,N,k,data,centroids,clusters);
 		// Recalculate the centroids
