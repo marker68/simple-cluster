@@ -58,7 +58,7 @@ double distance_square(double * x, double * y, size_t d) {
  * @return the mean posize_t of a cluster
  */
 double * mean_vector(vector<double *> data, const int * index, size_t d, size_t size, double * centroid) {
-	size_t i, j;
+	size_t i, j = 0;
 	if(size <= 0) {
 		return centroid;
 	}
@@ -66,8 +66,6 @@ double * mean_vector(vector<double *> data, const int * index, size_t d, size_t 
 	double * tmp = (double *)malloc(d * sizeof(double));
 	if(d_tmp == NULL || tmp == NULL) {
 		cerr << "Cannot allocate memory" << endl;
-		delete d_tmp;
-		delete tmp;
 		exit(1);
 	}
 

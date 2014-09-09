@@ -23,10 +23,6 @@ double distance(KDNode * _a, KDNode * _b) {
 		cerr << "Your vectors have some problems." << endl;
 		cerr << "a has " << _a->dim << " dimensions" << endl;
 		cerr << "b has " << _b->dim << " dimensions" << endl;
-		delete _a;
-		delete _b;
-		delete _av;
-		delete _bv;
 		exit(1);
 	}
 	size_t d = _a->dim;
@@ -58,7 +54,7 @@ KDNode * make_tree(KDNode * data, size_t N, size_t id, size_t d) {
 void find_nearest(KDNode * root, KDNode * node, KDNode ** best,
 		double * best_dist, size_t id) {
 	double tmp, tmp2, tmp3;
-	if(!root) return;
+	if(root == NULL) return;
 	tmp = distance(root,node);
 	double * _rv = root->data;
 	double * _nv = node->data;

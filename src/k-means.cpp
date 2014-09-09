@@ -137,7 +137,6 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 	double * d_tmp = (double *)malloc(d * sizeof(double));
 	if(d_tmp == NULL) {
 		cerr << "Cannot allocate memory" << endl;
-		delete d_tmp;
 		exit(1);
 	}
 //	memset(range, 0, k);
@@ -169,7 +168,6 @@ KDNode * convert_data_to_kd_nodes(vector<double *> data, size_t N, size_t d) {
 	KDNode * tree = (KDNode *)malloc(N * sizeof(KDNode));
 	if(!tree) {
 		cerr << "Cannot allocate memory" << endl;
-		delete tree;
 		exit(1);
 	}
 
@@ -197,6 +195,7 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 	size_t i, tmp;
 	KDNode * tree = convert_data_to_kd_nodes(centroids,k,d);
 	KDNode * root = make_tree(tree,k,0,d);
+	if(root == NULL || tree == NULL) return;
 	KDNode node, * found = new KDNode();
 	for(i = 0; i < k; i++) {
 		clusters[i] = new int();
@@ -206,7 +205,6 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 	double * d_tmp = (double *)malloc(d * sizeof(double));
 	if(d_tmp == NULL) {
 		cerr << "Cannot allocate memory" << endl;
-		delete d_tmp;
 		exit(1);
 	}
 //	memset(range, 0, k);
@@ -266,8 +264,6 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 	range = (size_t *)malloc(k * sizeof(size_t));
 	if(d_tmp == NULL || range == NULL) {
 		cerr << "Cannot allocate memory" << endl;
-		delete d_tmp;
-		delete range;
 		exit(1);
 	}
 
