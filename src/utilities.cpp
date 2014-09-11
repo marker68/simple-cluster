@@ -57,34 +57,30 @@ double distance_square(double * x, double * y, size_t d) {
  * @param d
  * @return the mean posize_t of a cluster
  */
-double * mean_vector(vector<double *> data, const int * index, size_t d, size_t size, double * centroid) {
-	size_t i, j = 0;
+double * mean_vector(double ** data, const int * index, size_t d, size_t size, double * centroid) {
+	size_t i, j = 0, k;
 	if(size <= 0) {
 		return centroid;
 	}
-	double * d_tmp = (double *)malloc(d * sizeof(double));
-	double * tmp = (double *)malloc(d * sizeof(double));
-	if(d_tmp == NULL || tmp == NULL) {
+
+	double * tmp = (double *)calloc(d,sizeof(double));
+	if(tmp == NULL) {
 		cerr << "Cannot allocate memory" << endl;
 		exit(1);
 	}
 
-	for(i = 0; i < d; i++)
-		tmp[i] = 0.0;
-
 	for(i = 0; i < size; i++) {
 		j = index[i];
-		d_tmp = data[j];
-		for(j = 0; j < d; j++) {
-			tmp[j] += d_tmp[j];
+		for(k = 0; k < d; k++) {
+			tmp[k] += data[j][k];
 		}
 	}
 
-	for(i = 0; i < d; i++)
+	for(i = 0; i < d; i++) {
 		tmp[i] /= static_cast<double>(size);
-	for(i = 0; i < d; i++)
-		d_tmp[i] = tmp[i];
-	return d_tmp;
+	}
+
+	return tmp;
 }
 
 /**
@@ -99,9 +95,9 @@ unsigned long get_millisecond_time() {
 /**
  * Utilities for printing vector
  */
-void print_vector(vector<double *> data, size_t d) {
-	size_t i, j, size = data.size();
-	for(i = 0; i < size; i++) {
+void print_vector(double ** data, size_t d, size_t N) {
+	size_t i, j;
+	for(i = 0; i < N; i++) {
 		cout << "Data point " << i << ":";
 		for(j = 0; j < d; j++)
 			cout << data[i][j] << " ";

@@ -27,29 +27,30 @@ add_subdirectory(test/googletest)
 include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 
 set(PROJECT_SRCS 
-${PROJECT_SOURCE_DIR}/src/k-means.cpp 
+#${PROJECT_SOURCE_DIR}/src/k-means.cpp 
 ${PROJECT_SOURCE_DIR}/src/utilities.cpp
 ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp 
 )
 
 # Some of the features need C++ 11 and math library
-list(APPEND CMAKE_CXX_FLAGS "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs -lm")
+list(APPEND CMAKE_CXX_FLAGS "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
 
 # Create a shared library file
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 add_dependencies(${PROJECT_NAME} gtest_main)
 
-# Make some tests
+# OpenCV paths
 set(OPENCV_INCLUDES "")
 foreach(dir ${OpenCV_INCLUDE_DIRS})
     set(OPENCV_INCLUDES "-I${dir} ${OPENCV_INCLUDES}")
 endforeach(dir)
-set(CMAKE_CXX_FLAGS "${OPENCV_INCLUDES} -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a")
-add_executable(test_kmeans ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp ${PROJECT_SRCS})
-set(OpenCV_FOR_TEST
-gtest
-pthread
-${OpenCV_LIBRARIES}
-)
-target_link_libraries(test_kmeans ${OpenCV_FOR_TEST})
-add_dependencies(test_kmeans gtest_main)
+
+# Make some tests
+set(CMAKE_CXX_FLAGS "-L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a")
+set(TEST_LIBS_FLAGS m gtest pthread)
+add_executable(test_utilities ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp ${PROJECT_SOURCE_DIR}/src/utilities.cpp)
+target_link_libraries(test_utilities ${TEST_LIBS_FLAGS})
+add_dependencies(test_utilities gtest_main)
+add_executable(test_kdtree ${PROJECT_SOURCE_DIR}/test/test_kdtree.cpp ${PROJECT_SOURCE_DIR}/src/utilities.cpp ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp )
+target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
+add_dependencies(test_kdtree gtest_main)

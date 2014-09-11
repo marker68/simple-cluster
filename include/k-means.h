@@ -18,9 +18,6 @@ using namespace std;
  */
 namespace SimpleCluster {
 
-typedef vector<double> d_vector;
-typedef vector<int> i_vector;
-
 /**
  * Criteria
  */
@@ -38,69 +35,17 @@ enum class KmeansType {
 	USER_SEEDS // take the seeds from input
 };
 
-/**
- * Random seeding method
- * @param d the number of dimensions
- * @param N the number of data
- * @param k the number of clusters
- * @param data the data
- * @param seeds seeds will be stored here
- * @return
- */
-void random_seeds(size_t d, size_t N, size_t k, vector<double *> data, vector<double *>& seeds);
-
-/**
- * K-means++'s seeding method
- * @param d the number of dimensions
- * @param N the number of data
- * @param k the number of clusters
- * @param data the data
- * @param seeds seeds will be stored here
- * @return
- */
-void kmeans_pp_seeds(size_t d, size_t N, size_t k, vector<double *> data, vector<double *>& seeds);
-
-/**
- * Assign the data points to clusters
- * The execution time would be O(N*k*d)
- * @param d the number of dimensions
- * @param N the number of data
- * @param k the number of clusters
- * @param data the data
- * @param centroids
- * @param clusters
- */
-void assign_to_closest_centroid(size_t d, size_t N, size_t k, vector<double *> data,
-		vector<double *> centroids, vector<int *>& clusters);
-void assign_to_closest_centroid_2(size_t d, size_t N, size_t k, vector<double *> data,
-		vector<double *> centroids, vector<int *>& clusters);
-
-/**
- * The k-means method
- * @param N the number of data
- * @param k the number of clusters
- * @param criteria the term of accuracy and maximum of iterations.
- * @param d the number of dimensions
- * @param data the data
- * @param centers the centers after the execution finished.
- * @param clusters the clusters that labeled by the centers' indices.
- * @param seeds seeds will be stored here.
- */
+void random_seeds(size_t d, size_t N, size_t k, double ** data, double ** seeds);
+void kmeans_pp_seeds(size_t d, size_t N, size_t k, double ** data, double ** seeds);
+void assign_to_closest_centroid(size_t d, size_t N, size_t k, double ** data,
+		double ** centroids, int ** clusters);
+void assign_to_closest_centroid_2(size_t d, size_t N, size_t k, double ** data,
+		double ** centroids, int ** clusters);
 void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
-		vector<double *> data, vector<double *>& centroids,
-		vector<int *>& clusters, vector<double *> seeds);
-
-/**
- * Calculate the distortion of a set of clusters
- * @param d the number of dimensions
- * @param N the number of data
- * @param k the number of clusters
- * @param data the data
- * @param centroids
- * @param clusters
- */
+		double ** data, double ** centroids,
+		int ** clusters, double ** seeds);
 double distortion(size_t d, size_t N, size_t k,
-		vector<double *> data, vector<double *> centroids, vector<int *> clusters);
+		double ** data, double ** centroids, int ** clusters);
 }
 
 #endif /* K_MEANS_H_ */
