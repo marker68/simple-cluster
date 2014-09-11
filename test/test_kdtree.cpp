@@ -34,7 +34,7 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 100;
+		N = 10000;
 		d = 128;
 		int i, j;
 
@@ -126,7 +126,18 @@ TEST_F(KDTreeTest, test6) {
 	KDNode<double> * root = NULL;
 	make_random_tree(root,data,N,d,0,0,false);
 //	kd_travel<double>(root,d,0);
-	KDNode<double> * result = NULL;//::new KDNode<double>;
+	KDNode<double> * result = NULL;
+	double best_dist = DBL_MAX;
+	nn_search(root,data[33],result,best_dist,d,0,false);
+	cout << "best:" << best_dist << " at " << result->id << endl;
+	EXPECT_EQ(0.0,best_dist);
+}
+
+TEST_F(KDTreeTest, test7) {
+	KDNode<double> * root = NULL;
+	make_balanced_tree(root,data,N,d,0,0,false);
+//	kd_travel<double>(root,d,0);
+	KDNode<double> * result = NULL;
 	double best_dist = DBL_MAX;
 	nn_search(root,data[33],result,best_dist,d,0,false);
 	cout << "best:" << best_dist << " at " << result->id << endl;

@@ -27,7 +27,7 @@ add_subdirectory(test/googletest)
 include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 
 set(PROJECT_SRCS 
-#${PROJECT_SOURCE_DIR}/src/k-means.cpp 
+${PROJECT_SOURCE_DIR}/src/k-means.cpp 
 ${PROJECT_SOURCE_DIR}/src/utilities.cpp
 ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp 
 )
@@ -54,3 +54,6 @@ add_dependencies(test_utilities gtest_main)
 add_executable(test_kdtree ${PROJECT_SOURCE_DIR}/test/test_kdtree.cpp ${PROJECT_SOURCE_DIR}/src/utilities.cpp ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp )
 target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
 add_dependencies(test_kdtree gtest_main)
+add_executable(test_kmeans ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp ${PROJECT_SRCS} )
+target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS})
+add_dependencies(test_kmeans gtest_main)

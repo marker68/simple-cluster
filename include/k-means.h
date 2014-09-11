@@ -35,17 +35,17 @@ enum class KmeansType {
 	USER_SEEDS // take the seeds from input
 };
 
-void random_seeds(size_t d, size_t N, size_t k, double ** data, double ** seeds);
-void kmeans_pp_seeds(size_t d, size_t N, size_t k, double ** data, double ** seeds);
-void assign_to_closest_centroid(size_t d, size_t N, size_t k, double ** data,
-		double ** centroids, int ** clusters);
-void assign_to_closest_centroid_2(size_t d, size_t N, size_t k, double ** data,
-		double ** centroids, int ** clusters);
-void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
-		double ** data, double ** centroids,
-		int ** clusters, double ** seeds);
+void random_seeds(size_t, size_t, size_t, double **, double **&, bool);
+void kmeans_pp_seeds(size_t, size_t, size_t, double **, double **&, bool);
+void assign_to_closest_centroid(size_t, size_t, size_t, double **,
+		double **, int **&, bool);
+void assign_to_closest_centroid_2(size_t, size_t, size_t, double **,
+		double **, int **&, bool);
+void simple_k_means(KmeansType, size_t, size_t, KmeansCriteria,size_t,
+		double **, double **,
+		int **, double **, bool);
 double distortion(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, int ** clusters);
+		double **, double **, int **);
 }
 
 #endif /* K_MEANS_H_ */

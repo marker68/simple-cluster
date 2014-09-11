@@ -25,9 +25,10 @@ namespace SimpleCluster {
 /*
  * Global variables
  */
-size_t * range;
+size_t * range = NULL;
 
-void random_seeds(size_t d, size_t N, size_t k, double ** data, double ** seeds) {
+void random_seeds(size_t d, size_t N, size_t k,
+		double ** data, double **& seeds, bool verbose) {
 	size_t i, j;
 	int tmp[k];
 
@@ -44,11 +45,17 @@ void random_seeds(size_t d, size_t N, size_t k, double ** data, double ** seeds)
 			tmp[j] = static_cast<int>(i);
 	}
 
-	for(i = 0; i < k; i++)
-		seeds[i] = data[tmp[i]];
+	for(i = 0; i < k; i++) {
+		if(!copy_array<double>(data[tmp[i]],seeds[i],d)) {
+			if(verbose)
+				cerr << "Cannot copy array! The program exit now!" << endl;
+			exit(1);
+		}
+	}
 }
 
-void kmeans_pp_seeds(size_t d, size_t N, size_t k, double ** data, double ** seeds) {
+void kmeans_pp_seeds(size_t d, size_t N, size_t k,
+		double ** data, double **& seeds, bool verbose) {
 	// For generating random numbers
 	random_device rd;
 	mt19937 gen(rd());
@@ -56,14 +63,15 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, double ** data, double ** see
 	uniform_int_distribution<size_t> int_dis(0, N - 1);
 	size_t tmp = int_dis(gen);
 
-	double * d_tmp = data[tmp];
-	seeds[0] = d_tmp;
-	double * distances = (double *)::operator new(N * sizeof(double));
-	double * sum_distances = (double *)::operator new(N * sizeof(double));
+	double * d_tmp;
+	init_array<double>(d_tmp,d);
+	copy_array<double>(data[tmp],seeds[0],d);
+	double * distances;
+	init_array<double>(distances,N);
+	double * sum_distances;
+	init_array<double>(sum_distances,N);
 	size_t i;
 	for(i = 0; i < N; i++) {
-		::new(distances + i) double;
-		::new(sum_distances + i) double;
 		distances[i] = SimpleCluster::distance_square(data[i], d_tmp, d);
 		sum_distances[i] = 0.0;
 	}
@@ -84,8 +92,8 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, double ** data, double ** see
 			if(sum1 < pivot && pivot <= sum2)
 				break;
 		}
-		d_tmp = data[i + 1];
-		seeds[count++] = d_tmp;
+		copy_array<double>(data[i+1],d_tmp,d);
+		copy_array<double>(d_tmp,seeds[count++],d);
 		// Update the distances
 		if(count < k) {
 			for(i = 0; i < N; i++) {
@@ -94,29 +102,23 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k, double ** data, double ** see
 			}
 		}
 	}
+	::delete[] distances;
+	::delete[] sum_distances;
+	::delete[] d_tmp;
 }
 
-/**
- * Assign the data posize_ts to clusters
- * The execution time would be O(N*k*d)
- * @param d the number of dimensions
- * @param N the number of data
- * @param k the number of clusters
- * @param data the data
- * @param centroids
- * @return
- */
 void assign_to_closest_centroid(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, int ** clusters) {
+		double ** data, double ** centroids, int **& clusters, bool verbose) {
 	size_t i, j, tmp;
 	i_vector i_tmp;
-	for(i = 0; i < k; i++) {
-		clusters[i] = new int();
-	}
+	init_array<int *>(clusters,k);
 
 	double min = 0.0, temp = 0.0;
+	if(range == NULL) {
+		init_array<size_t>(range,k);
+	}
+
 	for(i = 0; i < k; i++) {
-		::new(range + i) int;
 		range[i] = 0;
 	}
 
@@ -136,116 +138,92 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 	}
 }
 
-KDNode * convert_data_to_kd_nodes(double ** data, size_t N, size_t d) {
-	KDNode * tree = (KDNode *)::operator new(N * sizeof(KDNode));
-
-	size_t i;
-	for(i = 0; i < N; i++) {
-		::new(tree + i) KDNode;
-		tree[i].data = data[i];
-		tree[i].dim = d;
-	}
-
-	return tree;
-}
-
-/**
- * Assign the data posize_ts to clusters
- * The execution time would be O(N*k*d)
- * @param d the number of dimensions
- * @param N the number of data
- * @param k the number of clusters
- * @param data the data
- * @param centroids
- * @return
- */
 void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, int ** clusters) {
+		double ** data, double ** centroids, int **& clusters, bool verbose) {
 	size_t i, tmp;
-	KDNode * tree = convert_data_to_kd_nodes(centroids,k,d);
-	KDNode * root = make_tree(tree,k,0,d);
-	if(root == NULL || tree == NULL) return;
-	root->dim = d;
-	KDNode node, * found = new KDNode();
-	for(i = 0; i < k; i++) {
-		clusters[i] = new int();
-	}
+	KDNode<double> * root = NULL;
+	make_random_tree(root,centroids,k,d,0,0,verbose);
+	if(root == NULL) return;
+	init_array<int *>(clusters,k);
 
 	double min = DBL_MAX;
 
+	if(range == NULL) {
+		init_array<size_t>(range,k);
+	}
+
 	for(i = 0; i < k; i++) {
-		::new(range + i) int;
 		range[i] = 0;
 	}
 
 	for(i = 0; i < N; i++) {
+		if(verbose)
+			cout << "Reached in-loop " << i << "-th" << endl;
+		KDNode<double> * nn = NULL;
 		// Find the minimum distances between d_tmp and a centroid
-		node.data = data[i];
-		node.dim = d;
-		find_nearest(root,&node,*found,min,0);
-		tmp = found - tree;
+		nn_search(root,data[i],nn,min,d,0,verbose);
+		tmp = nn->id;
+		nn = NULL;
+		min = DBL_MAX;
 		// Assign the data[i] into cluster tmp
 		clusters[tmp][range[tmp]++] = static_cast<int>(i);
 	}
+
+	::delete root;
 }
 
 /**
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
- * @param N the number of data
- * @param k the number of clusters
- * @param criteria the term of accuracy and maximum of iterations.
- * @param d the number of dimensions
- * @param data the data
- * @param centers the centers after the execution finished.
- * @param clusters the clusters that labeled by the centers' indices.
- * @param seeds seeds will be stored here.
  */
 void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
 		double ** data, double ** centroids,
-		int ** clusters, double ** seeds) {
+		int ** clusters, double ** seeds, bool verbose) {
 	// Pre-check conditions
 	if (N < k) {
-		cerr << "There will be some empty clusters!" << endl;
+		if(verbose)
+			cerr << "There will be some empty clusters!" << endl;
 		exit(1);
+	}
+
+	if(seeds == NULL) {
+		init_array_2<double>(seeds,k,d);
 	}
 
 	// Seeding
 	// In case of defective seeds from users, we should overwrite it by kmeans++ seeds
 	if (type == KmeansType::RANDOM_SEEDS) {
-		random_seeds(d,N,k,data,seeds);
+		random_seeds(d,N,k,data,seeds,verbose);
 	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
-		kmeans_pp_seeds(d,N,k,data,seeds);
+		kmeans_pp_seeds(d,N,k,data,seeds,verbose);
 	}
 
-	cout << "Finished seeding" << endl;
+	if(verbose)
+		cout << "Finished seeding" << endl;
 
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0;
 	double error = criteria.accuracy, e = error, e_prev = 0.0;
 
 	double ** c_tmp;
-	range = (size_t *)::operator new(k * sizeof(size_t));
-	if(range == NULL) {
-		cerr << "Cannot allocate memory" << endl;
-		exit(1);
-	}
+	init_array_2<double>(c_tmp,k,d);
 
 	double tmp = 0.0;
 
 	// Initialize the centroids
-	centroids = seeds;
+	copy_array_2<double>(seeds,centroids,k,d);
 
 	while (1) {
-		cout << "Loop " << i << endl;
+		if(verbose)
+			cout << "Reached loop " << i << "-th" << endl;
 		// Assign the data points to clusters
-		assign_to_closest_centroid(d,N,k,data,centroids,clusters);
+		assign_to_closest_centroid_2(d,N,k,data,centroids,clusters,verbose);
 		// Recalculate the centroids
 		for(size_t j = 0; j < k; j++) {
-			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],d,range[j],centroids[j]);
+			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],
+					d,range[j],centroids[j]);
 			c_tmp[j] = d_tmp;
 		}
-		cout << "Loop " << i << endl;
 		// Calculate the distortion
 		e_prev = e;
 		e = 0.0;
@@ -255,24 +233,23 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 		}
 		e = sqrt(e);
 
-		centroids = c_tmp;
+		copy_array_2<double>(c_tmp,centroids,k,d);
 		i++;
 		if(i >= iters ||
-//				(e - e_prev < error && e - e_prev > -error)) break;
+				//				(e - e_prev < error && e - e_prev > -error)) break;
 				(e < error && e > -error)) break;
 	}
 
-	cout << "Finished clustering with error is " << e << " after " << i << " iterations." << endl;
+	if(verbose)
+		cout << "Finished clustering with error is " <<
+		e << " after " << i << " iterations." << endl;
+
+	dealloc_array_2<double>(c_tmp,k);
+	dealloc_array_2<double>(seeds,k);
 }
 
 /**
  * Calculate the distortion of a set of clusters.
- * @param d the number of dimensions
- * @param N the number of data
- * @param k the number of clusters
- * @param data the data
- * @param centroids
- * @param clusters
  */
 double distortion(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, int ** clusters) {
@@ -289,6 +266,9 @@ double distortion(size_t d, size_t N, size_t k,
 			++j;
 		}
 	}
+
+	::delete[] d_tmp;
+	::delete[] i_tmp;
 
 	return sqrt(e);
 }

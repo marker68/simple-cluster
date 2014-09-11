@@ -128,3 +128,39 @@ TEST_F(UtilTest, test7) {
 	int m = quick_select_k(arr,10000,5000,compare_double);
 	EXPECT_EQ(5000,m);
 }
+
+TEST_F(UtilTest, test8) {
+	double * t;
+	EXPECT_TRUE(init_array<double>(t,1000) && t!=NULL);
+}
+
+TEST_F(UtilTest, test9) {
+	double * t;
+	EXPECT_TRUE(init_array<double>(t,d) && t != NULL);
+	EXPECT_TRUE(copy_array<double>(data[0],t,d));
+	for(int i = 0; i < d; i++) {
+		EXPECT_TRUE(data[0][i] == t[i]);
+	}
+}
+
+TEST_F(UtilTest, test10) {
+	double ** t;
+	EXPECT_TRUE(init_array_2<double>(t,1000,200) && t!=NULL);
+}
+
+TEST_F(UtilTest, test11) {
+	double ** t;
+	EXPECT_TRUE(init_array_2<double>(t,N,d) && t != NULL);
+	EXPECT_TRUE(copy_array_2<double>(data,t,N,d));
+	for(int i = 0; i < N; i++) {
+		for(int j = 0; j < d; j++) {
+			EXPECT_TRUE(data[i][j] == t[i][j]);
+		}
+	}
+}
+
+TEST_F(UtilTest, test12) {
+	double ** t;
+	EXPECT_TRUE(init_array_2<double>(t,N,d) && t != NULL);
+	EXPECT_TRUE(dealloc_array_2<double>(t,N));
+}
