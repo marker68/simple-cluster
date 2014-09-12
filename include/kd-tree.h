@@ -17,14 +17,35 @@ namespace SimpleCluster {
 
 template<typename DataType>
 class KDNode {
-protected:
+private:
 	vector<DataType> data;
 public:
 	size_t id;
 	KDNode<DataType> * left, * right;
+	KDNode(const KDNode<DataType>& other) {
+		size_t size = other.get_size();
+		for(size_t i = 0; i < size; i++) {
+			data.push_back(other.get_data_at(i));
+		}
+		left = other.left;
+		right = other.right;
+		id = other.id;
+	}
 	KDNode() {
 		id = 0;
 		left = right = NULL;
+	}
+
+	KDNode& operator= (const KDNode<DataType>& other) {
+		KDNode<DataType> tmp;
+		size_t size = other.get_size();
+		for(size_t i = 0; i < size; i++) {
+			tmp.add_data(other.get_data_at(i));
+		}
+		tmp.left = other.left;
+		tmp.right = other.right;
+		tmp.id = other.id;
+		return tmp;
 	}
 
 	virtual ~KDNode() {
