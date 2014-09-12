@@ -22,6 +22,7 @@ private:
 public:
 	size_t id;
 	KDNode<DataType> * left, * right;
+
 	KDNode(const KDNode<DataType>& other) {
 		size_t size = other.get_size();
 		for(size_t i = 0; i < size; i++) {
@@ -31,6 +32,7 @@ public:
 		right = other.right;
 		id = other.id;
 	}
+
 	KDNode() {
 		id = 0;
 		left = right = NULL;
@@ -57,12 +59,15 @@ public:
 	void add_data(DataType _d) {
 		data.push_back(_d);
 	}
+
 	void clear_data() {
 		data.clear();
 	}
+
 	DataType get_data_at(size_t _id) const{
 		return data[_id];
 	}
+
 	size_t get_size() const{
 		return data.size();
 	}
