@@ -40,6 +40,7 @@ to generate the binaries.
 
 ## Documentation
 
+This project uses Doxygen to generate its documentation. You cand find it in `doc/` or an online version at http://simplecluster.tech-codes.com/
 
 ## License
 ```
