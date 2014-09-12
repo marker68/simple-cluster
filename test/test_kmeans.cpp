@@ -72,10 +72,6 @@ protected:
 			cerr << "Cannot allocate memory for centroids data!" << endl;
 			exit(1);
 		}
-		if(!init_array<int *>(clusters,k)) {
-			cerr << "Cannot allocate memory for clusters data!" << endl;
-			exit(1);
-		}
 		//		print_vector(data,d,N);
 	}
 
@@ -95,10 +91,14 @@ protected:
 			cerr << "centroids: Deallocating failed!" << endl;
 			exit(1);
 		}
-		if(!dealloc_array_2<int>(clusters,k)) {
-			cerr << "clusters: Deallocating failed!" << endl;
-			exit(1);
+
+		vector<i_vector>::iterator it = clusters.begin();
+		vector<i_vector>::iterator ie = clusters.end();
+		while(it != ie) {
+			(*it).clear();
+			++it;
 		}
+		clusters.clear();
 	}
 
 	// You can define per-test set-up and tear-down logic as usual.
@@ -110,14 +110,14 @@ public:
 	static double ** data;
 	static double ** seeds;
 	static double ** centroids;
-	static int ** clusters;
+	static vector<i_vector> clusters;
 	static int N, d, k;
 };
 
 double ** KmeansTest::data;
 double ** KmeansTest::seeds;
 double ** KmeansTest::centroids;
-int ** KmeansTest::clusters;
+vector<i_vector> KmeansTest::clusters;
 int KmeansTest::N;
 int KmeansTest::d;
 int KmeansTest::k;
@@ -130,13 +130,19 @@ TEST_F(KmeansTest, test2) {
 	kmeans_pp_seeds(d,N,k,data,seeds,true);
 }
 
-TEST_F(KmeansTest, test3) {
+TEST_F(KmeansTest, DISABLED_test3) {
 	random_seeds(d,N,k,data,seeds,true);
-	assign_to_closest_centroid_2(d,N,k,data,seeds,clusters,true);
+	assign_to_closest_centroid(d,N,k,data,seeds,clusters,false);
 }
 
 TEST_F(KmeansTest, DISABLED_test4) {
+	random_seeds(d,N,k,data,seeds,true);
+	assign_to_closest_centroid_2(d,N,k,data,seeds,clusters,false);
+}
+
+TEST_F(KmeansTest, test5) {
 	KmeansCriteria criteria = {1.0,10};
-	simple_k_means(KmeansType::RANDOM_SEEDS,N,k,criteria,d,
+	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,N,k,criteria,d,
 			data,centroids,clusters,seeds,true);
+	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,true) << endl;
 }

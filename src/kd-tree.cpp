@@ -110,7 +110,7 @@ void make_random_tree(KDNode<double> *& root, double ** data,
 void nn_search(KDNode<double> * root, const double * query,
 		KDNode<double> *& result,
 		double& best_dist, size_t N, size_t level, bool verbose) {
-	if(best_dist == 0) return;
+	if(best_dist == 0.0) return;
 	if(root == NULL || root->get_size() != N) {
 		if(verbose) {
 			cout << "Reached a leaf" << endl;
@@ -136,21 +136,19 @@ void nn_search(KDNode<double> * root, const double * query,
 		}
 	}
 
-	level = (level + 1) % N;
-	if(d1 >= 0) {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+	size_t l = (level + 1) % N;
+	if(d1 >= 0.0) {
+		nn_search(root->left,query,result,best_dist,N,l,verbose);
 	} else {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,l,verbose);
 	}
-	if(verbose)
-		cout << "Finished first side" << endl;
-	if(fabs(d1) > best_dist) return;
-	if(verbose)
-		cout << "So we need to check the remaining side" << endl;
-	if(d1 >= 0) {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+
+	if(fabs(d1) >= best_dist) return;
+
+	if(d1 >= 0.0) {
+		nn_search(root->right,query,result,best_dist,N,l,verbose);
 	} else {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,l,verbose);
 	}
 	::delete tmp;
 }

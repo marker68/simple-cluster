@@ -34,6 +34,9 @@ using namespace std;
  */
 namespace SimpleCluster {
 
+typedef vector<double> d_vector;
+typedef vector<int> i_vector;
+
 /**
  * Criteria
  */
@@ -54,14 +57,14 @@ enum class KmeansType {
 void random_seeds(size_t, size_t, size_t, double **, double **&, bool);
 void kmeans_pp_seeds(size_t, size_t, size_t, double **, double **&, bool);
 void assign_to_closest_centroid(size_t, size_t, size_t, double **,
-		double **, int **&, bool);
+		double **, vector<i_vector>&, bool);
 void assign_to_closest_centroid_2(size_t, size_t, size_t, double **,
-		double **, int **&, bool);
+		double **, vector<i_vector>&, bool);
 void simple_k_means(KmeansType, size_t, size_t, KmeansCriteria,size_t,
-		double **, double **,
-		int **, double **, bool);
+		double **, double **&,
+		vector<i_vector>&, double **&, bool);
 double distortion(size_t d, size_t N, size_t k,
-		double **, double **, int **);
+		double **, double **, vector<i_vector>, bool);
 }
 
 #endif /* K_MEANS_H_ */

@@ -45,6 +45,7 @@ double distance_square(double *, double *, size_t);
  * Calculate the mean vector in a cluster
  */
 double * mean_vector(double **, const int *, size_t, size_t, double *);
+double * mean_vector(double **, const i_vector, size_t, double *);
 /**
  * Get system time in milliseconds
  */
@@ -87,6 +88,18 @@ bool init_array_2(DataType **& arr, size_t M, size_t N) {
 	return true;
 }
 
+/**
+ * Initialize a vector
+ */
+template<typename DataType>
+bool init_vector(vector<DataType>& vec, size_t N) {
+	DataType tmp;
+	vec.clear();
+	for(size_t i = 0; i < N; i++) {
+		vec.push_back(tmp);
+	}
+	return true;
+}
 template<typename DataType>
 bool copy_array(DataType * from, DataType *& to, size_t N) {
 	if(from == NULL || to == NULL)

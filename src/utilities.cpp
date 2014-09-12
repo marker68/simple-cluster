@@ -73,11 +73,47 @@ double distance_square(double * x, double * y, size_t d) {
  * @param d
  * @return the mean posize_t of a cluster
  */
-double * mean_vector(double ** data, const int * index, size_t d, size_t size, double * centroid) {
+double * mean_vector(double ** data, const int * index,
+		size_t d, size_t size, double * centroid) {
 	size_t i, j = 0, k;
 	if(size <= 0) {
 		return centroid;
 	}
+
+	double * tmp = (double *)calloc(d, sizeof(double));
+	if(tmp == NULL) {
+		cerr << "Cannot allocate memory" << endl;
+		exit(1);
+	}
+
+	for(i = 0; i < size; i++) {
+		j = index[i];
+		for(k = 0; k < d; k++) {
+			tmp[k] += data[j][k];
+		}
+	}
+
+	for(i = 0; i < d; i++) {
+		tmp[i] /= static_cast<double>(size);
+	}
+
+	return tmp;
+}
+
+/**
+ * Calculate the mean of a cluster
+ * @param data
+ * @param index a vetcor of integers
+ * @param d
+ * @return the mean posize_t of a cluster
+ */
+double * mean_vector(double ** data, const i_vector index,
+		size_t d, double * centroid) {
+	size_t i, j = 0, k;
+	if(index.size() <= 0) {
+		return centroid;
+	}
+	size_t size = index.size();
 
 	double * tmp = (double *)calloc(d,sizeof(double));
 	if(tmp == NULL) {

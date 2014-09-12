@@ -118,25 +118,13 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k,
 			}
 		}
 	}
-	::delete[] distances;
-	::delete[] sum_distances;
-	::delete[] d_tmp;
 }
 
 void assign_to_closest_centroid(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, int **& clusters, bool verbose) {
+		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, j, tmp;
-	i_vector i_tmp;
-	init_array<int *>(clusters,k);
 
 	double min = 0.0, temp = 0.0;
-	if(range == NULL) {
-		init_array<size_t>(range,k);
-	}
-
-	for(i = 0; i < k; i++) {
-		range[i] = 0;
-	}
 
 	for(i = 0; i < N; i++) {
 		// Find the minimum distances between d_tmp and a centroid
@@ -150,42 +138,26 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 			}
 		}
 		// Assign the data[i] into cluster tmp
-		clusters[tmp][range[tmp]++] = static_cast<int>(i);
+		clusters[tmp].push_back(static_cast<int>(i));
 	}
 }
 
 void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, int **& clusters, bool verbose) {
+		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = NULL;
-	make_random_tree(root,centroids,k,d,0,0,verbose);
+	make_balanced_tree(root,centroids,k,d,0,0,verbose);
 	if(root == NULL) return;
-	init_array<int *>(clusters,k);
-
-	double min = DBL_MAX;
-
-	if(range == NULL) {
-		init_array<size_t>(range,k);
-	}
-
-	for(i = 0; i < k; i++) {
-		range[i] = 0;
-	}
 
 	for(i = 0; i < N; i++) {
-		if(verbose)
-			cout << "Reached in-loop " << i << "-th" << endl;
 		KDNode<double> * nn = NULL;
+		double min = DBL_MAX;
 		// Find the minimum distances between d_tmp and a centroid
 		nn_search(root,data[i],nn,min,d,0,verbose);
 		tmp = nn->id;
-		nn = NULL;
-		min = DBL_MAX;
 		// Assign the data[i] into cluster tmp
-		clusters[tmp][range[tmp]++] = static_cast<int>(i);
+		clusters[tmp].push_back(static_cast<int>(i));
 	}
-
-	::delete root;
 }
 
 /**
@@ -193,8 +165,8 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
  */
 void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
-		double ** data, double ** centroids,
-		int ** clusters, double ** seeds, bool verbose) {
+		double ** data, double **& centroids,
+		vector<i_vector>& clusters, double **& seeds, bool verbose) {
 	// Pre-check conditions
 	if (N < k) {
 		if(verbose)
@@ -223,6 +195,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	double ** c_tmp;
 	init_array_2<double>(c_tmp,k,d);
+	init_vector<i_vector>(clusters,k);
 
 	double tmp = 0.0;
 
@@ -230,15 +203,13 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 	copy_array_2<double>(seeds,centroids,k,d);
 
 	while (1) {
-		if(verbose)
-			cout << "Reached loop " << i << "-th" << endl;
 		// Assign the data points to clusters
-		assign_to_closest_centroid_2(d,N,k,data,centroids,clusters,verbose);
+		assign_to_closest_centroid(d,N,k,data,centroids,clusters,verbose);
 		// Recalculate the centroids
 		for(size_t j = 0; j < k; j++) {
 			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],
-					d,range[j],centroids[j]);
-			c_tmp[j] = d_tmp;
+					d,centroids[j]);
+			copy_array<double>(d_tmp,c_tmp[j],d);
 		}
 		// Calculate the distortion
 		e_prev = e;
@@ -261,30 +232,27 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 		e << " after " << i << " iterations." << endl;
 
 	dealloc_array_2<double>(c_tmp,k);
-	dealloc_array_2<double>(seeds,k);
 }
 
 /**
  * Calculate the distortion of a set of clusters.
  */
 double distortion(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, int ** clusters) {
+		double ** data, double ** centroids,
+		vector<i_vector> clusters, bool verbose) {
 	double e = 0.0;
 	size_t i, j = 0;
-	double * d_tmp;
-	int * i_tmp;
+	i_vector i_tmp;
 
 	for(i = 0; i < k; i++) {
 		i_tmp = clusters[i];
-		d_tmp = centroids[i];
-		while(j < range[i]) {
-			e += SimpleCluster::distance_square(d_tmp, data[i_tmp[j]], d);
+		while(j < i_tmp.size()) {
+			e += SimpleCluster::distance_square(centroids[i], data[i_tmp[j]], d);
 			++j;
 		}
 	}
 
-	::delete[] d_tmp;
-	::delete[] i_tmp;
+	i_tmp.clear();
 
 	return sqrt(e);
 }
