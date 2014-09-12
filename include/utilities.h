@@ -112,8 +112,8 @@ bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
 template<typename DataType>
 bool dealloc_array_2(DataType **& arr, size_t M) {
 	for(size_t i = 0; i < M; i++)
-		::delete[] arr[i];
-	::delete[] arr;
+		::delete arr[i];
+	::delete arr;
 	return true;
 }
 

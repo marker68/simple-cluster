@@ -76,8 +76,8 @@ protected:
 	static void TearDownTestCase() {
 		size_t i;
 		for(i = 0; i < N; i++)
-			::delete[] data[i];
-		::delete[] data;
+			::delete data[i];
+		::delete data;
 	}
 
 	// You can define per-test set-up and tear-down logic as usual.
