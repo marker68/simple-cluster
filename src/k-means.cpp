@@ -37,12 +37,15 @@ using namespace std;
 
 namespace SimpleCluster {
 
-
-/*
- * Global variables
+/**
+ * Create random seeds for k-means
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the numbe rof clusters
+ * @param data input data
+ * @param seeds the seeds
+ * @param verbose for debugging
  */
-size_t * range = NULL;
-
 void random_seeds(size_t d, size_t N, size_t k,
 		double ** data, double **& seeds, bool verbose) {
 	size_t i, j;
@@ -70,6 +73,15 @@ void random_seeds(size_t d, size_t N, size_t k,
 	}
 }
 
+/**
+ * Create seeds for k-means++
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the numbe rof clusters
+ * @param data input data
+ * @param seeds the seeds
+ * @param verbose for debugging
+ */
 void kmeans_pp_seeds(size_t d, size_t N, size_t k,
 		double ** data, double **& seeds, bool verbose) {
 	// For generating random numbers
@@ -120,6 +132,18 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k,
 	}
 }
 
+/**
+ * After having a set of centroids,
+ * we need to assign data into each cluster respectively.
+ * This solution uses linear search to assign data.
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the numbe rof clusters
+ * @param data input data
+ * @param centroids the centroids
+ * @param clusters the clusters
+ * @param verbose for debugging
+ */
 void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, j, tmp;
@@ -142,6 +166,18 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 	}
 }
 
+/**
+ * After having a set of centroids,
+ * we need to assign data into each cluster respectively.
+ * This solution uses kd-tree search to assign data.
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the numbe rof clusters
+ * @param data input data
+ * @param centroids the centroids
+ * @param clusters the clusters
+ * @param verbose for debugging
+ */
 void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, tmp;
@@ -163,6 +199,16 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 /**
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
+ * @param type the type of seeding method
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the number of clusters
+ * @param criteria the criteria
+ * @param data input data
+ * @param centroids the centroids
+ * @param clusters the clusters
+ * @param seeds the initial centroids = the seeds
+ * @param verbose for debugging
  */
 void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
 		double ** data, double **& centroids,
@@ -236,6 +282,13 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 /**
  * Calculate the distortion of a set of clusters.
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the numbe rof clusters
+ * @param data input data
+ * @param centroids the centroids
+ * @param clusters the clusters
+ * @param verbose for debugging
  */
 double distortion(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids,

@@ -146,6 +146,9 @@ unsigned long get_millisecond_time() {
 
 /**
  * Utilities for printing vector
+ * @param data the input data
+ * @param d the number of dimensions
+ * @param N the size of the input
  */
 void print_vector(double ** data, size_t d, size_t N) {
 	size_t i, j;

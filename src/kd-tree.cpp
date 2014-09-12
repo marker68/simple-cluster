@@ -33,6 +33,13 @@ using namespace std;
 
 namespace SimpleCluster {
 
+/**
+ * Calculate the distances between two KDNode
+ * @param _a, _b the input KDNode
+ * @param N the size of the vector
+ * @param verbose Just for debugging
+ * @return the distance between two KDNode if no error occurs, otherwise return DBL_MAX
+ */
 double kd_distance(KDNode<double> * _a, KDNode<double> * _b, size_t N, bool verbose) {
 	if(_a->get_size() != _b->get_size()) {
 		if(verbose) {
@@ -53,6 +60,7 @@ double kd_distance(KDNode<double> * _a, KDNode<double> * _b, size_t N, bool verb
 
 /**
  * A comparator
+ * @param _a, _b two float numbers
  */
 int compare_double(const double * _a, const double * _b) {
 	if(*_a > *_b) return 1;
@@ -60,6 +68,14 @@ int compare_double(const double * _a, const double * _b) {
 	else return 0;
 }
 
+/**
+ * Find the median of the input vector data
+ * @param data the input data
+ * @param M,N the size of the input
+ * @param id the index of the component to find median
+ * @param verbose just for debugging
+ * @return the index of the median
+ */
 size_t find_median(double ** data, size_t M, size_t N, size_t id, bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
@@ -77,6 +93,15 @@ size_t find_median(double ** data, size_t M, size_t N, size_t id, bool verbose) 
 	return res;
 }
 
+/**
+ * Create a balanced kd-tree
+ * @param root the root node of the tree
+ * @param data the data of the nodes to be inserted
+ * @param M,N the size of the input
+ * @param level the cut-plane level
+ * @param base the base index to be added
+ * @param verbose just for debugging
+ */
 void make_balanced_tree(KDNode<double> *& root, double ** data,
 		size_t M, size_t N, size_t level, size_t base, bool verbose) {
 	if(N <= 0 || M <= 0) {
@@ -92,6 +117,15 @@ void make_balanced_tree(KDNode<double> *& root, double ** data,
 			M - id - 1,N,(level+1)%N,base+id+1,verbose);
 }
 
+/**
+ * Create a random kd-tree
+ * @param root the root node of the tree
+ * @param data the data of the nodes to be inserted
+ * @param M,N the size of the input
+ * @param level the cut-plane level
+ * @param base the base index to be added
+ * @param verbose just for debugging
+ */
 void make_random_tree(KDNode<double> *& root, double ** data,
 		size_t M, size_t N, size_t level,size_t base, bool verbose) {
 	if(N <= 0 || M <= 0) {
@@ -107,6 +141,16 @@ void make_random_tree(KDNode<double> *& root, double ** data,
 			M - id - 1,N,(level+1)%N,base+id+1,verbose);
 }
 
+/**
+ * Search for the nearest neighbor in the kd-tree
+ * @param root the root node of the tree
+ * @param query the data of the query
+ * @param result the nearest neighbor
+ * @param best_dist the best distance
+ * @param N the size of the input
+ * @param level the cut-plane level
+ * @param _id the index of the new node
+ */
 void nn_search(KDNode<double> * root, const double * query,
 		KDNode<double> *& result,
 		double& best_dist, size_t N, size_t level, bool verbose) {

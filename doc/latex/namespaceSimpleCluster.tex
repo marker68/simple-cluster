@@ -1,149 +1,270 @@
-\hypertarget{namespaceSimpleCluster}{\section{Simple\-Cluster Namespace Reference}
-\label{namespaceSimpleCluster}\index{Simple\-Cluster@{Simple\-Cluster}}
+\hypertarget{namespaceSimpleCluster}{\section{Simple\+Cluster Namespace Reference}
+\label{namespaceSimpleCluster}\index{Simple\+Cluster@{Simple\+Cluster}}
 }
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-struct \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\-Criteria}
+class \hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}
 \item 
-class \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}
+struct \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\+Criteria}
 \end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespaceSimpleCluster_aa39bdfcecba7a15122204a678f496615}{typedef vector$<$ double $>$ {\bfseries d\-\_\-vector}}\label{namespaceSimpleCluster_aa39bdfcecba7a15122204a678f496615}
+\hypertarget{namespaceSimpleCluster_a2c39f662ef8ab290b2a0613dbc3b4c4e}{typedef vector$<$ double $>$ {\bfseries d\+\_\+vector}}\label{namespaceSimpleCluster_a2c39f662ef8ab290b2a0613dbc3b4c4e}
 
 \item 
-\hypertarget{namespaceSimpleCluster_a7395281cd61dde0217079787c5620e76}{typedef vector$<$ int $>$ {\bfseries i\-\_\-vector}}\label{namespaceSimpleCluster_a7395281cd61dde0217079787c5620e76}
+\hypertarget{namespaceSimpleCluster_ab17abba17860f283d1defd90861cb798}{typedef vector$<$ int $>$ {\bfseries i\+\_\+vector}}\label{namespaceSimpleCluster_ab17abba17860f283d1defd90861cb798}
 
 \end{DoxyCompactItemize}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\-Type} \{ {\bfseries R\-A\-N\-D\-O\-M\-\_\-\-S\-E\-E\-D\-S}, 
-{\bfseries K\-M\-E\-A\-N\-S\-\_\-\-P\-L\-U\-S\-\_\-\-S\-E\-E\-D\-S}, 
-{\bfseries U\-S\-E\-R\-\_\-\-S\-E\-E\-D\-S}
+enum \hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\+Type} \{ {\bfseries R\+A\+N\+D\+O\+M\+\_\+\+S\+E\+E\+D\+S}, 
+{\bfseries K\+M\+E\+A\+N\+S\+\_\+\+P\+L\+U\+S\+\_\+\+S\+E\+E\+D\+S}, 
+{\bfseries U\+S\+E\+R\+\_\+\+S\+E\+E\+D\+S}
  \}
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}{void {\bfseries random\-\_\-seeds} (size\-\_\-t, size\-\_\-t, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$\&, bool)}\label{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}
-
+void \hyperlink{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}{random\+\_\+seeds} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$\&, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}{void {\bfseries kmeans\-\_\-pp\-\_\-seeds} (size\-\_\-t, size\-\_\-t, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$\&, bool)}\label{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}
-
+void \hyperlink{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}{kmeans\+\_\+pp\+\_\+seeds} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$\&, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_ab2891f2d63800fe4bfc4b99aaadb7f75}{void {\bfseries assign\-\_\-to\-\_\-closest\-\_\-centroid} (size\-\_\-t, size\-\_\-t, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$, int $\ast$$\ast$\&, bool)}\label{namespaceSimpleCluster_ab2891f2d63800fe4bfc4b99aaadb7f75}
-
+void \hyperlink{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}{assign\+\_\+to\+\_\+closest\+\_\+centroid} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_a9bbcb2b17eb235fac8b15e8a8283849e}{void {\bfseries assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-2} (size\-\_\-t, size\-\_\-t, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$, int $\ast$$\ast$\&, bool)}\label{namespaceSimpleCluster_a9bbcb2b17eb235fac8b15e8a8283849e}
-
+void \hyperlink{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, bool)
 \item 
-void \hyperlink{namespaceSimpleCluster_a567aef9107b538f7866d782c292236af}{simple\-\_\-k\-\_\-means} (\hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\-Type}, size\-\_\-t, size\-\_\-t, \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\-Criteria}, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$, int $\ast$$\ast$, double $\ast$$\ast$, bool)
+void \hyperlink{namespaceSimpleCluster_ab12576ad548dd6a6d0ba093c3a637abb}{simple\+\_\+k\+\_\+means} (\hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\+Type}, size\+\_\+t, size\+\_\+t, \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\+Criteria}, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$\&, vector$<$ i\+\_\+vector $>$ \&, double $\ast$$\ast$\&, bool)
 \item 
-double \hyperlink{namespaceSimpleCluster_ac4e86e21df3609d069aac485d0d09b54}{distortion} (size\-\_\-t d, size\-\_\-t N, size\-\_\-t k, double $\ast$$\ast$, double $\ast$$\ast$, int $\ast$$\ast$)
+double \hyperlink{namespaceSimpleCluster_a2b5ed423662d1968e1af5262812d7ca8}{distortion} (size\+\_\+t d, size\+\_\+t N, size\+\_\+t k, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_a35cd22686dbc96142da1962ac88caaed}{double {\bfseries kd\-\_\-distance} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$, size\-\_\-t, bool)}\label{namespaceSimpleCluster_a35cd22686dbc96142da1962ac88caaed}
-
+double \hyperlink{namespaceSimpleCluster_a35cd22686dbc96142da1962ac88caaed}{kd\+\_\+distance} (\hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$, size\+\_\+t, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_aac5892d8292ef724345d8c422519ae05}{size\-\_\-t {\bfseries find\-\_\-median} (double $\ast$$\ast$, size\-\_\-t, size\-\_\-t, size\-\_\-t, bool)}\label{namespaceSimpleCluster_aac5892d8292ef724345d8c422519ae05}
-
+size\+\_\+t \hyperlink{namespaceSimpleCluster_aac5892d8292ef724345d8c422519ae05}{find\+\_\+median} (double $\ast$$\ast$, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_a9b7733dc2edec70ad323beb9f3a9143e}{void {\bfseries make\-\_\-balanced\-\_\-tree} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$\&, double $\ast$$\ast$, size\-\_\-t, size\-\_\-t, size\-\_\-t, size\-\_\-t, bool)}\label{namespaceSimpleCluster_a9b7733dc2edec70ad323beb9f3a9143e}
-
+void \hyperlink{namespaceSimpleCluster_a9b7733dc2edec70ad323beb9f3a9143e}{make\+\_\+balanced\+\_\+tree} (\hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$\&, double $\ast$$\ast$, size\+\_\+t, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_a367a8fc15d6fd44d0c898dfc6bf6b409}{void {\bfseries make\-\_\-random\-\_\-tree} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$\&, double $\ast$$\ast$, size\-\_\-t, size\-\_\-t, size\-\_\-t, size\-\_\-t, bool)}\label{namespaceSimpleCluster_a367a8fc15d6fd44d0c898dfc6bf6b409}
-
+void \hyperlink{namespaceSimpleCluster_a367a8fc15d6fd44d0c898dfc6bf6b409}{make\+\_\+random\+\_\+tree} (\hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$\&, double $\ast$$\ast$, size\+\_\+t, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_a2b562a30c0311c53a2efda7c1ec2bcf6}{void {\bfseries nn\-\_\-search} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$, const double $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$\&, double \&, size\-\_\-t, size\-\_\-t, bool)}\label{namespaceSimpleCluster_a2b562a30c0311c53a2efda7c1ec2bcf6}
-
+void \hyperlink{namespaceSimpleCluster_a2b562a30c0311c53a2efda7c1ec2bcf6}{nn\+\_\+search} (\hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$, const double $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$\&, double \&, size\+\_\+t, size\+\_\+t, bool)
 \item 
-\hypertarget{namespaceSimpleCluster_af64e6d198c73f553404f1202e0b818eb}{{\footnotesize template$<$typename Data\-Type $>$ }\\void {\bfseries kd\-\_\-insert} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ Data\-Type $>$ $\ast$\&root, const Data\-Type $\ast$\-\_\-data, size\-\_\-t N, size\-\_\-t level, size\-\_\-t \-\_\-id, bool verbose)}\label{namespaceSimpleCluster_af64e6d198c73f553404f1202e0b818eb}
-
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \hyperlink{namespaceSimpleCluster_af64e6d198c73f553404f1202e0b818eb}{kd\+\_\+insert} (\hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ Data\+Type $>$ $\ast$\&root, const Data\+Type $\ast$\+\_\+data, size\+\_\+t N, size\+\_\+t level, size\+\_\+t \+\_\+id, bool verbose)
 \item 
-\hypertarget{namespaceSimpleCluster_addb0a17c2b98fa9a4847e598dac6971a}{{\footnotesize template$<$typename Data\-Type $>$ }\\void {\bfseries kd\-\_\-travel} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ Data\-Type $>$ $\ast$root, size\-\_\-t N, size\-\_\-t level)}\label{namespaceSimpleCluster_addb0a17c2b98fa9a4847e598dac6971a}
-
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \hyperlink{namespaceSimpleCluster_addb0a17c2b98fa9a4847e598dac6971a}{kd\+\_\+travel} (\hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ Data\+Type $>$ $\ast$root, size\+\_\+t N, size\+\_\+t level)
 \item 
-double \hyperlink{namespaceSimpleCluster_a32994022b5f131b488b98d00fdb40a1f}{distance} (double $\ast$, double $\ast$, size\-\_\-t)
+double \hyperlink{namespaceSimpleCluster_a32994022b5f131b488b98d00fdb40a1f}{distance} (double $\ast$, double $\ast$, size\+\_\+t)
 \item 
-double \hyperlink{namespaceSimpleCluster_a2b7cf8225bcc829f7f0717292d49e0f0}{distance\-\_\-square} (double $\ast$, double $\ast$, size\-\_\-t)
+double \hyperlink{namespaceSimpleCluster_a2b7cf8225bcc829f7f0717292d49e0f0}{distance\+\_\+square} (double $\ast$, double $\ast$, size\+\_\+t)
 \item 
-double $\ast$ \hyperlink{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}{mean\-\_\-vector} (double $\ast$$\ast$, const int $\ast$, size\-\_\-t, size\-\_\-t, double $\ast$)
+double $\ast$ \hyperlink{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}{mean\+\_\+vector} (double $\ast$$\ast$, const int $\ast$, size\+\_\+t, size\+\_\+t, double $\ast$)
 \item 
-unsigned long \hyperlink{namespaceSimpleCluster_a00c790e51730b0e775438fe6c5ccc2c6}{get\-\_\-millisecond\-\_\-time} ()
+double $\ast$ \hyperlink{namespaceSimpleCluster_aee4546894b94aa53a606f5a436db8c7f}{mean\+\_\+vector} (double $\ast$$\ast$, const i\+\_\+vector, size\+\_\+t, double $\ast$)
 \item 
-void \hyperlink{namespaceSimpleCluster_ad04f5b6a882a4eea162fbf4eddc1246c}{print\-\_\-vector} (double $\ast$$\ast$, size\-\_\-t, size\-\_\-t)
+unsigned long \hyperlink{namespaceSimpleCluster_a00c790e51730b0e775438fe6c5ccc2c6}{get\+\_\+millisecond\+\_\+time} ()
 \item 
-{\footnotesize template$<$typename Data\-Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_acc1dff4c68ab24c3054d8b0953c8f92d}{init\-\_\-array} (Data\-Type $\ast$\&arr, size\-\_\-t N)
+void \hyperlink{namespaceSimpleCluster_ad04f5b6a882a4eea162fbf4eddc1246c}{print\+\_\+vector} (double $\ast$$\ast$, size\+\_\+t, size\+\_\+t)
 \item 
-{\footnotesize template$<$typename Data\-Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_a3e85bbadb909b189b987f27b841ca220}{init\-\_\-array\-\_\-2} (Data\-Type $\ast$$\ast$\&arr, size\-\_\-t M, size\-\_\-t N)
+{\footnotesize template$<$typename Data\+Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_acc1dff4c68ab24c3054d8b0953c8f92d}{init\+\_\+array} (Data\+Type $\ast$\&arr, size\+\_\+t N)
 \item 
-\hypertarget{namespaceSimpleCluster_a0639106c2ddf850801bd10f3ffb8de6f}{{\footnotesize template$<$typename Data\-Type $>$ }\\bool {\bfseries copy\-\_\-array} (Data\-Type $\ast$from, Data\-Type $\ast$\&to, size\-\_\-t N)}\label{namespaceSimpleCluster_a0639106c2ddf850801bd10f3ffb8de6f}
-
+{\footnotesize template$<$typename Data\+Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_a3e85bbadb909b189b987f27b841ca220}{init\+\_\+array\+\_\+2} (Data\+Type $\ast$$\ast$\&arr, size\+\_\+t M, size\+\_\+t N)
 \item 
-\hypertarget{namespaceSimpleCluster_a9bc5fb00d7a05159e5c7ba1b27e0273f}{{\footnotesize template$<$typename Data\-Type $>$ }\\bool {\bfseries copy\-\_\-array\-\_\-2} (Data\-Type $\ast$$\ast$from, Data\-Type $\ast$$\ast$\&to, size\-\_\-t M, size\-\_\-t N)}\label{namespaceSimpleCluster_a9bc5fb00d7a05159e5c7ba1b27e0273f}
-
+{\footnotesize template$<$typename Data\+Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_a28eb5aee7b654151728fe1333dc1a470}{init\+\_\+vector} (vector$<$ Data\+Type $>$ \&vec, size\+\_\+t N)
 \item 
-\hypertarget{namespaceSimpleCluster_a22acb50e58f0867d2ee468f7f395f691}{{\footnotesize template$<$typename Data\-Type $>$ }\\bool {\bfseries dealloc\-\_\-array\-\_\-2} (Data\-Type $\ast$$\ast$\&arr, size\-\_\-t M)}\label{namespaceSimpleCluster_a22acb50e58f0867d2ee468f7f395f691}
-
+{\footnotesize template$<$typename Data\+Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_a0639106c2ddf850801bd10f3ffb8de6f}{copy\+\_\+array} (Data\+Type $\ast$from, Data\+Type $\ast$\&to, size\+\_\+t N)
 \item 
-{\footnotesize template$<$typename Data\-Type $>$ }\\void \hyperlink{namespaceSimpleCluster_aefa29bb93b88e6235d7a7c3be4181bf7}{swap} (Data\-Type $\ast$data, int m, int n, size\-\_\-t N)
+{\footnotesize template$<$typename Data\+Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_a9bc5fb00d7a05159e5c7ba1b27e0273f}{copy\+\_\+array\+\_\+2} (Data\+Type $\ast$$\ast$from, Data\+Type $\ast$$\ast$\&to, size\+\_\+t M, size\+\_\+t N)
 \item 
-{\footnotesize template$<$typename Data\-Type $>$ }\\int \hyperlink{namespaceSimpleCluster_adcef86d645170d3c6b1c7908866d755e}{partition} (Data\-Type $\ast$data, Data\-Type pivot, size\-\_\-t N, int($\ast$compare)(const Data\-Type $\ast$, const Data\-Type $\ast$))
+{\footnotesize template$<$typename Data\+Type $>$ }\\bool \hyperlink{namespaceSimpleCluster_a22acb50e58f0867d2ee468f7f395f691}{dealloc\+\_\+array\+\_\+2} (Data\+Type $\ast$$\ast$\&arr, size\+\_\+t M)
 \item 
-{\footnotesize template$<$typename Data\-Type $>$ }\\void \hyperlink{namespaceSimpleCluster_acbdd21892a0a82f32c6d1851a7044f37}{bbsort} (Data\-Type $\ast$data, size\-\_\-t N, int($\ast$compare)(const Data\-Type $\ast$, const Data\-Type $\ast$))
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \hyperlink{namespaceSimpleCluster_aefa29bb93b88e6235d7a7c3be4181bf7}{swap} (Data\+Type $\ast$data, int m, int n, size\+\_\+t N)
 \item 
-{\footnotesize template$<$typename Data\-Type $>$ }\\size\-\_\-t \hyperlink{namespaceSimpleCluster_a3ff7d10652b776ae35a941228850d904}{quick\-\_\-select\-\_\-k} (Data\-Type $\ast$data, size\-\_\-t N, size\-\_\-t k, int($\ast$compare)(const Data\-Type $\ast$, const Data\-Type $\ast$))
+{\footnotesize template$<$typename Data\+Type $>$ }\\int \hyperlink{namespaceSimpleCluster_adcef86d645170d3c6b1c7908866d755e}{partition} (Data\+Type $\ast$data, Data\+Type pivot, size\+\_\+t N, int($\ast$compare)(const Data\+Type $\ast$, const Data\+Type $\ast$))
 \item 
-int \hyperlink{namespaceSimpleCluster_a14624e6cca7beb136be3623222fb3acc}{compare\-\_\-double} (const double $\ast$\-\_\-a, const double $\ast$\-\_\-b)
-\end{DoxyCompactItemize}
-\subsection*{Variables}
-\begin{DoxyCompactItemize}
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \hyperlink{namespaceSimpleCluster_acbdd21892a0a82f32c6d1851a7044f37}{bbsort} (Data\+Type $\ast$data, size\+\_\+t N, int($\ast$compare)(const Data\+Type $\ast$, const Data\+Type $\ast$))
 \item 
-\hypertarget{namespaceSimpleCluster_a8f5c11077c075f56a6d74d5a6a81c345}{size\-\_\-t $\ast$ {\bfseries range} = N\-U\-L\-L}\label{namespaceSimpleCluster_a8f5c11077c075f56a6d74d5a6a81c345}
-
+{\footnotesize template$<$typename Data\+Type $>$ }\\size\+\_\+t \hyperlink{namespaceSimpleCluster_a3ff7d10652b776ae35a941228850d904}{quick\+\_\+select\+\_\+k} (Data\+Type $\ast$data, size\+\_\+t N, size\+\_\+t k, int($\ast$compare)(const Data\+Type $\ast$, const Data\+Type $\ast$))
+\item 
+int \hyperlink{namespaceSimpleCluster_a14624e6cca7beb136be3623222fb3acc}{compare\+\_\+double} (const double $\ast$\+\_\+a, const double $\ast$\+\_\+b)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Cluster methods' space 
+Cluster methods' space
+
+The main namespace 
 
 \subsection{Enumeration Type Documentation}
-\hypertarget{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{\index{Simple\-Cluster@{Simple\-Cluster}!Kmeans\-Type@{Kmeans\-Type}}
-\index{Kmeans\-Type@{Kmeans\-Type}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{Kmeans\-Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Simple\-Cluster\-::\-Kmeans\-Type}\hspace{0.3cm}{\ttfamily [strong]}}}\label{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}
+\hypertarget{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{\index{Simple\+Cluster@{Simple\+Cluster}!Kmeans\+Type@{Kmeans\+Type}}
+\index{Kmeans\+Type@{Kmeans\+Type}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{Kmeans\+Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Simple\+Cluster\+::\+Kmeans\+Type}\hspace{0.3cm}{\ttfamily [strong]}}}\label{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}
 Types of the k-\/means seeding 
 
 \subsection{Function Documentation}
-\hypertarget{namespaceSimpleCluster_acbdd21892a0a82f32c6d1851a7044f37}{\index{Simple\-Cluster@{Simple\-Cluster}!bbsort@{bbsort}}
-\index{bbsort@{bbsort}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{bbsort}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\-Type $>$ void Simple\-Cluster\-::bbsort (
+\hypertarget{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}{\index{Simple\+Cluster@{Simple\+Cluster}!assign\+\_\+to\+\_\+closest\+\_\+centroid@{assign\+\_\+to\+\_\+closest\+\_\+centroid}}
+\index{assign\+\_\+to\+\_\+closest\+\_\+centroid@{assign\+\_\+to\+\_\+closest\+\_\+centroid}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{assign\+\_\+to\+\_\+closest\+\_\+centroid}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::assign\+\_\+to\+\_\+closest\+\_\+centroid (
 \begin{DoxyParamCaption}
-\item[{Data\-Type $\ast$}]{data, }
-\item[{size\-\_\-t}]{N, }
-\item[{int($\ast$)(const Data\-Type $\ast$, const Data\-Type $\ast$)}]{compare}
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$}]{centroids, }
+\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}
+After having a set of centroids, we need to assign data into each cluster respectively. This solution uses linear search to assign data. 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}{\index{Simple\+Cluster@{Simple\+Cluster}!assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2@{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2}}
+\index{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2@{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2 (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$}]{centroids, }
+\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}
+After having a set of centroids, we need to assign data into each cluster respectively. This solution uses kd-\/tree search to assign data. 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_acbdd21892a0a82f32c6d1851a7044f37}{\index{Simple\+Cluster@{Simple\+Cluster}!bbsort@{bbsort}}
+\index{bbsort@{bbsort}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{bbsort}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ void Simple\+Cluster\+::bbsort (
+\begin{DoxyParamCaption}
+\item[{Data\+Type $\ast$}]{data, }
+\item[{size\+\_\+t}]{N, }
+\item[{int($\ast$)(const Data\+Type $\ast$, const Data\+Type $\ast$)}]{compare}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_acbdd21892a0a82f32c6d1851a7044f37}
-A bubble sorting function data\-: the array of elements N\-: the size of data compare\-: the comparator \hypertarget{namespaceSimpleCluster_a14624e6cca7beb136be3623222fb3acc}{\index{Simple\-Cluster@{Simple\-Cluster}!compare\-\_\-double@{compare\-\_\-double}}
-\index{compare\-\_\-double@{compare\-\_\-double}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{compare\-\_\-double}]{\setlength{\rightskip}{0pt plus 5cm}int Simple\-Cluster\-::compare\-\_\-double (
+A bubble sorting function 
+\begin{DoxyParams}{Parameters}
+{\em data} & the array of elements \\
+\hline
+{\em N} & the size of data \\
+\hline
+{\em compare} & the comparator \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a14624e6cca7beb136be3623222fb3acc}{\index{Simple\+Cluster@{Simple\+Cluster}!compare\+\_\+double@{compare\+\_\+double}}
+\index{compare\+\_\+double@{compare\+\_\+double}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{compare\+\_\+double}]{\setlength{\rightskip}{0pt plus 5cm}int Simple\+Cluster\+::compare\+\_\+double (
 \begin{DoxyParamCaption}
-\item[{const double $\ast$}]{\-\_\-a, }
-\item[{const double $\ast$}]{\-\_\-b}
+\item[{const double $\ast$}]{\+\_\+a, }
+\item[{const double $\ast$}]{\+\_\+b}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_a14624e6cca7beb136be3623222fb3acc}
-A comparator \hypertarget{namespaceSimpleCluster_a32994022b5f131b488b98d00fdb40a1f}{\index{Simple\-Cluster@{Simple\-Cluster}!distance@{distance}}
-\index{distance@{distance}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{distance}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\-Cluster\-::distance (
+A comparator 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+a,\+\_\+b} & two float numbers \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a0639106c2ddf850801bd10f3ffb8de6f}{\index{Simple\+Cluster@{Simple\+Cluster}!copy\+\_\+array@{copy\+\_\+array}}
+\index{copy\+\_\+array@{copy\+\_\+array}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{copy\+\_\+array}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ bool Simple\+Cluster\+::copy\+\_\+array (
+\begin{DoxyParamCaption}
+\item[{Data\+Type $\ast$}]{from, }
+\item[{Data\+Type $\ast$\&}]{to, }
+\item[{size\+\_\+t}]{N}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a0639106c2ddf850801bd10f3ffb8de6f}
+Copy an array. 
+\begin{DoxyParams}{Parameters}
+{\em from} & The input array \\
+\hline
+{\em to} & the copy destination \\
+\hline
+{\em N} & the number of the elements to be copied \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if copy was succeeded, otherwise return false. 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a9bc5fb00d7a05159e5c7ba1b27e0273f}{\index{Simple\+Cluster@{Simple\+Cluster}!copy\+\_\+array\+\_\+2@{copy\+\_\+array\+\_\+2}}
+\index{copy\+\_\+array\+\_\+2@{copy\+\_\+array\+\_\+2}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{copy\+\_\+array\+\_\+2}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ bool Simple\+Cluster\+::copy\+\_\+array\+\_\+2 (
+\begin{DoxyParamCaption}
+\item[{Data\+Type $\ast$$\ast$}]{from, }
+\item[{Data\+Type $\ast$$\ast$\&}]{to, }
+\item[{size\+\_\+t}]{M, }
+\item[{size\+\_\+t}]{N}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a9bc5fb00d7a05159e5c7ba1b27e0273f}
+Copy a 2-\/\+D array. 
+\begin{DoxyParams}{Parameters}
+{\em from} & The input array \\
+\hline
+{\em to} & the copy destination \\
+\hline
+{\em M} & the number of the elements to be copied \\
+\hline
+{\em N} & the number of the elements to be copied \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if copy was succeeded, otherwise return false. 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a22acb50e58f0867d2ee468f7f395f691}{\index{Simple\+Cluster@{Simple\+Cluster}!dealloc\+\_\+array\+\_\+2@{dealloc\+\_\+array\+\_\+2}}
+\index{dealloc\+\_\+array\+\_\+2@{dealloc\+\_\+array\+\_\+2}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{dealloc\+\_\+array\+\_\+2}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ bool Simple\+Cluster\+::dealloc\+\_\+array\+\_\+2 (
+\begin{DoxyParamCaption}
+\item[{Data\+Type $\ast$$\ast$\&}]{arr, }
+\item[{size\+\_\+t}]{M}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a22acb50e58f0867d2ee468f7f395f691}
+De-\/alloc a 2-\/\+D array 
+\begin{DoxyParams}{Parameters}
+{\em arr} & The input array \\
+\hline
+{\em M} & the size of the input array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if everything's O\+K, otherwise return false. 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a32994022b5f131b488b98d00fdb40a1f}{\index{Simple\+Cluster@{Simple\+Cluster}!distance@{distance}}
+\index{distance@{distance}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{distance}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\+Cluster\+::distance (
 \begin{DoxyParamCaption}
 \item[{double $\ast$}]{x, }
 \item[{double $\ast$}]{y, }
-\item[{size\-\_\-t}]{d}
+\item[{size\+\_\+t}]{d}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_a32994022b5f131b488b98d00fdb40a1f}
-Calculate the distance between two vectors
-
 Calculate the distance between two vectors 
 \begin{DoxyParams}{Parameters}
 {\em x} & \\
@@ -156,17 +277,15 @@ Calculate the distance between two vectors
 \begin{DoxyReturn}{Returns}
 the distance between x and y in d dimensional space 
 \end{DoxyReturn}
-\hypertarget{namespaceSimpleCluster_a2b7cf8225bcc829f7f0717292d49e0f0}{\index{Simple\-Cluster@{Simple\-Cluster}!distance\-\_\-square@{distance\-\_\-square}}
-\index{distance\-\_\-square@{distance\-\_\-square}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{distance\-\_\-square}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\-Cluster\-::distance\-\_\-square (
+\hypertarget{namespaceSimpleCluster_a2b7cf8225bcc829f7f0717292d49e0f0}{\index{Simple\+Cluster@{Simple\+Cluster}!distance\+\_\+square@{distance\+\_\+square}}
+\index{distance\+\_\+square@{distance\+\_\+square}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{distance\+\_\+square}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\+Cluster\+::distance\+\_\+square (
 \begin{DoxyParamCaption}
 \item[{double $\ast$}]{x, }
 \item[{double $\ast$}]{y, }
-\item[{size\-\_\-t}]{d}
+\item[{size\+\_\+t}]{d}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_a2b7cf8225bcc829f7f0717292d49e0f0}
-Calculate the square distances
-
 Calculate the square of distance between two vectors 
 \begin{DoxyParams}{Parameters}
 {\em x} & \\
@@ -179,55 +298,282 @@ Calculate the square of distance between two vectors
 \begin{DoxyReturn}{Returns}
 the square of distance between x and y in d dimensional space 
 \end{DoxyReturn}
-\hypertarget{namespaceSimpleCluster_ac4e86e21df3609d069aac485d0d09b54}{\index{Simple\-Cluster@{Simple\-Cluster}!distortion@{distortion}}
-\index{distortion@{distortion}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{distortion}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\-Cluster\-::distortion (
+\hypertarget{namespaceSimpleCluster_a2b5ed423662d1968e1af5262812d7ca8}{\index{Simple\+Cluster@{Simple\+Cluster}!distortion@{distortion}}
+\index{distortion@{distortion}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{distortion}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\+Cluster\+::distortion (
 \begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{d, }
-\item[{size\-\_\-t}]{N, }
-\item[{size\-\_\-t}]{k, }
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
 \item[{double $\ast$$\ast$}]{data, }
 \item[{double $\ast$$\ast$}]{centroids, }
-\item[{int $\ast$$\ast$}]{clusters}
+\item[{vector$<$ i\+\_\+vector $>$}]{clusters, }
+\item[{bool}]{verbose}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_ac4e86e21df3609d069aac485d0d09b54}
-Calculate the distortion of a set of clusters. \hypertarget{namespaceSimpleCluster_a00c790e51730b0e775438fe6c5ccc2c6}{\index{Simple\-Cluster@{Simple\-Cluster}!get\-\_\-millisecond\-\_\-time@{get\-\_\-millisecond\-\_\-time}}
-\index{get\-\_\-millisecond\-\_\-time@{get\-\_\-millisecond\-\_\-time}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{get\-\_\-millisecond\-\_\-time}]{\setlength{\rightskip}{0pt plus 5cm}unsigned long Simple\-Cluster\-::get\-\_\-millisecond\-\_\-time (
+)}}\label{namespaceSimpleCluster_a2b5ed423662d1968e1af5262812d7ca8}
+Calculate the distortion of a set of clusters. 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_aac5892d8292ef724345d8c422519ae05}{\index{Simple\+Cluster@{Simple\+Cluster}!find\+\_\+median@{find\+\_\+median}}
+\index{find\+\_\+median@{find\+\_\+median}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{find\+\_\+median}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t Simple\+Cluster\+::find\+\_\+median (
+\begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{size\+\_\+t}]{M, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{id, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_aac5892d8292ef724345d8c422519ae05}
+Find the median of the input vector data 
+\begin{DoxyParams}{Parameters}
+{\em data} & the input data \\
+\hline
+{\em M,N} & the size of the input \\
+\hline
+{\em id} & the index of the component to find median \\
+\hline
+{\em verbose} & just for debugging \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the index of the median 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a00c790e51730b0e775438fe6c5ccc2c6}{\index{Simple\+Cluster@{Simple\+Cluster}!get\+\_\+millisecond\+\_\+time@{get\+\_\+millisecond\+\_\+time}}
+\index{get\+\_\+millisecond\+\_\+time@{get\+\_\+millisecond\+\_\+time}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{get\+\_\+millisecond\+\_\+time}]{\setlength{\rightskip}{0pt plus 5cm}unsigned long Simple\+Cluster\+::get\+\_\+millisecond\+\_\+time (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_a00c790e51730b0e775438fe6c5ccc2c6}
-Get system time in milliseconds \hypertarget{namespaceSimpleCluster_acc1dff4c68ab24c3054d8b0953c8f92d}{\index{Simple\-Cluster@{Simple\-Cluster}!init\-\_\-array@{init\-\_\-array}}
-\index{init\-\_\-array@{init\-\_\-array}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{init\-\_\-array}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\-Type $>$ bool Simple\-Cluster\-::init\-\_\-array (
+Get system time in milliseconds \hypertarget{namespaceSimpleCluster_acc1dff4c68ab24c3054d8b0953c8f92d}{\index{Simple\+Cluster@{Simple\+Cluster}!init\+\_\+array@{init\+\_\+array}}
+\index{init\+\_\+array@{init\+\_\+array}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{init\+\_\+array}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ bool Simple\+Cluster\+::init\+\_\+array (
 \begin{DoxyParamCaption}
-\item[{Data\-Type $\ast$\&}]{arr, }
-\item[{size\-\_\-t}]{N}
+\item[{Data\+Type $\ast$\&}]{arr, }
+\item[{size\+\_\+t}]{N}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_acc1dff4c68ab24c3054d8b0953c8f92d}
-Initialize an 1-\/\-D array \hypertarget{namespaceSimpleCluster_a3e85bbadb909b189b987f27b841ca220}{\index{Simple\-Cluster@{Simple\-Cluster}!init\-\_\-array\-\_\-2@{init\-\_\-array\-\_\-2}}
-\index{init\-\_\-array\-\_\-2@{init\-\_\-array\-\_\-2}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{init\-\_\-array\-\_\-2}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\-Type $>$ bool Simple\-Cluster\-::init\-\_\-array\-\_\-2 (
+Initialize an 1-\/\+D array. 
+\begin{DoxyParams}{Parameters}
+{\em arr} & the input array \\
+\hline
+{\em N} & the size of the input array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the array was initalized successfully, otherwise return false. 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a3e85bbadb909b189b987f27b841ca220}{\index{Simple\+Cluster@{Simple\+Cluster}!init\+\_\+array\+\_\+2@{init\+\_\+array\+\_\+2}}
+\index{init\+\_\+array\+\_\+2@{init\+\_\+array\+\_\+2}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{init\+\_\+array\+\_\+2}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ bool Simple\+Cluster\+::init\+\_\+array\+\_\+2 (
 \begin{DoxyParamCaption}
-\item[{Data\-Type $\ast$$\ast$\&}]{arr, }
-\item[{size\-\_\-t}]{M, }
-\item[{size\-\_\-t}]{N}
+\item[{Data\+Type $\ast$$\ast$\&}]{arr, }
+\item[{size\+\_\+t}]{M, }
+\item[{size\+\_\+t}]{N}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_a3e85bbadb909b189b987f27b841ca220}
-Initialize a 2-\/\-D array \hypertarget{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}{\index{Simple\-Cluster@{Simple\-Cluster}!mean\-\_\-vector@{mean\-\_\-vector}}
-\index{mean\-\_\-vector@{mean\-\_\-vector}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{mean\-\_\-vector}]{\setlength{\rightskip}{0pt plus 5cm}double $\ast$ Simple\-Cluster\-::mean\-\_\-vector (
+Initialize a 2-\/\+D array. 
+\begin{DoxyParams}{Parameters}
+{\em M} & the size of the input array \\
+\hline
+{\em N} & the size of the input array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the array was initalized successfully, otherwise return false. 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a28eb5aee7b654151728fe1333dc1a470}{\index{Simple\+Cluster@{Simple\+Cluster}!init\+\_\+vector@{init\+\_\+vector}}
+\index{init\+\_\+vector@{init\+\_\+vector}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{init\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ bool Simple\+Cluster\+::init\+\_\+vector (
+\begin{DoxyParamCaption}
+\item[{vector$<$ Data\+Type $>$ \&}]{vec, }
+\item[{size\+\_\+t}]{N}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a28eb5aee7b654151728fe1333dc1a470}
+Initialize a vector. 
+\begin{DoxyParams}{Parameters}
+{\em vec} & the input vector \\
+\hline
+{\em N} & the size of the vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if everything's O\+K, otherwise return false 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a35cd22686dbc96142da1962ac88caaed}{\index{Simple\+Cluster@{Simple\+Cluster}!kd\+\_\+distance@{kd\+\_\+distance}}
+\index{kd\+\_\+distance@{kd\+\_\+distance}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{kd\+\_\+distance}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\+Cluster\+::kd\+\_\+distance (
+\begin{DoxyParamCaption}
+\item[{K\+D\+Node$<$ double $>$ $\ast$}]{\+\_\+a, }
+\item[{K\+D\+Node$<$ double $>$ $\ast$}]{\+\_\+b, }
+\item[{size\+\_\+t}]{N, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a35cd22686dbc96142da1962ac88caaed}
+Calculate the distances between two \hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node} 
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+a,\+\_\+b} & the input \hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node} \\
+\hline
+{\em N} & the size of the vector \\
+\hline
+{\em verbose} & Just for debugging \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the distance between two \hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node} if no error occurs, otherwise return D\+B\+L\+\_\+\+M\+A\+X 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_af64e6d198c73f553404f1202e0b818eb}{\index{Simple\+Cluster@{Simple\+Cluster}!kd\+\_\+insert@{kd\+\_\+insert}}
+\index{kd\+\_\+insert@{kd\+\_\+insert}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{kd\+\_\+insert}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ void Simple\+Cluster\+::kd\+\_\+insert (
+\begin{DoxyParamCaption}
+\item[{K\+D\+Node$<$ Data\+Type $>$ $\ast$\&}]{root, }
+\item[{const Data\+Type $\ast$}]{\+\_\+data, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{level, }
+\item[{size\+\_\+t}]{\+\_\+id, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_af64e6d198c73f553404f1202e0b818eb}
+Insert a node into the kd-\/tree 
+\begin{DoxyParams}{Parameters}
+{\em root} & the root node of the tree \\
+\hline
+{\em data} & the data of the node to be inserted \\
+\hline
+{\em N} & the size of the vector \\
+\hline
+{\em level} & the cut-\/plane level \\
+\hline
+{\em \+\_\+id} & the index of the new node  true to print verbose. Just for debugging. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_addb0a17c2b98fa9a4847e598dac6971a}{\index{Simple\+Cluster@{Simple\+Cluster}!kd\+\_\+travel@{kd\+\_\+travel}}
+\index{kd\+\_\+travel@{kd\+\_\+travel}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{kd\+\_\+travel}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ void Simple\+Cluster\+::kd\+\_\+travel (
+\begin{DoxyParamCaption}
+\item[{K\+D\+Node$<$ Data\+Type $>$ $\ast$}]{root, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{level}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_addb0a17c2b98fa9a4847e598dac6971a}
+Traveling in the kd-\/tree 
+\begin{DoxyParams}{Parameters}
+{\em root} & the root node of the tree \\
+\hline
+{\em N} & the size of the vector \\
+\hline
+{\em level} & the cut-\/plane level \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}{\index{Simple\+Cluster@{Simple\+Cluster}!kmeans\+\_\+pp\+\_\+seeds@{kmeans\+\_\+pp\+\_\+seeds}}
+\index{kmeans\+\_\+pp\+\_\+seeds@{kmeans\+\_\+pp\+\_\+seeds}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{kmeans\+\_\+pp\+\_\+seeds}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::kmeans\+\_\+pp\+\_\+seeds (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$\&}]{seeds, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}
+Create seeds for k-\/means++ 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em seeds} & the seeds \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a9b7733dc2edec70ad323beb9f3a9143e}{\index{Simple\+Cluster@{Simple\+Cluster}!make\+\_\+balanced\+\_\+tree@{make\+\_\+balanced\+\_\+tree}}
+\index{make\+\_\+balanced\+\_\+tree@{make\+\_\+balanced\+\_\+tree}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{make\+\_\+balanced\+\_\+tree}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::make\+\_\+balanced\+\_\+tree (
+\begin{DoxyParamCaption}
+\item[{K\+D\+Node$<$ double $>$ $\ast$\&}]{root, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{size\+\_\+t}]{M, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{level, }
+\item[{size\+\_\+t}]{base, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a9b7733dc2edec70ad323beb9f3a9143e}
+Create a balanced kd-\/tree 
+\begin{DoxyParams}{Parameters}
+{\em root} & the root node of the tree \\
+\hline
+{\em data} & the data of the nodes to be inserted \\
+\hline
+{\em M,N} & the size of the input \\
+\hline
+{\em level} & the cut-\/plane level \\
+\hline
+{\em base} & the base index to be added \\
+\hline
+{\em verbose} & just for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a367a8fc15d6fd44d0c898dfc6bf6b409}{\index{Simple\+Cluster@{Simple\+Cluster}!make\+\_\+random\+\_\+tree@{make\+\_\+random\+\_\+tree}}
+\index{make\+\_\+random\+\_\+tree@{make\+\_\+random\+\_\+tree}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{make\+\_\+random\+\_\+tree}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::make\+\_\+random\+\_\+tree (
+\begin{DoxyParamCaption}
+\item[{K\+D\+Node$<$ double $>$ $\ast$\&}]{root, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{size\+\_\+t}]{M, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{level, }
+\item[{size\+\_\+t}]{base, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a367a8fc15d6fd44d0c898dfc6bf6b409}
+Create a random kd-\/tree 
+\begin{DoxyParams}{Parameters}
+{\em root} & the root node of the tree \\
+\hline
+{\em data} & the data of the nodes to be inserted \\
+\hline
+{\em M,N} & the size of the input \\
+\hline
+{\em level} & the cut-\/plane level \\
+\hline
+{\em base} & the base index to be added \\
+\hline
+{\em verbose} & just for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}{\index{Simple\+Cluster@{Simple\+Cluster}!mean\+\_\+vector@{mean\+\_\+vector}}
+\index{mean\+\_\+vector@{mean\+\_\+vector}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{mean\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}double $\ast$ Simple\+Cluster\+::mean\+\_\+vector (
 \begin{DoxyParamCaption}
 \item[{double $\ast$$\ast$}]{data, }
 \item[{const int $\ast$}]{index, }
-\item[{size\-\_\-t}]{d, }
-\item[{size\-\_\-t}]{size, }
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{size, }
 \item[{double $\ast$}]{centroid}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}
-Calculate the mean vector in a cluster
-
 Calculate the mean of a cluster 
 \begin{DoxyParams}{Parameters}
 {\em data} & \\
@@ -238,65 +584,208 @@ Calculate the mean of a cluster
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-the mean posize\-\_\-t of a cluster 
+the mean posize\+\_\+t of a cluster 
 \end{DoxyReturn}
-\hypertarget{namespaceSimpleCluster_adcef86d645170d3c6b1c7908866d755e}{\index{Simple\-Cluster@{Simple\-Cluster}!partition@{partition}}
-\index{partition@{partition}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{partition}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\-Type $>$ int Simple\-Cluster\-::partition (
-\begin{DoxyParamCaption}
-\item[{Data\-Type $\ast$}]{data, }
-\item[{Data\-Type}]{pivot, }
-\item[{size\-\_\-t}]{N, }
-\item[{int($\ast$)(const Data\-Type $\ast$, const Data\-Type $\ast$)}]{compare}
-\end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_adcef86d645170d3c6b1c7908866d755e}
-Separate an array into two parts\-: one contains only elements that $<$ pivot, another one contains only elements that $>$= pivot data\-: the array of elements pivot \-: the pivot N\-: the size of data compare\-: the comparator
-
-Return the index of the separator \hypertarget{namespaceSimpleCluster_ad04f5b6a882a4eea162fbf4eddc1246c}{\index{Simple\-Cluster@{Simple\-Cluster}!print\-\_\-vector@{print\-\_\-vector}}
-\index{print\-\_\-vector@{print\-\_\-vector}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{print\-\_\-vector}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Cluster\-::print\-\_\-vector (
+\hypertarget{namespaceSimpleCluster_aee4546894b94aa53a606f5a436db8c7f}{\index{Simple\+Cluster@{Simple\+Cluster}!mean\+\_\+vector@{mean\+\_\+vector}}
+\index{mean\+\_\+vector@{mean\+\_\+vector}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{mean\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}double $\ast$ Simple\+Cluster\+::mean\+\_\+vector (
 \begin{DoxyParamCaption}
 \item[{double $\ast$$\ast$}]{data, }
-\item[{size\-\_\-t}]{d, }
-\item[{size\-\_\-t}]{N}
+\item[{const i\+\_\+vector}]{index, }
+\item[{size\+\_\+t}]{d, }
+\item[{double $\ast$}]{centroid}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_ad04f5b6a882a4eea162fbf4eddc1246c}
-Print the content of a vector
-
-Utilities for printing vector \hypertarget{namespaceSimpleCluster_a3ff7d10652b776ae35a941228850d904}{\index{Simple\-Cluster@{Simple\-Cluster}!quick\-\_\-select\-\_\-k@{quick\-\_\-select\-\_\-k}}
-\index{quick\-\_\-select\-\_\-k@{quick\-\_\-select\-\_\-k}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{quick\-\_\-select\-\_\-k}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\-Type $>$ size\-\_\-t Simple\-Cluster\-::quick\-\_\-select\-\_\-k (
+)}}\label{namespaceSimpleCluster_aee4546894b94aa53a606f5a436db8c7f}
+Calculate the mean of a cluster 
+\begin{DoxyParams}{Parameters}
+{\em data} & \\
+\hline
+{\em index} & a vetcor of integers \\
+\hline
+{\em d} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the mean posize\+\_\+t of a cluster 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a2b562a30c0311c53a2efda7c1ec2bcf6}{\index{Simple\+Cluster@{Simple\+Cluster}!nn\+\_\+search@{nn\+\_\+search}}
+\index{nn\+\_\+search@{nn\+\_\+search}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{nn\+\_\+search}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::nn\+\_\+search (
 \begin{DoxyParamCaption}
-\item[{Data\-Type $\ast$}]{data, }
-\item[{size\-\_\-t}]{N, }
-\item[{size\-\_\-t}]{k, }
-\item[{int($\ast$)(const Data\-Type $\ast$, const Data\-Type $\ast$)}]{compare}
-\end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_a3ff7d10652b776ae35a941228850d904}
-Select k+1-\/th smallest member of an array \-: Quick\-Select by Hoare This one take O(n) time in average but O(n$^\wedge$2) in the worst case. Quick\-Select might be slower than Stable\-Select in worst cases, but in most cases, Quick\-Select outperformed Stable\-Select. B\-E C\-A\-R\-E\-F\-U\-L! This function will change the order of the input data. Make sure you stored your input data somewhere else. \hypertarget{namespaceSimpleCluster_a567aef9107b538f7866d782c292236af}{\index{Simple\-Cluster@{Simple\-Cluster}!simple\-\_\-k\-\_\-means@{simple\-\_\-k\-\_\-means}}
-\index{simple\-\_\-k\-\_\-means@{simple\-\_\-k\-\_\-means}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{simple\-\_\-k\-\_\-means}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Cluster\-::simple\-\_\-k\-\_\-means (
-\begin{DoxyParamCaption}
-\item[{Kmeans\-Type}]{type, }
-\item[{size\-\_\-t}]{N, }
-\item[{size\-\_\-t}]{k, }
-\item[{Kmeans\-Criteria}]{criteria, }
-\item[{size\-\_\-t}]{d, }
-\item[{double $\ast$$\ast$}]{data, }
-\item[{double $\ast$$\ast$}]{centroids, }
-\item[{int $\ast$$\ast$}]{clusters, }
-\item[{double $\ast$$\ast$}]{seeds, }
+\item[{K\+D\+Node$<$ double $>$ $\ast$}]{root, }
+\item[{const double $\ast$}]{query, }
+\item[{K\+D\+Node$<$ double $>$ $\ast$\&}]{result, }
+\item[{double \&}]{best\+\_\+dist, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{level, }
 \item[{bool}]{verbose}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_a567aef9107b538f7866d782c292236af}
-The k-\/means method\-: a description of the method can be found at \href{http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html}{\tt http\-://home.\-deib.\-polimi.\-it/matteucc/\-Clustering/tutorial\-\_\-html/kmeans.\-html} \hypertarget{namespaceSimpleCluster_aefa29bb93b88e6235d7a7c3be4181bf7}{\index{Simple\-Cluster@{Simple\-Cluster}!swap@{swap}}
-\index{swap@{swap}!SimpleCluster@{Simple\-Cluster}}
-\subsubsection[{swap}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\-Type $>$ void Simple\-Cluster\-::swap (
+)}}\label{namespaceSimpleCluster_a2b562a30c0311c53a2efda7c1ec2bcf6}
+Search for the nearest neighbor in the kd-\/tree 
+\begin{DoxyParams}{Parameters}
+{\em root} & the root node of the tree \\
+\hline
+{\em query} & the data of the query \\
+\hline
+{\em result} & the nearest neighbor \\
+\hline
+{\em best\+\_\+dist} & the best distance \\
+\hline
+{\em N} & the size of the input \\
+\hline
+{\em level} & the cut-\/plane level \\
+\hline
+{\em \+\_\+id} & the index of the new node \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_adcef86d645170d3c6b1c7908866d755e}{\index{Simple\+Cluster@{Simple\+Cluster}!partition@{partition}}
+\index{partition@{partition}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{partition}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ int Simple\+Cluster\+::partition (
 \begin{DoxyParamCaption}
-\item[{Data\-Type $\ast$}]{data, }
+\item[{Data\+Type $\ast$}]{data, }
+\item[{Data\+Type}]{pivot, }
+\item[{size\+\_\+t}]{N, }
+\item[{int($\ast$)(const Data\+Type $\ast$, const Data\+Type $\ast$)}]{compare}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_adcef86d645170d3c6b1c7908866d755e}
+Separate an array into two parts\+: one contains only elements that $<$ pivot, another one contains only elements that $>$= pivot 
+\begin{DoxyParams}{Parameters}
+{\em data} & the array of elements \\
+\hline
+{\em pivot} & the pivot \\
+\hline
+{\em N} & the size of data \\
+\hline
+{\em compare} & the comparator\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the index of the separator 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_ad04f5b6a882a4eea162fbf4eddc1246c}{\index{Simple\+Cluster@{Simple\+Cluster}!print\+\_\+vector@{print\+\_\+vector}}
+\index{print\+\_\+vector@{print\+\_\+vector}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{print\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::print\+\_\+vector (
+\begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_ad04f5b6a882a4eea162fbf4eddc1246c}
+Utilities for printing vector 
+\begin{DoxyParams}{Parameters}
+{\em data} & the input data \\
+\hline
+{\em d} & the number of dimensions \\
+\hline
+{\em N} & the size of the input \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a3ff7d10652b776ae35a941228850d904}{\index{Simple\+Cluster@{Simple\+Cluster}!quick\+\_\+select\+\_\+k@{quick\+\_\+select\+\_\+k}}
+\index{quick\+\_\+select\+\_\+k@{quick\+\_\+select\+\_\+k}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{quick\+\_\+select\+\_\+k}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ size\+\_\+t Simple\+Cluster\+::quick\+\_\+select\+\_\+k (
+\begin{DoxyParamCaption}
+\item[{Data\+Type $\ast$}]{data, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{int($\ast$)(const Data\+Type $\ast$, const Data\+Type $\ast$)}]{compare}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a3ff7d10652b776ae35a941228850d904}
+Select k+1-\/th smallest member of an array \+: Quick\+Select by Hoare. This one take O(n) time in average but O(n$^\wedge$2) in the worst case. Quick\+Select might be slower than Stable\+Select in worst cases, but in most cases, Quick\+Select outperformed Stable\+Select. B\+E C\+A\+R\+E\+F\+U\+L! This function will change the order of the input data. Make sure you stored your input data somewhere else. 
+\begin{DoxyParams}{Parameters}
+{\em data} & the input data \\
+\hline
+{\em N} & the size of the input \\
+\hline
+{\em k} & the index \\
+\hline
+{\em compare} & the comparator \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the index of the k-\/th smallest element 
+\end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}{\index{Simple\+Cluster@{Simple\+Cluster}!random\+\_\+seeds@{random\+\_\+seeds}}
+\index{random\+\_\+seeds@{random\+\_\+seeds}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{random\+\_\+seeds}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::random\+\_\+seeds (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$\&}]{seeds, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}
+Create random seeds for k-\/means 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em seeds} & the seeds \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_ab12576ad548dd6a6d0ba093c3a637abb}{\index{Simple\+Cluster@{Simple\+Cluster}!simple\+\_\+k\+\_\+means@{simple\+\_\+k\+\_\+means}}
+\index{simple\+\_\+k\+\_\+means@{simple\+\_\+k\+\_\+means}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{simple\+\_\+k\+\_\+means}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::simple\+\_\+k\+\_\+means (
+\begin{DoxyParamCaption}
+\item[{Kmeans\+Type}]{type, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{Kmeans\+Criteria}]{criteria, }
+\item[{size\+\_\+t}]{d, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$\&}]{centroids, }
+\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
+\item[{double $\ast$$\ast$\&}]{seeds, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_ab12576ad548dd6a6d0ba093c3a637abb}
+The k-\/means method\+: a description of the method can be found at \href{http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html}{\tt http\+://home.\+deib.\+polimi.\+it/matteucc/\+Clustering/tutorial\+\_\+html/kmeans.\+html} 
+\begin{DoxyParams}{Parameters}
+{\em type} & the type of seeding method \\
+\hline
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the number of clusters \\
+\hline
+{\em criteria} & the criteria \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
+\hline
+{\em seeds} & the initial centroids = the seeds \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_aefa29bb93b88e6235d7a7c3be4181bf7}{\index{Simple\+Cluster@{Simple\+Cluster}!swap@{swap}}
+\index{swap@{swap}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{swap}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ void Simple\+Cluster\+::swap (
+\begin{DoxyParamCaption}
+\item[{Data\+Type $\ast$}]{data, }
 \item[{int}]{m, }
 \item[{int}]{n, }
-\item[{size\-\_\-t}]{N}
+\item[{size\+\_\+t}]{N}
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_aefa29bb93b88e6235d7a7c3be4181bf7}
-Swap two elements in an array data\-: the array of elements m,n \-: the indices of elements to be swapped N\-: the size of data 
+Swap two elements in an array 
+\begin{DoxyParams}{Parameters}
+{\em data} & the array of elements \\
+\hline
+{\em m,n} & the indices of elements to be swapped \\
+\hline
+{\em N} & the size of data \\
+\hline
+\end{DoxyParams}

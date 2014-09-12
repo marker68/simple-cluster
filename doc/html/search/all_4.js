@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['init_5farray',['init_array',['../namespaceSimpleCluster.html#acc1dff4c68ab24c3054d8b0953c8f92d',1,'SimpleCluster']]],
-  ['init_5farray_5f2',['init_array_2',['../namespaceSimpleCluster.html#a3e85bbadb909b189b987f27b841ca220',1,'SimpleCluster']]]
+  ['find_5fmedian',['find_median',['../namespaceSimpleCluster.html#aac5892d8292ef724345d8c422519ae05',1,'SimpleCluster']]]
 ];

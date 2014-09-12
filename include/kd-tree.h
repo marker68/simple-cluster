@@ -31,6 +31,9 @@ using namespace std;
 
 namespace SimpleCluster {
 
+/**
+ * KD-Tree node class
+ */
 template<typename DataType>
 class KDNode {
 private:
@@ -39,6 +42,10 @@ public:
 	size_t id;
 	KDNode<DataType> * left, * right;
 
+	/**
+	 * A constructor to initialize data from another node
+	 * @param other another KDNode
+	 */
 	KDNode(const KDNode<DataType>& other) {
 		size_t size = other.get_size();
 		for(size_t i = 0; i < size; i++) {
@@ -49,11 +56,18 @@ public:
 		id = other.id;
 	}
 
+	/**
+	 * The default constructor
+	 */
 	KDNode() {
 		id = 0;
 		left = right = NULL;
 	}
 
+	/**
+	 * Copy function
+	 * @param other another KDNode
+	 */
 	KDNode& operator= (const KDNode<DataType>& other) {
 		KDNode<DataType> tmp;
 		size_t size = other.get_size();
@@ -66,24 +80,41 @@ public:
 		return tmp;
 	}
 
+	/**
+	 * The destructor
+	 */
 	virtual ~KDNode() {
 		data.clear();
 		::delete left;
 		::delete right;
 	}
 
+	/**
+	 * Insert a new data into the vector of the node
+	 * @param _d The data to be inserted
+	 */
 	void add_data(DataType _d) {
 		data.push_back(_d);
 	}
 
+	/**
+	 * Clear the data in the node
+	 */
 	void clear_data() {
 		data.clear();
 	}
 
+	/**
+	 * get a component of the vector
+	 * @param _id index of the component
+	 */
 	DataType get_data_at(size_t _id) const{
 		return data[_id];
 	}
 
+	/**
+	 * Get the size or the dimensions of the vector
+	 */
 	size_t get_size() const{
 		return data.size();
 	}
@@ -98,6 +129,15 @@ void make_random_tree(KDNode<double> *&, double **,
 void nn_search(KDNode<double> *, const double *,
 		KDNode<double> *&, double&, size_t, size_t, bool);
 
+/**
+ * Insert a node into the kd-tree
+ * @param root the root node of the tree
+ * @param data the data of the node to be inserted
+ * @param N the size of the vector
+ * @param level the cut-plane level
+ * @param _id the index of the new node
+ * @verbose true to print verbose. Just for debugging.
+ */
 template<typename DataType>
 void kd_insert(KDNode<DataType> *& root, const DataType * _data,
 		size_t N, size_t level, size_t _id, bool verbose) {
@@ -125,6 +165,12 @@ void kd_insert(KDNode<DataType> *& root, const DataType * _data,
 	}
 }
 
+/**
+ * Traveling in the kd-tree
+ * @param root the root node of the tree
+ * @param N the size of the vector
+ * @param level the cut-plane level
+ */
 template<typename DataType>
 void kd_travel(KDNode<DataType> * root, size_t N, size_t level) {
 	if(root == NULL) {

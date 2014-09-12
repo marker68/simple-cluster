@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['compare_5fdouble',['compare_double',['../namespaceSimpleCluster.html#a14624e6cca7beb136be3623222fb3acc',1,'SimpleCluster']]]
+  ['bbsort',['bbsort',['../namespaceSimpleCluster.html#acbdd21892a0a82f32c6d1851a7044f37',1,'SimpleCluster']]]
 ];

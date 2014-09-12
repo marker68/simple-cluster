@@ -29,34 +29,25 @@
 
 using namespace std;
 
+/**
+ * The main namespace
+ */
 namespace SimpleCluster {
 typedef vector<double> d_vector;
 typedef vector<int> i_vector;
 
-/**
- * Calculate the distance between two vectors
- */
 double distance(double *, double *, size_t);
-/**
- * Calculate the square distances
- */
 double distance_square(double *, double *, size_t);
-/**
- * Calculate the mean vector in a cluster
- */
 double * mean_vector(double **, const int *, size_t, size_t, double *);
 double * mean_vector(double **, const i_vector, size_t, double *);
-/**
- * Get system time in milliseconds
- */
 unsigned long get_millisecond_time();
-/**
- * Print the content of a vector
- */
 void print_vector(double **, size_t, size_t);
 
 /**
- * Initialize an 1-D array
+ * Initialize an 1-D array.
+ * @param arr the input array
+ * @param N the size of the input array
+ * @return true if the array was initalized successfully, otherwise return false.
  */
 template<typename DataType>
 bool init_array(DataType *& arr, size_t N) {
@@ -71,7 +62,10 @@ bool init_array(DataType *& arr, size_t N) {
 }
 
 /**
- * Initialize a 2-D array
+ * Initialize a 2-D array.
+ * @param M the size of the input array
+ * @param N the size of the input array
+ * @return true if the array was initalized successfully, otherwise return false.
  */
 template<typename DataType>
 bool init_array_2(DataType **& arr, size_t M, size_t N) {
@@ -89,7 +83,10 @@ bool init_array_2(DataType **& arr, size_t M, size_t N) {
 }
 
 /**
- * Initialize a vector
+ * Initialize a vector.
+ * @param vec the input vector
+ * @param N the size of the vector
+ * @return true if everything's OK, otherwise return false
  */
 template<typename DataType>
 bool init_vector(vector<DataType>& vec, size_t N) {
@@ -100,6 +97,14 @@ bool init_vector(vector<DataType>& vec, size_t N) {
 	}
 	return true;
 }
+
+/**
+ * Copy an array.
+ * @param from The input array
+ * @param to the copy destination
+ * @param N the number of the elements to be copied
+ * @return true if copy was succeeded, otherwise return false.
+ */
 template<typename DataType>
 bool copy_array(DataType * from, DataType *& to, size_t N) {
 	if(from == NULL || to == NULL)
@@ -110,6 +115,14 @@ bool copy_array(DataType * from, DataType *& to, size_t N) {
 	return true;
 }
 
+/**
+ * Copy a 2-D array.
+ * @param from The input array
+ * @param to the copy destination
+ * @param M the number of the elements to be copied
+ * @param N the number of the elements to be copied
+ * @return true if copy was succeeded, otherwise return false.
+ */
 template<typename DataType>
 bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
 	if(from == NULL || to == NULL)
@@ -122,6 +135,12 @@ bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
 	return true;
 }
 
+/**
+ * De-alloc a 2-D array
+ * @param arr The input array
+ * @param M the size of the input array
+ * @return true if everything's OK, otherwise return false.
+ */
 template<typename DataType>
 bool dealloc_array_2(DataType **& arr, size_t M) {
 	for(size_t i = 0; i < M; i++)
@@ -132,9 +151,9 @@ bool dealloc_array_2(DataType **& arr, size_t M) {
 
 /**
  * Swap two elements in an array
- * data: the array of elements
- * m,n : the indices of elements to be swapped
- * N: the size of data
+ * @param data the array of elements
+ * @param m,n the indices of elements to be swapped
+ * @param N the size of data
  */
 template<typename DataType>
 void swap(DataType * data, int m, int n, size_t N) {
@@ -150,12 +169,12 @@ void swap(DataType * data, int m, int n, size_t N) {
 /**
  * Separate an array into two parts: one contains only elements that < pivot,
  * another one contains only elements that >= pivot
- * data: the array of elements
- * pivot : the pivot
- * N: the size of data
- * compare: the comparator
+ * @param data the array of elements
+ * @param pivot the pivot
+ * @param N the size of data
+ * @param compare the comparator
  *
- * Return the index of the separator
+ * @return the index of the separator
  */
 template<typename DataType>
 int partition(DataType * data, DataType pivot, size_t N, int (*compare)(const DataType *, const DataType *)) {
@@ -177,9 +196,9 @@ int partition(DataType * data, DataType pivot, size_t N, int (*compare)(const Da
 
 /**
  * A bubble sorting function
- * data: the array of elements
- * N: the size of data
- * compare: the comparator
+ * @param data the array of elements
+ * @param N the size of data
+ * @param compare the comparator
  */
 template<typename DataType>
 void bbsort(DataType * data, size_t N, int (*compare)(const DataType *, const DataType *)) {
@@ -199,12 +218,17 @@ void bbsort(DataType * data, size_t N, int (*compare)(const DataType *, const Da
 }
 
 /**
- * Select k+1-th smallest member of an array : QuickSelect by Hoare
+ * Select k+1-th smallest member of an array : QuickSelect by Hoare.
  * This one take O(n) time in average but O(n^2) in the worst case.
  * QuickSelect might be slower than StableSelect in worst cases,
  * but in most cases, QuickSelect outperformed StableSelect.
  * BE CAREFUL! This function will change the order of the input data.
  * Make sure you stored your input data somewhere else.
+ * @param data the input data
+ * @param N the size of the input
+ * @param k the index
+ * @param compare the comparator
+ * @return the index of the k-th smallest element
  */
 template<typename DataType>
 size_t quick_select_k(DataType * data, size_t N, size_t k, int (*compare)(const DataType*, const DataType*)) {

@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['simple_5fk_5fmeans',['simple_k_means',['../namespaceSimpleCluster.html#a567aef9107b538f7866d782c292236af',1,'SimpleCluster']]],
-  ['swap',['swap',['../namespaceSimpleCluster.html#aefa29bb93b88e6235d7a7c3be4181bf7',1,'SimpleCluster']]]
+  ['make_5fbalanced_5ftree',['make_balanced_tree',['../namespaceSimpleCluster.html#a9b7733dc2edec70ad323beb9f3a9143e',1,'SimpleCluster']]],
+  ['make_5frandom_5ftree',['make_random_tree',['../namespaceSimpleCluster.html#a367a8fc15d6fd44d0c898dfc6bf6b409',1,'SimpleCluster']]],
+  ['mean_5fvector',['mean_vector',['../namespaceSimpleCluster.html#a88d267f1612b952f290e0b3861360d53',1,'SimpleCluster::mean_vector(double **, const int *, size_t, size_t, double *)'],['../namespaceSimpleCluster.html#aee4546894b94aa53a606f5a436db8c7f',1,'SimpleCluster::mean_vector(double **, const i_vector, size_t, double *)']]]
 ];
