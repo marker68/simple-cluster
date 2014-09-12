@@ -37,14 +37,26 @@ typedef vector<int> i_vector;
  * Calculate the distance between two vectors
  */
 double distance(double *, double *, size_t);
+/**
+ * Calculate the square distances
+ */
 double distance_square(double *, double *, size_t);
+/**
+ * Calculate the mean vector in a cluster
+ */
 double * mean_vector(double **, const int *, size_t, size_t, double *);
 /**
  * Get system time in milliseconds
  */
 unsigned long get_millisecond_time();
+/**
+ * Print the content of a vector
+ */
 void print_vector(double **, size_t, size_t);
 
+/**
+ * Initialize an 1-D array
+ */
 template<typename DataType>
 bool init_array(DataType *& arr, size_t N) {
 	if(N <= 0)
@@ -57,6 +69,9 @@ bool init_array(DataType *& arr, size_t N) {
 	return true;
 }
 
+/**
+ * Initialize a 2-D array
+ */
 template<typename DataType>
 bool init_array_2(DataType **& arr, size_t M, size_t N) {
 	if(M <= 0 || N <= 0)

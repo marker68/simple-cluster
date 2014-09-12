@@ -10,8 +10,9 @@ The implementations based on many papers that are mentioned below. This project 
 
 [1] S. P. Lloyd, "Least squares quantization in PCM",  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982
    
-
 [2] D. Arthur et al., "k-means++: the advantages of careful seeding",  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007
+
+[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees", Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977
 
 ## Usage
 
@@ -19,20 +20,23 @@ The implementations based on many papers that are mentioned below. This project 
 
 * [CMake](http://www.cmake.org/) 2.8 or newer. For UNIX users, check your CMake version in terminal by `cmake -version`.
 * An C++ compiler that supports C++ 11.
+* [OpenCV](http://opencv.org/downloads.html) 2.4.8 or newer. This library is used for testing only. Just for comparing the performance with our implementations.
 
 ### Build
 * To build this project, just type:
 ```bash
 $ cmake -H. -B<where_you_want_to_save_CMake_build_files>
+### Example
+$ cmake -H. -Bbuild
 ```
-on your terminal. This will generate CMake files under `cmake/`. Then type:
+on your terminal. This will generate CMake files under `build/` and binaries under `bin/`. Then type:
 ```bash
 $ cmake --build <the_location_of_CMake_build_files> -- -j3
 ```
 to generate the binaries.
 
-* The above step would generate in `bin/` folder the following files: `libsimple_cluster.*`,`test_kmeans`. 
-* The `test_kmeans` is an unit test program.
+* The above step would generate in `bin/` folder the following files: `libsimplecluster.*`,`test_*`. 
+* The `test_*` are unit test programs. You can review the source of unit tests in `test/`. They are also self-explained documentation for the common usage.
 
 ## Documentation
 
