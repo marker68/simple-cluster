@@ -246,7 +246,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	while (1) {
 		// Assign the data points to clusters
-		assign_to_closest_centroid_2(d,N,k,data,centroids,clusters,verbose);
+		assign_to_closest_centroid(d,N,k,data,centroids,clusters,verbose);
 		// Recalculate the centroids
 		for(size_t j = 0; j < k; j++) {
 			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],
@@ -265,8 +265,8 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 		copy_array_2<double>(c_tmp,centroids,k,d);
 		i++;
 		if(i >= iters ||
-				//				(e - e_prev < error && e - e_prev > -error)) break;
-				(e < error && e > -error)) break;
+				(e - e_prev < error && e - e_prev > -error)) break;
+		//				(e < error && e > -error)) break;
 	}
 
 	if(verbose)

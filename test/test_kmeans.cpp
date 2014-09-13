@@ -43,7 +43,13 @@ using namespace SimpleCluster;
  * A converter
  */
 void convert_array_to_mat(double ** data, Mat& result, size_t M, size_t N) {
+	for(size_t i = 0; i < M; i++) {
+		for(size_t j = 0; j < N; j++) {
+			result.push_back(data[i][j]);
+		}
+	}
 
+	result = result.reshape(1,static_cast<int>(M));
 }
 
 /**
@@ -154,8 +160,27 @@ TEST_F(KmeansTest, test4) {
 }
 
 TEST_F(KmeansTest, test5) {
-	KmeansCriteria criteria = {1.0,10};
-	simple_k_means(KmeansType::RANDOM_SEEDS,N,k,criteria,d,
+	KmeansCriteria criteria = {1.0,1000};
+	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,N,k,criteria,d,
 			data,centroids,clusters,seeds,false);
 	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,true) << endl;
+}
+
+TEST_F(KmeansTest, test6) {
+	Mat _data;
+	convert_array_to_mat(data,_data,N,d);
+	_data.convertTo(_data,CV_32F);
+	Mat _labels, _centers(k, 1, _data.type());
+	TermCriteria opencv_criteria {CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1.0};
+	kmeans(_data, k, _labels, opencv_criteria, 3, KMEANS_PP_CENTERS, _centers);
+	// Find the distortion
+	double distortion = 0.0;
+	for(size_t i = 0; i < _labels.rows; i++) {
+		size_t id = _labels.at<size_t>(i,0);
+		Mat tmp = _data.row(i);
+		Mat c = _centers.row(id);
+		double d_t = norm(tmp,c,NORM_L2);
+		distortion += d_t * d_t;
+	}
+	cout << "Distortion is " << sqrt(distortion) << endl;
 }

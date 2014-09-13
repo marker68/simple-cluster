@@ -62,7 +62,7 @@ foreach(dir ${OpenCV_INCLUDE_DIRS})
 endforeach(dir)
 
 # Make some tests
-set(CMAKE_CXX_FLAGS "-L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a")
+set(CMAKE_CXX_FLAGS "${OPENCV_INCLUDES} -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS} ${CMAKE_BINARY_DIR}/libgtest_main.a")
 set(TEST_LIBS_FLAGS m gtest pthread)
 add_executable(test_utilities ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp ${PROJECT_SOURCE_DIR}/src/utilities.cpp)
 target_link_libraries(test_utilities ${TEST_LIBS_FLAGS})
