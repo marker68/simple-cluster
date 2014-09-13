@@ -149,7 +149,7 @@ void make_random_tree(KDNode<double> *& root, double ** data,
  * @param best_dist the best distance
  * @param N the size of the input
  * @param level the cut-plane level
- * @param _id the index of the new node
+ * @param verbose for debugging
  */
 void nn_search(KDNode<double> * root, const double * query,
 		KDNode<double> *& result,
@@ -195,6 +195,35 @@ void nn_search(KDNode<double> * root, const double * query,
 		nn_search(root->left,query,result,best_dist,N,l,verbose);
 	}
 	::delete tmp;
+}
+
+/**
+ * A linear solution for NNS
+ * @param data the database
+ * @param query the input query
+ * @param best the index of the NNS
+ * @param best_dist the best distance
+ * @param N the size of database
+ * @param d the dimensions
+ * @param verbose for debugging
+ */
+void linear_search(double ** data, double * query, size_t& best,
+		double& best_dist, size_t N, size_t d, bool verbose) {
+	if(N <= 0 || d <= 0) {
+		if(verbose)
+			cerr << "Wrong size" << endl;
+		return;
+	}
+	best = 0;
+	best_dist = SimpleCluster::distance(query,data[0],d);
+	double tmp = 0.0;
+	for(size_t i = 1; i < N; i++) {
+		tmp = SimpleCluster::distance(query,data[i],d);
+		if(tmp < best_dist) {
+			best_dist = tmp;
+			best = i;
+		}
+	}
 }
 }
 

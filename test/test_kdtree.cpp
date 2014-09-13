@@ -43,7 +43,7 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 10000;
+		N = 256;
 		d = 128;
 		int i, j;
 
@@ -61,7 +61,7 @@ protected:
 				data[i][j] = real_dis(gen);
 			}
 		}
-//		print_vector(data,d,N);
+		//		print_vector(data,d,N);
 	}
 
 	// Per-test-case tear-down.
@@ -116,25 +116,38 @@ TEST_F(KDTreeTest, test3) {
 		_d[i][0] = _d[i][1] = static_cast<double>(i);
 	}
 	EXPECT_EQ(5000,find_median(_d,10000,2,1,true));
-//	cout << find_median(data,N,d,64) << endl;
+	//	cout << find_median(data,N,d,64) << endl;
 }
 
 TEST_F(KDTreeTest, test4) {
 	KDNode<double> * root = NULL;
 	make_balanced_tree(root,data,N,d,0,0,false);
-//	kd_travel(root,d,0);
+	//	kd_travel(root,d,0);
 }
 
 TEST_F(KDTreeTest, test5) {
 	KDNode<double> * root = NULL;
 	make_random_tree(root,data,N,d,0,0,false);
-//	kd_travel(root,d,0);
+	//	kd_travel(root,d,0);
 }
 
 TEST_F(KDTreeTest, test6) {
 	KDNode<double> * root = NULL;
 	make_random_tree(root,data,N,d,0,0,false);
-//	kd_travel<double>(root,d,0);
+	//	kd_travel<double>(root,d,0);
+	for(int i = 0; i < 10000; i++) {
+		KDNode<double> * result = NULL;
+		double best_dist = DBL_MAX;
+		nn_search(root,data[33],result,best_dist,d,0,false);
+//		cout << "best:" << best_dist << " at " << result->id << endl;
+		EXPECT_EQ(0.0,best_dist);
+	}
+}
+
+TEST_F(KDTreeTest, test7) {
+	KDNode<double> * root = NULL;
+	make_balanced_tree(root,data,N,d,0,0,false);
+	//	kd_travel<double>(root,d,0);
 	KDNode<double> * result = NULL;
 	double best_dist = DBL_MAX;
 	nn_search(root,data[33],result,best_dist,d,0,false);
@@ -142,13 +155,14 @@ TEST_F(KDTreeTest, test6) {
 	EXPECT_EQ(0.0,best_dist);
 }
 
-TEST_F(KDTreeTest, test7) {
+TEST_F(KDTreeTest, test8) {
 	KDNode<double> * root = NULL;
-	make_balanced_tree(root,data,N,d,0,0,false);
-//	kd_travel<double>(root,d,0);
-	KDNode<double> * result = NULL;
-	double best_dist = DBL_MAX;
-	nn_search(root,data[33],result,best_dist,d,0,false);
-	cout << "best:" << best_dist << " at " << result->id << endl;
-	EXPECT_EQ(0.0,best_dist);
+	make_random_tree(root,data,N,d,0,0,false);
+	for(int i = 0; i < 10000; i++) {
+		size_t best = 0;
+		double best_dist = DBL_MAX;
+		linear_search(data,data[33],best,best_dist,N,d,true);
+//		cout << "best:" << best_dist << " at " << best << endl;
+		EXPECT_EQ(0.0,best_dist);
+	}
 }

@@ -128,6 +128,8 @@ void make_random_tree(KDNode<double> *&, double **,
 		size_t, size_t, size_t, size_t, bool);
 void nn_search(KDNode<double> *, const double *,
 		KDNode<double> *&, double&, size_t, size_t, bool);
+void linear_search(double **, double *, size_t&,
+		double&, size_t, size_t, bool);
 
 /**
  * Insert a node into the kd-tree
