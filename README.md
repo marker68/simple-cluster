@@ -6,12 +6,13 @@ Simple Clusters
 This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
 The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
 
-The purpose of this project is to provide a more flexible interface for clustering methods. In OpenCV, the implementations of k-means algorithm is limited: they use FLANN on the assigning phase that increase the distortion. Thus, I hope to this one will prodive an implementation with more choices for k-means. But sometimes you need to reduce the distortion than to improve the runtime performance. Other clustering methods will also be considered and be implemented.
+The purpose of this project is to provide a more flexible interface for clustering methods. In OpenCV, the implementations of k-means algorithm is limited: they use FLANN on the assigning phase that increase the distortion. Thus, I hope to this one will prodive an implementation with more choices for k-means. But sometimes you need to reduce the distortion than to improve the runtime performance. Other clustering methods will also be considered and be implemented. The input of many methods now are vectors, I hope to improve this issue soon, i.e let you input files.
 
 ## Usage
 
 ### Prerequisites
 
+* An Unix or Windows Operating System. Tested on Mac OS X 10.9 and Ubuntu 14.04.
 * [CMake](http://www.cmake.org/) 2.8 or newer. For UNIX users, check your CMake version in terminal by `cmake -version`.
 * An C++ compiler that supports C++ 11.
 * [OpenCV](http://opencv.org/downloads.html) 2.4.8 or newer. This library is used for testing only. Just for comparing the performance with our implementations.
