@@ -98,6 +98,14 @@ public:
 	}
 
 	/**
+	 * Add an array of data
+	 */
+	void add_data(DataType * _d, size_t N) {
+		for(size_t i = 0; i < N; i++)
+			data.push_back(_d[i]);
+	}
+
+	/**
 	 * Clear the data in the node
 	 */
 	void clear_data() {
@@ -110,6 +118,20 @@ public:
 	 */
 	DataType get_data_at(size_t _id) const{
 		return data[_id];
+	}
+
+	/**
+	 * Get all the vector data
+	 */
+	vector<DataType> get_data() {
+		return data;
+	}
+
+	/**
+	 * Get all data as array
+	 */
+	DataType * get_data_array() {
+		return &data[0];
 	}
 
 	/**
@@ -126,7 +148,7 @@ void make_balanced_tree(KDNode<double> *&, double **,
 		size_t, size_t, size_t, size_t, bool);
 void make_random_tree(KDNode<double> *&, double **,
 		size_t, size_t, size_t, size_t, bool);
-void nn_search(KDNode<double> *, const double *,
+void nn_search(KDNode<double> *, KDNode<double> *,
 		KDNode<double> *&, double&, size_t, size_t, bool);
 void linear_search(double **, double *, size_t&,
 		double&, size_t, size_t, bool);

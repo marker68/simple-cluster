@@ -88,7 +88,7 @@ double ** KDTreeTest::data;
 int KDTreeTest::N;
 int KDTreeTest::d;
 
-TEST_F(KDTreeTest, test1) {
+TEST_F(KDTreeTest, DISABLED_test1) {
 	KDNode<double> * a, * b;
 	a = ::new KDNode<double>;
 	b = ::new KDNode<double>;
@@ -99,7 +99,7 @@ TEST_F(KDTreeTest, test1) {
 	EXPECT_LT(0.0, kd_distance(a,b,d,false));
 }
 
-TEST_F(KDTreeTest, test2) {
+TEST_F(KDTreeTest, DISABLED_test2) {
 	KDNode<double> * root = NULL;
 	double d[][2] = {{2.0,3.0},{4.0,3.0},{7.0,9.0}};
 	for(int i = 0; i < 3; i++) {
@@ -108,7 +108,7 @@ TEST_F(KDTreeTest, test2) {
 	kd_travel(root,2,0);
 }
 
-TEST_F(KDTreeTest, test3) {
+TEST_F(KDTreeTest, DISABLED_test3) {
 	double ** _d;
 	_d = new double*[10000];
 	for(int i = 0; i < 10000; i++) {
@@ -119,13 +119,13 @@ TEST_F(KDTreeTest, test3) {
 	//	cout << find_median(data,N,d,64) << endl;
 }
 
-TEST_F(KDTreeTest, test4) {
+TEST_F(KDTreeTest, DISABLED_test4) {
 	KDNode<double> * root = NULL;
 	make_balanced_tree(root,data,N,d,0,0,false);
 	//	kd_travel(root,d,0);
 }
 
-TEST_F(KDTreeTest, test5) {
+TEST_F(KDTreeTest, DISABLED_test5) {
 	KDNode<double> * root = NULL;
 	make_random_tree(root,data,N,d,0,0,false);
 	//	kd_travel(root,d,0);
@@ -135,11 +135,13 @@ TEST_F(KDTreeTest, test6) {
 	KDNode<double> * root = NULL;
 	make_random_tree(root,data,N,d,0,0,false);
 	//	kd_travel<double>(root,d,0);
+	KDNode<double> * query = ::new KDNode<double>;
+	size_t pos = N >> 1;
+	query->add_data(data[pos],d);
 	for(int i = 0; i < 10000; i++) {
 		KDNode<double> * result = NULL;
 		double best_dist = DBL_MAX;
-		nn_search(root,data[33],result,best_dist,d,0,false);
-//		cout << "best:" << best_dist << " at " << result->id << endl;
+		nn_search(root,query,result,best_dist,d,0,false);
 		EXPECT_EQ(0.0,best_dist);
 	}
 }
@@ -148,21 +150,42 @@ TEST_F(KDTreeTest, test7) {
 	KDNode<double> * root = NULL;
 	make_balanced_tree(root,data,N,d,0,0,false);
 	//	kd_travel<double>(root,d,0);
-	KDNode<double> * result = NULL;
-	double best_dist = DBL_MAX;
-	nn_search(root,data[33],result,best_dist,d,0,false);
-	cout << "best:" << best_dist << " at " << result->id << endl;
-	EXPECT_EQ(0.0,best_dist);
+	KDNode<double> * query = ::new KDNode<double>;
+	size_t pos = N >> 1;
+	query->add_data(data[pos],d);
+	for(int i = 0; i < 10000; i++) {
+		KDNode<double> * result = NULL;
+		double best_dist = DBL_MAX;
+		nn_search(root,query,result,best_dist,d,0,false);
+		EXPECT_EQ(0.0,best_dist);
+	}
 }
 
 TEST_F(KDTreeTest, test8) {
 	KDNode<double> * root = NULL;
-	make_random_tree(root,data,N,d,0,0,false);
+	make_balanced_tree(root,data,N,d,0,0,false);
+	size_t pos = N >> 1;
 	for(int i = 0; i < 10000; i++) {
 		size_t best = 0;
 		double best_dist = DBL_MAX;
-		linear_search(data,data[33],best,best_dist,N,d,true);
-//		cout << "best:" << best_dist << " at " << best << endl;
+		linear_search(data,data[pos],best,best_dist,N,d,true);
 		EXPECT_EQ(0.0,best_dist);
 	}
+}
+
+TEST_F(KDTreeTest, DISABLED_test9) {
+	KDNode<double> * a, * b;
+	a = ::new KDNode<double>;
+	b = ::new KDNode<double>;
+	a->add_data(data[0],d);
+	b->add_data(data[1],d);
+	unsigned long int t1, t2, t3;
+	t1 = get_millisecond_time();
+	double d1 = kd_distance(a,b,d,true);
+	t2 = get_millisecond_time();
+	double d2 = distance(data[0],data[1],d);
+	t3 = get_millisecond_time();
+	cout << "kd_distance's time:" << t2-t1 << "[ms]" << endl;
+	cout << "distance's time:" << t3-t2 << "[ms]" << endl;
+	EXPECT_EQ(d1,d2);
 }

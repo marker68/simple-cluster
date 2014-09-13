@@ -146,21 +146,13 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k,
  */
 void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
-	size_t i, j, tmp;
+	size_t i, tmp;
 
-	double min = 0.0, temp = 0.0;
+	double min = 0.0;
 
 	for(i = 0; i < N; i++) {
 		// Find the minimum distances between d_tmp and a centroid
-		min = SimpleCluster::distance(data[i],centroids[0],d);
-		tmp = 0;
-		for(j = 1; j < k; j++) {
-			temp = SimpleCluster::distance(data[i],centroids[j],d);
-			if(min < temp) {
-				min = temp;
-				tmp = j;
-			}
-		}
+		linear_search(centroids,data[i],tmp,min,k,d,verbose);
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
 	}
@@ -185,14 +177,18 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 	make_balanced_tree(root,centroids,k,d,0,0,verbose);
 	if(root == NULL) return;
 
+	KDNode<double> query;
+
 	for(i = 0; i < N; i++) {
 		KDNode<double> * nn = NULL;
 		double min = DBL_MAX;
+		query.add_data(data[i],d);
 		// Find the minimum distances between d_tmp and a centroid
-		nn_search(root,data[i],nn,min,d,0,verbose);
+		nn_search(root,&query,nn,min,d,0,verbose);
 		tmp = nn->id;
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
+		query.clear_data();
 	}
 }
 
@@ -250,7 +246,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	while (1) {
 		// Assign the data points to clusters
-		assign_to_closest_centroid(d,N,k,data,centroids,clusters,verbose);
+		assign_to_closest_centroid_2(d,N,k,data,centroids,clusters,verbose);
 		// Recalculate the centroids
 		for(size_t j = 0; j < k; j++) {
 			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],

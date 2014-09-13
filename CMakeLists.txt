@@ -71,5 +71,5 @@ add_executable(test_kdtree ${PROJECT_SOURCE_DIR}/test/test_kdtree.cpp ${PROJECT_
 target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
 add_dependencies(test_kdtree gtest_main)
 add_executable(test_kmeans ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp ${PROJECT_SRCS} )
-target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS})
+target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
 add_dependencies(test_kmeans gtest_main)

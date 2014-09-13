@@ -41,21 +41,10 @@ namespace SimpleCluster {
  * @return the distance between two KDNode if no error occurs, otherwise return DBL_MAX
  */
 double kd_distance(KDNode<double> * _a, KDNode<double> * _b, size_t N, bool verbose) {
-	if(_a->get_size() != _b->get_size()) {
-		if(verbose) {
-			cerr << "Your vector has some problem" << endl;
-			cerr << "a has " << _a->get_size() << " dimensions" << endl;
-			cerr << "b has " << _b->get_size() << " dimensions" << endl;
-		}
-		return DBL_MAX;
-	}
-	double tmp = 0.0, res = 0.0;
-	for(size_t i = 0; i < N; i++) {
-		tmp = _a->get_data_at(i) - _b->get_data_at(i);
-		res += tmp * tmp;
-	}
-
-	return sqrt(res);
+//	double tmp = 0.0, res = 0.0;
+	double * a = _a->get_data_array();
+	double * b = _b->get_data_array();
+	return distance(a,b,N);
 }
 
 /**
@@ -151,7 +140,7 @@ void make_random_tree(KDNode<double> *& root, double ** data,
  * @param level the cut-plane level
  * @param verbose for debugging
  */
-void nn_search(KDNode<double> * root, const double * query,
+void nn_search(KDNode<double> * root, KDNode<double> * query,
 		KDNode<double> *& result,
 		double& best_dist, size_t N, size_t level, bool verbose) {
 	if(best_dist == 0.0) return;
@@ -162,39 +151,29 @@ void nn_search(KDNode<double> * root, const double * query,
 		}
 		return;
 	}
-	if(verbose)
-		cout << "Visiting node " << root->id << endl;
-	KDNode<double> * tmp = ::new KDNode<double>;
-	for(size_t i = 0; i < N; i++)
-		tmp->add_data(query[i]);
 
-	double d = kd_distance(root,tmp,N,verbose);
-	double d1 = root->get_data_at(level) - query[level];
+	double d = kd_distance(root,query,N,verbose);
+	double d1 = root->get_data_at(level) - query->get_data_at(level);
 
 	if(result == NULL || d < best_dist) {
 		best_dist = d;
 		result = root;
-		if(verbose) {
-			cout << best_dist << endl;
-			cout << result->id << endl;
-		}
 	}
 
-	size_t l = (level + 1) % N;
+	level = (level + 1) % N;
 	if(d1 >= 0.0) {
-		nn_search(root->left,query,result,best_dist,N,l,verbose);
+		nn_search(root->left,query,result,best_dist,N,level,verbose);
 	} else {
-		nn_search(root->right,query,result,best_dist,N,l,verbose);
+		nn_search(root->right,query,result,best_dist,N,level,verbose);
 	}
 
 	if(fabs(d1) >= best_dist) return;
 
 	if(d1 >= 0.0) {
-		nn_search(root->right,query,result,best_dist,N,l,verbose);
+		nn_search(root->right,query,result,best_dist,N,level,verbose);
 	} else {
-		nn_search(root->left,query,result,best_dist,N,l,verbose);
+		nn_search(root->left,query,result,best_dist,N,level,verbose);
 	}
-	::delete tmp;
 }
 
 /**

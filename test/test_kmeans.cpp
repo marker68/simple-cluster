@@ -29,11 +29,22 @@
 #include <gtest/gtest.h>
 #include <math.h>
 #include <stdlib.h>
+#include "opencv2/opencv.hpp"
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
 #include "k-means.h"
 #include "utilities.h"
 
 using namespace std;
+using namespace cv;
 using namespace SimpleCluster;
+
+/**
+ * A converter
+ */
+void convert_array_to_mat(double ** data, Mat& result, size_t M, size_t N) {
+
+}
 
 /**
  * Customized test case for testing
@@ -130,19 +141,21 @@ TEST_F(KmeansTest, test2) {
 	kmeans_pp_seeds(d,N,k,data,seeds,true);
 }
 
-TEST_F(KmeansTest, DISABLED_test3) {
+TEST_F(KmeansTest, test3) {
 	random_seeds(d,N,k,data,seeds,true);
+	init_vector<i_vector>(clusters,k);
 	assign_to_closest_centroid(d,N,k,data,seeds,clusters,false);
 }
 
-TEST_F(KmeansTest, DISABLED_test4) {
+TEST_F(KmeansTest, test4) {
 	random_seeds(d,N,k,data,seeds,true);
+	init_vector<i_vector>(clusters,k);
 	assign_to_closest_centroid_2(d,N,k,data,seeds,clusters,false);
 }
 
 TEST_F(KmeansTest, test5) {
 	KmeansCriteria criteria = {1.0,10};
-	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,N,k,criteria,d,
-			data,centroids,clusters,seeds,true);
+	simple_k_means(KmeansType::RANDOM_SEEDS,N,k,criteria,d,
+			data,centroids,clusters,seeds,false);
 	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,true) << endl;
 }
