@@ -1,4 +1,4 @@
-Simple Clustering
+Simple Clusters
 ===============================
 
 ## What is this?
