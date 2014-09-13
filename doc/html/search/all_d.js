@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['random_5fseeds',['random_seeds',['../namespaceSimpleCluster.html#aa3c1fa27364305d35f14eb0b6b984a10',1,'SimpleCluster']]]
+  ['quick_5fselect_5fk',['quick_select_k',['../namespaceSimpleCluster.html#a3ff7d10652b776ae35a941228850d904',1,'SimpleCluster']]]
 ];

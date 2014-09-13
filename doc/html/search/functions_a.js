@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operator_3d',['operator=',['../classSimpleCluster_1_1KDNode.html#a7719d6922448ee1c3c4f777117ce48a0',1,'SimpleCluster::KDNode']]]
+  ['nn_5fsearch',['nn_search',['../namespaceSimpleCluster.html#a056ad815fcca85e233100116f5a4b2e2',1,'SimpleCluster']]]
 ];

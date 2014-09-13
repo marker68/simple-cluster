@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['quick_5fselect_5fk',['quick_select_k',['../namespaceSimpleCluster.html#a3ff7d10652b776ae35a941228850d904',1,'SimpleCluster']]]
+  ['partition',['partition',['../namespaceSimpleCluster.html#adcef86d645170d3c6b1c7908866d755e',1,'SimpleCluster']]],
+  ['print_5fvector',['print_vector',['../namespaceSimpleCluster.html#ad04f5b6a882a4eea162fbf4eddc1246c',1,'SimpleCluster']]]
 ];
