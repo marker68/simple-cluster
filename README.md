@@ -4,15 +4,7 @@ Simple Clustering
 ## What is this?
 
 This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
-The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just see the license statement.
-
-## References
-
-[1] S. P. Lloyd, "Least squares quantization in PCM",  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982
-   
-[2] D. Arthur et al., "k-means++: the advantages of careful seeding",  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007
-
-[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees", Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977
+The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
 
 ## Usage
 
@@ -41,6 +33,14 @@ to generate the binaries.
 ## Documentation
 
 This project uses Doxygen to generate its documentation. You cand find it in `doc/` or an online version at http://simplecluster.tech-codes.com/
+
+## References
+
+[1] S. P. Lloyd, "Least squares quantization in PCM",  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982
+   
+[2] D. Arthur et al., "k-means++: the advantages of careful seeding",  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007
+
+[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees", Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977
 
 ## License
 ```
