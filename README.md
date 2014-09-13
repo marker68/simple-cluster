@@ -32,6 +32,7 @@ to generate the binaries.
 
 * The above step would generate in `bin/` folder the following files: `libsimplecluster.*`,`test_*`. 
 * The `test_*` are unit test programs. You can review the source of unit tests in `test/`. They are also self-explained documentation for the common usage.
+* An example to show you how to use this library: https://github.com/marker68/example-simplecluster
 
 ## Contributing
 I welcome any contributions. First, read some materials like [How to contribute to an open source project?](https://guides.github.com/activities/contributing-to-open-source/) or [an excellent example from FuelPHP](https://github.com/fuelphp/fuelphp/blob/master/CONTRIBUTING.md). I will work on this term later.
