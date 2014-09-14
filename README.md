@@ -6,7 +6,7 @@ Simple Clusters
 This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
 The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
 
-The purpose of this project is to provide a more flexible interface for clustering methods. In OpenCV, the implementations of k-means algorithm is limited: they use FLANN on the assigning phase that increase the distortion. Thus, I hope to this one will prodive an implementation with more choices for k-means. But sometimes you need to reduce the distortion than to improve the runtime performance. Other clustering methods will also be considered and be implemented. The input of many methods now are vectors, I hope to improve this issue soon, i.e let you input files.
+The purpose of this project is to provide a more flexible interface for clustering methods. In OpenCV, the implementations of k-means algorithm is limited. Thus, I hope to this one will prodive an implementation with more choices for k-means. Sometimes, reducing the distortion is more important than improving the runtime performance. Other clustering methods will also be considered and be implemented. The input of many methods now are vectors, I hope to improve this issue soon, i.e let you input files.
 
 ## Usage
 
