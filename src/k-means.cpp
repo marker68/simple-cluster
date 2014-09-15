@@ -193,6 +193,40 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 }
 
 /**
+ * After having a set of centroids,
+ * we need to assign data into each cluster respectively.
+ * This solution uses kd-tree search to assign data.
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the numbe rof clusters
+ * @param data input data
+ * @param centroids the centroids
+ * @param clusters the clusters
+ * @param verbose for debugging
+ */
+void assign_to_closest_centroid_3(size_t d, size_t N, size_t k,
+		double ** data, double ** centroids, vector<i_vector>& clusters, double alpha, bool verbose) {
+	size_t i, tmp;
+	KDNode<double> * root = NULL;
+	make_random_tree(root,centroids,k,d,0,0,verbose);
+	if(root == NULL) return;
+
+	KDNode<double> query;
+
+	for(i = 0; i < N; i++) {
+		KDNode<double> * nn = NULL;
+		double min = DBL_MAX;
+		query.add_data(data[i],d);
+		// Find the minimum distances between d_tmp and a centroid
+		ann_search(root,&query,nn,min,alpha,d,0,verbose);
+		tmp = nn->id;
+		// Assign the data[i] into cluster tmp
+		clusters[tmp].push_back(static_cast<int>(i));
+		query.clear_data();
+	}
+}
+
+/**
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
  * @param type the type of seeding method
@@ -206,7 +240,8 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
  * @param seeds the initial centroids = the seeds
  * @param verbose for debugging
  */
-void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria,size_t d,
+void simple_k_means(KmeansType type, KmeansAssignType assign,
+		size_t N, size_t k, KmeansCriteria criteria,size_t d,
 		double ** data, double **& centroids,
 		vector<i_vector>& clusters, double **& seeds, bool verbose) {
 	// Pre-check conditions
@@ -234,6 +269,7 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0;
 	double error = criteria.accuracy, e = error, e_prev = 0.0;
+	double alpha = criteria.alpha;
 
 	double ** c_tmp;
 	init_array_2<double>(c_tmp,k,d);
@@ -246,7 +282,12 @@ void simple_k_means(KmeansType type, size_t N, size_t k, KmeansCriteria criteria
 
 	while (1) {
 		// Assign the data points to clusters
-		assign_to_closest_centroid(d,N,k,data,centroids,clusters,verbose);
+		if(assign == KmeansAssignType::LINEAR)
+			assign_to_closest_centroid(d,N,k,data,centroids,clusters,verbose);
+		else if(assign == KmeansAssignType::NN_KD_TREE)
+			assign_to_closest_centroid_2(d,N,k,data,centroids,clusters,verbose);
+		else
+			assign_to_closest_centroid_3(d,N,k,data,centroids,clusters,alpha,verbose);
 		// Recalculate the centroids
 		for(size_t j = 0; j < k; j++) {
 			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],

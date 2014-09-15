@@ -63,7 +63,7 @@ protected:
 	static void SetUpTestCase() {
 		N = 10000;
 		d = 128;
-		k = 256;
+		k = 4096;
 		int i, j;
 
 		// For generating random numbers
@@ -139,39 +139,46 @@ int KmeansTest::N;
 int KmeansTest::d;
 int KmeansTest::k;
 
-TEST_F(KmeansTest, test1) {
+TEST_F(KmeansTest, DISABLED_test1) {
 	random_seeds(d,N,k,data,seeds,true);
 }
 
-TEST_F(KmeansTest, test2) {
+TEST_F(KmeansTest, DISABLED_test2) {
 	kmeans_pp_seeds(d,N,k,data,seeds,true);
 }
 
-TEST_F(KmeansTest, test3) {
+TEST_F(KmeansTest, DISABLED_test3) {
 	random_seeds(d,N,k,data,seeds,true);
 	init_vector<i_vector>(clusters,k);
 	assign_to_closest_centroid(d,N,k,data,seeds,clusters,false);
 }
 
-TEST_F(KmeansTest, test4) {
+TEST_F(KmeansTest, DISABLED_test4) {
 	random_seeds(d,N,k,data,seeds,true);
 	init_vector<i_vector>(clusters,k);
 	assign_to_closest_centroid_2(d,N,k,data,seeds,clusters,false);
 }
 
-TEST_F(KmeansTest, test5) {
-	KmeansCriteria criteria = {1.0,1000};
-	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,N,k,criteria,d,
-			data,centroids,clusters,seeds,false);
-	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,true) << endl;
+TEST_F(KmeansTest, DISABLED_test5) {
+	random_seeds(d,N,k,data,seeds,true);
+	init_vector<i_vector>(clusters,k);
+	assign_to_closest_centroid_3(d,N,k,data,seeds,clusters,100.0,false);
 }
 
 TEST_F(KmeansTest, test6) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::ANN_KD_TREE,N,k,criteria,d,
+			data,centroids,clusters,seeds,false);
+	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
+}
+
+TEST_F(KmeansTest, test7) {
 	Mat _data;
 	convert_array_to_mat(data,_data,N,d);
 	_data.convertTo(_data,CV_32F);
 	Mat _labels, _centers(k, 1, _data.type());
-	TermCriteria opencv_criteria {CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 1000, 1.0};
+	TermCriteria opencv_criteria {CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 100, 1.0};
 	kmeans(_data, k, _labels, opencv_criteria, 3, KMEANS_PP_CENTERS, _centers);
 	// Find the distortion
 	double distortion = 0.0;

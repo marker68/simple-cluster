@@ -177,6 +177,53 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
 }
 
 /**
+ * Search for the approximate nearest neighbor in the kd-tree
+ * @param root the root node of the tree
+ * @param query the data of the query
+ * @param result the nearest neighbor
+ * @param best_dist the best distance
+ * @param alpha the parameter that set the quality of nearest neighbor
+ * @param N the size of the input
+ * @param level the cut-plane level
+ * @param verbose for debugging
+ */
+void ann_search(KDNode<double> * root, KDNode<double> * query,
+		KDNode<double> *& result, double& best_dist,
+		double alpha, size_t N, size_t level, bool verbose) {
+	if(best_dist == 0.0) return;
+	if(root == NULL || root->get_size() != N) {
+		if(verbose) {
+			cout << "Reached a leaf" << endl;
+			if(root) cout << "ID:" << root->id << endl;
+		}
+		return;
+	}
+
+	double d = kd_distance(root,query,N,verbose);
+	double d1 = root->get_data_at(level) - query->get_data_at(level);
+
+	if(result == NULL || d < best_dist) {
+		best_dist = d;
+		result = root;
+	}
+
+	level = (level + 1) % N;
+	if(d1 >= 0.0) {
+		nn_search(root->left,query,result,best_dist,N,level,verbose);
+	} else {
+		nn_search(root->right,query,result,best_dist,N,level,verbose);
+	}
+
+	if(fabs(d1) * alpha >= best_dist) return;
+
+	if(d1 >= 0.0) {
+		nn_search(root->right,query,result,best_dist,N,level,verbose);
+	} else {
+		nn_search(root->left,query,result,best_dist,N,level,verbose);
+	}
+}
+
+/**
  * A linear solution for NNS
  * @param data the database
  * @param query the input query

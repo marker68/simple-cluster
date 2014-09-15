@@ -99,6 +99,8 @@ public:
 
 	/**
 	 * Add an array of data
+	 * @param _d data to be inserted
+	 * @param N the size of the input
 	 */
 	void add_data(DataType * _d, size_t N) {
 		for(size_t i = 0; i < N; i++)
@@ -150,6 +152,8 @@ void make_random_tree(KDNode<double> *&, double **,
 		size_t, size_t, size_t, size_t, bool);
 void nn_search(KDNode<double> *, KDNode<double> *,
 		KDNode<double> *&, double&, size_t, size_t, bool);
+void ann_search(KDNode<double> *, KDNode<double> *,
+		KDNode<double> *&, double&, double, size_t, size_t, bool);
 void linear_search(double **, double *, size_t&,
 		double&, size_t, size_t, bool);
 

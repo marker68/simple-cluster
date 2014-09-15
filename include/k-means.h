@@ -41,9 +41,19 @@ typedef vector<int> i_vector;
  * Criteria
  */
 typedef struct {
+	double alpha;
 	double accuracy;
 	int iterations;
 } KmeansCriteria;
+
+/**
+ * Types of assigning methods
+ */
+enum class KmeansAssignType {
+	LINEAR,
+	NN_KD_TREE,
+	ANN_KD_TREE
+};
 
 /**
  * Types of the k-means seeding
@@ -60,7 +70,9 @@ void assign_to_closest_centroid(size_t, size_t, size_t, double **,
 		double **, vector<i_vector>&, bool);
 void assign_to_closest_centroid_2(size_t, size_t, size_t, double **,
 		double **, vector<i_vector>&, bool);
-void simple_k_means(KmeansType, size_t, size_t, KmeansCriteria,size_t,
+void assign_to_closest_centroid_3(size_t, size_t, size_t, double **,
+		double **, vector<i_vector>&, double, bool);
+void simple_k_means(KmeansType, KmeansAssignType, size_t, size_t, KmeansCriteria,size_t,
 		double **, double **&,
 		vector<i_vector>&, double **&, bool);
 double distortion(size_t d, size_t N, size_t k,

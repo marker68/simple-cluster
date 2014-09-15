@@ -8,4 +8,5 @@ Please add the TODOs in the following format:
 TODOs:
 
 * Implement k-NN search for KD-Tree[*]
+* ANN for KD-Tree[*]
 * Implement EM algorithm[marker68]: Some documents could be found at http://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm
