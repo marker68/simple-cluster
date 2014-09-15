@@ -195,7 +195,7 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 /**
  * After having a set of centroids,
  * we need to assign data into each cluster respectively.
- * This solution uses kd-tree search to assign data.
+ * This solution uses ANN kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
  * @param k the numbe rof clusters
@@ -230,6 +230,7 @@ void assign_to_closest_centroid_3(size_t d, size_t N, size_t k,
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
  * @param type the type of seeding method
+ * @param assign the type of assigning method
  * @param d the dimensions of the data
  * @param N the number of the data
  * @param k the number of clusters

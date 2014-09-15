@@ -7,6 +7,7 @@ var searchData=
   ['kdnode',['KDNode',['../classSimpleCluster_1_1KDNode.html',1,'SimpleCluster']]],
   ['kdtreetest',['KDTreeTest',['../classKDTreeTest.html',1,'']]],
   ['kmeans_5fpp_5fseeds',['kmeans_pp_seeds',['../namespaceSimpleCluster.html#ab1abfee692e0476f34c72ac18a68bf17',1,'SimpleCluster']]],
+  ['kmeansassigntype',['KmeansAssignType',['../namespaceSimpleCluster.html#a1ad2d6129171ff9a5ee57f48b5f3f6e1',1,'SimpleCluster']]],
   ['kmeanscriteria',['KmeansCriteria',['../structSimpleCluster_1_1KmeansCriteria.html',1,'SimpleCluster']]],
   ['kmeanstest',['KmeansTest',['../classKmeansTest.html',1,'']]],
   ['kmeanstype',['KmeansType',['../namespaceSimpleCluster.html#a8a8f57121b69a7b43575e4d6a53928e2',1,'SimpleCluster']]]

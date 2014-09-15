@@ -110,6 +110,11 @@ typedef vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:a1ad2d6129171ff9a5ee57f48b5f3f6e1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#a1ad2d6129171ff9a5ee57f48b5f3f6e1">KmeansAssignType</a> { <b>LINEAR</b>, 
+<b>NN_KD_TREE</b>, 
+<b>ANN_KD_TREE</b>
+ }</td></tr>
+<tr class="separator:a1ad2d6129171ff9a5ee57f48b5f3f6e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a8f57121b69a7b43575e4d6a53928e2"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#a8a8f57121b69a7b43575e4d6a53928e2">KmeansType</a> { <b>RANDOM_SEEDS</b>, 
 <b>KMEANS_PLUS_SEEDS</b>, 
 <b>USER_SEEDS</b>
@@ -126,8 +131,10 @@ Functions</h2></td></tr>
 <tr class="separator:aca74ac04af2feab94c72dcfe7a26fd9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af66bb5dcaeacf5d9a3856fbf793115d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#af66bb5dcaeacf5d9a3856fbf793115d5">assign_to_closest_centroid_2</a> (size_t, size_t, size_t, double **, double **, vector&lt; i_vector &gt; &amp;, bool)</td></tr>
 <tr class="separator:af66bb5dcaeacf5d9a3856fbf793115d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab12576ad548dd6a6d0ba093c3a637abb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#ab12576ad548dd6a6d0ba093c3a637abb">simple_k_means</a> (<a class="el" href="namespaceSimpleCluster.html#a8a8f57121b69a7b43575e4d6a53928e2">KmeansType</a>, size_t, size_t, <a class="el" href="structSimpleCluster_1_1KmeansCriteria.html">KmeansCriteria</a>, size_t, double **, double **&amp;, vector&lt; i_vector &gt; &amp;, double **&amp;, bool)</td></tr>
-<tr class="separator:ab12576ad548dd6a6d0ba093c3a637abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3eb269fbf66080b629b367254abe6b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#ae3eb269fbf66080b629b367254abe6b7">assign_to_closest_centroid_3</a> (size_t, size_t, size_t, double **, double **, vector&lt; i_vector &gt; &amp;, double, bool)</td></tr>
+<tr class="separator:ae3eb269fbf66080b629b367254abe6b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bc3ccce11e60fd93ee92a1c4095c337"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#a7bc3ccce11e60fd93ee92a1c4095c337">simple_k_means</a> (<a class="el" href="namespaceSimpleCluster.html#a8a8f57121b69a7b43575e4d6a53928e2">KmeansType</a>, <a class="el" href="namespaceSimpleCluster.html#a1ad2d6129171ff9a5ee57f48b5f3f6e1">KmeansAssignType</a>, size_t, size_t, <a class="el" href="structSimpleCluster_1_1KmeansCriteria.html">KmeansCriteria</a>, size_t, double **, double **&amp;, vector&lt; i_vector &gt; &amp;, double **&amp;, bool)</td></tr>
+<tr class="separator:a7bc3ccce11e60fd93ee92a1c4095c337"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b5ed423662d1968e1af5262812d7ca8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#a2b5ed423662d1968e1af5262812d7ca8">distortion</a> (size_t d, size_t N, size_t k, double **, double **, vector&lt; i_vector &gt;, bool)</td></tr>
 <tr class="separator:a2b5ed423662d1968e1af5262812d7ca8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35cd22686dbc96142da1962ac88caaed"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#a35cd22686dbc96142da1962ac88caaed">kd_distance</a> (<a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *, <a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *, size_t, bool)</td></tr>
@@ -140,6 +147,8 @@ Functions</h2></td></tr>
 <tr class="separator:a367a8fc15d6fd44d0c898dfc6bf6b409"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a056ad815fcca85e233100116f5a4b2e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#a056ad815fcca85e233100116f5a4b2e2">nn_search</a> (<a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *, <a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *, <a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *&amp;, double &amp;, size_t, size_t, bool)</td></tr>
 <tr class="separator:a056ad815fcca85e233100116f5a4b2e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d8ac8637aac62697d37d355d76cc678"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#a4d8ac8637aac62697d37d355d76cc678">ann_search</a> (<a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *, <a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *, <a class="el" href="classSimpleCluster_1_1KDNode.html">KDNode</a>&lt; double &gt; *&amp;, double &amp;, double, size_t, size_t, bool)</td></tr>
+<tr class="separator:a4d8ac8637aac62697d37d355d76cc678"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2d8bf0284b8790eaf448766b3f17153"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSimpleCluster.html#ad2d8bf0284b8790eaf448766b3f17153">linear_search</a> (double **, double *, size_t &amp;, double &amp;, size_t, size_t, bool)</td></tr>
 <tr class="separator:ad2d8bf0284b8790eaf448766b3f17153"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af64e6d198c73f553404f1202e0b818eb"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
@@ -197,6 +206,27 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Cluster methods' space</p>
 <p>The main namespace </p>
 </div><h2 class="groupheader">Enumeration Type Documentation</h2>
+<a class="anchor" id="a1ad2d6129171ff9a5ee57f48b5f3f6e1"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespaceSimpleCluster.html#a1ad2d6129171ff9a5ee57f48b5f3f6e1">SimpleCluster::KmeansAssignType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Types of assigning methods </p>
+
+</div>
+</div>
 <a class="anchor" id="a8a8f57121b69a7b43575e4d6a53928e2"></a>
 <div class="memitem">
 <div class="memproto">
@@ -219,6 +249,82 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="a4d8ac8637aac62697d37d355d76cc678"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SimpleCluster::ann_search </td>
+          <td>(</td>
+          <td class="paramtype">KDNode&lt; double &gt; *&#160;</td>
+          <td class="paramname"><em>root</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">KDNode&lt; double &gt; *&#160;</td>
+          <td class="paramname"><em>query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">KDNode&lt; double &gt; *&amp;&#160;</td>
+          <td class="paramname"><em>result</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>best_dist</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>alpha</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>level</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>verbose</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Search for the approximate nearest neighbor in the kd-tree </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">root</td><td>the root node of the tree </td></tr>
+    <tr><td class="paramname">query</td><td>the data of the query </td></tr>
+    <tr><td class="paramname">result</td><td>the nearest neighbor </td></tr>
+    <tr><td class="paramname">best_dist</td><td>the best distance </td></tr>
+    <tr><td class="paramname">alpha</td><td>the parameter that set the quality of nearest neighbor </td></tr>
+    <tr><td class="paramname">N</td><td>the size of the input </td></tr>
+    <tr><td class="paramname">level</td><td>the cut-plane level </td></tr>
+    <tr><td class="paramname">verbose</td><td>for debugging </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="aca74ac04af2feab94c72dcfe7a26fd9f"></a>
 <div class="memitem">
 <div class="memproto">
@@ -342,6 +448,81 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>After having a set of centroids, we need to assign data into each cluster respectively. This solution uses kd-tree search to assign data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">d</td><td>the dimensions of the data </td></tr>
+    <tr><td class="paramname">N</td><td>the number of the data </td></tr>
+    <tr><td class="paramname">k</td><td>the numbe rof clusters </td></tr>
+    <tr><td class="paramname">data</td><td>input data </td></tr>
+    <tr><td class="paramname">centroids</td><td>the centroids </td></tr>
+    <tr><td class="paramname">clusters</td><td>the clusters </td></tr>
+    <tr><td class="paramname">verbose</td><td>for debugging </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ae3eb269fbf66080b629b367254abe6b7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SimpleCluster::assign_to_closest_centroid_3 </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>d</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double **&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double **&#160;</td>
+          <td class="paramname"><em>centroids</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">vector&lt; i_vector &gt; &amp;&#160;</td>
+          <td class="paramname"><em>clusters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>alpha</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>verbose</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>After having a set of centroids, we need to assign data into each cluster respectively. This solution uses ANN kd-tree search to assign data. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">d</td><td>the dimensions of the data </td></tr>
@@ -1703,7 +1884,7 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ab12576ad548dd6a6d0ba093c3a637abb"></a>
+<a class="anchor" id="a7bc3ccce11e60fd93ee92a1c4095c337"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1712,6 +1893,12 @@ template&lt;typename DataType &gt; </div>
           <td>(</td>
           <td class="paramtype">KmeansType&#160;</td>
           <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">KmeansAssignType&#160;</td>
+          <td class="paramname"><em>assign</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1778,6 +1965,7 @@ template&lt;typename DataType &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">type</td><td>the type of seeding method </td></tr>
+    <tr><td class="paramname">assign</td><td>the type of assigning method </td></tr>
     <tr><td class="paramname">d</td><td>the dimensions of the data </td></tr>
     <tr><td class="paramname">N</td><td>the number of the data </td></tr>
     <tr><td class="paramname">k</td><td>the number of clusters </td></tr>
@@ -1845,7 +2033,7 @@ template&lt;typename DataType &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Sep 13 2014 20:25:26 for SIMPLE CLUSTERS by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Sep 15 2014 23:40:21 for SIMPLE CLUSTERS by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

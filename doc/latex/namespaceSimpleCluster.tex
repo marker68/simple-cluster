@@ -20,6 +20,11 @@ class \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}
 \subsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
+enum \hyperlink{namespaceSimpleCluster_a1ad2d6129171ff9a5ee57f48b5f3f6e1}{Kmeans\-Assign\-Type} \{ {\bfseries L\-I\-N\-E\-A\-R}, 
+{\bfseries N\-N\-\_\-\-K\-D\-\_\-\-T\-R\-E\-E}, 
+{\bfseries A\-N\-N\-\_\-\-K\-D\-\_\-\-T\-R\-E\-E}
+ \}
+\item 
 enum \hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\-Type} \{ {\bfseries R\-A\-N\-D\-O\-M\-\_\-\-S\-E\-E\-D\-S}, 
 {\bfseries K\-M\-E\-A\-N\-S\-\_\-\-P\-L\-U\-S\-\_\-\-S\-E\-E\-D\-S}, 
 {\bfseries U\-S\-E\-R\-\_\-\-S\-E\-E\-D\-S}
@@ -36,7 +41,9 @@ void \hyperlink{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}{assign
 \item 
 void \hyperlink{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}{assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-2} (size\-\_\-t, size\-\_\-t, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\-\_\-vector $>$ \&, bool)
 \item 
-void \hyperlink{namespaceSimpleCluster_ab12576ad548dd6a6d0ba093c3a637abb}{simple\-\_\-k\-\_\-means} (\hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\-Type}, size\-\_\-t, size\-\_\-t, \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\-Criteria}, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$\&, vector$<$ i\-\_\-vector $>$ \&, double $\ast$$\ast$\&, bool)
+void \hyperlink{namespaceSimpleCluster_ae3eb269fbf66080b629b367254abe6b7}{assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-3} (size\-\_\-t, size\-\_\-t, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\-\_\-vector $>$ \&, double, bool)
+\item 
+void \hyperlink{namespaceSimpleCluster_a7bc3ccce11e60fd93ee92a1c4095c337}{simple\-\_\-k\-\_\-means} (\hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\-Type}, \hyperlink{namespaceSimpleCluster_a1ad2d6129171ff9a5ee57f48b5f3f6e1}{Kmeans\-Assign\-Type}, size\-\_\-t, size\-\_\-t, \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\-Criteria}, size\-\_\-t, double $\ast$$\ast$, double $\ast$$\ast$\&, vector$<$ i\-\_\-vector $>$ \&, double $\ast$$\ast$\&, bool)
 \item 
 double \hyperlink{namespaceSimpleCluster_a2b5ed423662d1968e1af5262812d7ca8}{distortion} (size\-\_\-t d, size\-\_\-t N, size\-\_\-t k, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\-\_\-vector $>$, bool)
 \item 
@@ -49,6 +56,8 @@ void \hyperlink{namespaceSimpleCluster_a9b7733dc2edec70ad323beb9f3a9143e}{make\-
 void \hyperlink{namespaceSimpleCluster_a367a8fc15d6fd44d0c898dfc6bf6b409}{make\-\_\-random\-\_\-tree} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$\&, double $\ast$$\ast$, size\-\_\-t, size\-\_\-t, size\-\_\-t, size\-\_\-t, bool)
 \item 
 void \hyperlink{namespaceSimpleCluster_a056ad815fcca85e233100116f5a4b2e2}{nn\-\_\-search} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$\&, double \&, size\-\_\-t, size\-\_\-t, bool)
+\item 
+void \hyperlink{namespaceSimpleCluster_a4d8ac8637aac62697d37d355d76cc678}{ann\-\_\-search} (\hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\-D\-Node}$<$ double $>$ $\ast$\&, double \&, double, size\-\_\-t, size\-\_\-t, bool)
 \item 
 void \hyperlink{namespaceSimpleCluster_ad2d8bf0284b8790eaf448766b3f17153}{linear\-\_\-search} (double $\ast$$\ast$, double $\ast$, size\-\_\-t \&, double \&, size\-\_\-t, size\-\_\-t, bool)
 \item 
@@ -98,12 +107,48 @@ Cluster methods' space
 The main namespace 
 
 \subsection{Enumeration Type Documentation}
-\hypertarget{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{\index{Simple\-Cluster@{Simple\-Cluster}!Kmeans\-Type@{Kmeans\-Type}}
+\hypertarget{namespaceSimpleCluster_a1ad2d6129171ff9a5ee57f48b5f3f6e1}{\index{Simple\-Cluster@{Simple\-Cluster}!Kmeans\-Assign\-Type@{Kmeans\-Assign\-Type}}
+\index{Kmeans\-Assign\-Type@{Kmeans\-Assign\-Type}!SimpleCluster@{Simple\-Cluster}}
+\subsubsection[{Kmeans\-Assign\-Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Simple\-Cluster\-::\-Kmeans\-Assign\-Type}\hspace{0.3cm}{\ttfamily [strong]}}}\label{namespaceSimpleCluster_a1ad2d6129171ff9a5ee57f48b5f3f6e1}
+Types of assigning methods \hypertarget{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{\index{Simple\-Cluster@{Simple\-Cluster}!Kmeans\-Type@{Kmeans\-Type}}
 \index{Kmeans\-Type@{Kmeans\-Type}!SimpleCluster@{Simple\-Cluster}}
 \subsubsection[{Kmeans\-Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Simple\-Cluster\-::\-Kmeans\-Type}\hspace{0.3cm}{\ttfamily [strong]}}}\label{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}
 Types of the k-\/means seeding 
 
 \subsection{Function Documentation}
+\hypertarget{namespaceSimpleCluster_a4d8ac8637aac62697d37d355d76cc678}{\index{Simple\-Cluster@{Simple\-Cluster}!ann\-\_\-search@{ann\-\_\-search}}
+\index{ann\-\_\-search@{ann\-\_\-search}!SimpleCluster@{Simple\-Cluster}}
+\subsubsection[{ann\-\_\-search}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Cluster\-::ann\-\_\-search (
+\begin{DoxyParamCaption}
+\item[{K\-D\-Node$<$ double $>$ $\ast$}]{root, }
+\item[{K\-D\-Node$<$ double $>$ $\ast$}]{query, }
+\item[{K\-D\-Node$<$ double $>$ $\ast$\&}]{result, }
+\item[{double \&}]{best\-\_\-dist, }
+\item[{double}]{alpha, }
+\item[{size\-\_\-t}]{N, }
+\item[{size\-\_\-t}]{level, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a4d8ac8637aac62697d37d355d76cc678}
+Search for the approximate nearest neighbor in the kd-\/tree 
+\begin{DoxyParams}{Parameters}
+{\em root} & the root node of the tree \\
+\hline
+{\em query} & the data of the query \\
+\hline
+{\em result} & the nearest neighbor \\
+\hline
+{\em best\-\_\-dist} & the best distance \\
+\hline
+{\em alpha} & the parameter that set the quality of nearest neighbor \\
+\hline
+{\em N} & the size of the input \\
+\hline
+{\em level} & the cut-\/plane level \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
 \hypertarget{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}{\index{Simple\-Cluster@{Simple\-Cluster}!assign\-\_\-to\-\_\-closest\-\_\-centroid@{assign\-\_\-to\-\_\-closest\-\_\-centroid}}
 \index{assign\-\_\-to\-\_\-closest\-\_\-centroid@{assign\-\_\-to\-\_\-closest\-\_\-centroid}!SimpleCluster@{Simple\-Cluster}}
 \subsubsection[{assign\-\_\-to\-\_\-closest\-\_\-centroid}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Cluster\-::assign\-\_\-to\-\_\-closest\-\_\-centroid (
@@ -148,6 +193,37 @@ After having a set of centroids, we need to assign data into each cluster respec
 \end{DoxyParamCaption}
 )}}\label{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}
 After having a set of centroids, we need to assign data into each cluster respectively. This solution uses kd-\/tree search to assign data. 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_ae3eb269fbf66080b629b367254abe6b7}{\index{Simple\-Cluster@{Simple\-Cluster}!assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-3@{assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-3}}
+\index{assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-3@{assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-3}!SimpleCluster@{Simple\-Cluster}}
+\subsubsection[{assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-3}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Cluster\-::assign\-\_\-to\-\_\-closest\-\_\-centroid\-\_\-3 (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{d, }
+\item[{size\-\_\-t}]{N, }
+\item[{size\-\_\-t}]{k, }
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$}]{centroids, }
+\item[{vector$<$ i\-\_\-vector $>$ \&}]{clusters, }
+\item[{double}]{alpha, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_ae3eb269fbf66080b629b367254abe6b7}
+After having a set of centroids, we need to assign data into each cluster respectively. This solution uses A\-N\-N kd-\/tree search to assign data. 
 \begin{DoxyParams}{Parameters}
 {\em d} & the dimensions of the data \\
 \hline
@@ -763,11 +839,12 @@ Create random seeds for k-\/means
 {\em verbose} & for debugging \\
 \hline
 \end{DoxyParams}
-\hypertarget{namespaceSimpleCluster_ab12576ad548dd6a6d0ba093c3a637abb}{\index{Simple\-Cluster@{Simple\-Cluster}!simple\-\_\-k\-\_\-means@{simple\-\_\-k\-\_\-means}}
+\hypertarget{namespaceSimpleCluster_a7bc3ccce11e60fd93ee92a1c4095c337}{\index{Simple\-Cluster@{Simple\-Cluster}!simple\-\_\-k\-\_\-means@{simple\-\_\-k\-\_\-means}}
 \index{simple\-\_\-k\-\_\-means@{simple\-\_\-k\-\_\-means}!SimpleCluster@{Simple\-Cluster}}
 \subsubsection[{simple\-\_\-k\-\_\-means}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Cluster\-::simple\-\_\-k\-\_\-means (
 \begin{DoxyParamCaption}
 \item[{Kmeans\-Type}]{type, }
+\item[{Kmeans\-Assign\-Type}]{assign, }
 \item[{size\-\_\-t}]{N, }
 \item[{size\-\_\-t}]{k, }
 \item[{Kmeans\-Criteria}]{criteria, }
@@ -778,10 +855,12 @@ Create random seeds for k-\/means
 \item[{double $\ast$$\ast$\&}]{seeds, }
 \item[{bool}]{verbose}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_ab12576ad548dd6a6d0ba093c3a637abb}
+)}}\label{namespaceSimpleCluster_a7bc3ccce11e60fd93ee92a1c4095c337}
 The k-\/means method\-: a description of the method can be found at \href{http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html}{\tt http\-://home.\-deib.\-polimi.\-it/matteucc/\-Clustering/tutorial\-\_\-html/kmeans.\-html} 
 \begin{DoxyParams}{Parameters}
 {\em type} & the type of seeding method \\
+\hline
+{\em assign} & the type of assigning method \\
 \hline
 {\em d} & the dimensions of the data \\
 \hline
