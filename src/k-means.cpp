@@ -177,18 +177,17 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 	make_balanced_tree(root,centroids,k,d,0,0,verbose);
 	if(root == NULL) return;
 
-	KDNode<double> query;
+	KDNode<double> query(d);
 
 	for(i = 0; i < N; i++) {
 		KDNode<double> * nn = NULL;
 		double min = DBL_MAX;
-		query.add_data(data[i],d);
+		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
 		nn_search(root,&query,nn,min,d,0,verbose);
 		tmp = nn->id;
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
-		query.clear_data();
 	}
 }
 
@@ -211,18 +210,17 @@ void assign_to_closest_centroid_3(size_t d, size_t N, size_t k,
 	make_random_tree(root,centroids,k,d,0,0,verbose);
 	if(root == NULL) return;
 
-	KDNode<double> query;
+	KDNode<double> query(d);
 
 	for(i = 0; i < N; i++) {
 		KDNode<double> * nn = NULL;
 		double min = DBL_MAX;
-		query.add_data(data[i],d);
+		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
 		ann_search(root,&query,nn,min,alpha,d,0,verbose);
 		tmp = nn->id;
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
-		query.clear_data();
 	}
 }
 

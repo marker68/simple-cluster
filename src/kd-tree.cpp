@@ -36,14 +36,21 @@ namespace SimpleCluster {
 /**
  * Calculate the distances between two KDNode
  * @param _a, _b the input KDNode
- * @param N the size of the vector
  * @param verbose Just for debugging
  * @return the distance between two KDNode if no error occurs, otherwise return DBL_MAX
  */
-double kd_distance(KDNode<double> * _a, KDNode<double> * _b, size_t N, bool verbose) {
-//	double tmp = 0.0, res = 0.0;
-	double * a = _a->get_data_array();
-	double * b = _b->get_data_array();
+double kd_distance(KDNode<double> * _a, KDNode<double> * _b, bool verbose) {
+	double * a = _a->get_data();
+	double * b = _b->get_data();
+	size_t N = _a->size();
+	if(N != _b->size()) {
+		if(verbose) {
+			cerr << "Dimension are different" << endl;
+			cerr << "a has " << N << " dimensions" << endl;
+			cerr << "b has " << _b->size() << " dimensions" << endl;
+		}
+		exit(1);
+	}
 	return distance(a,b,N);
 }
 
@@ -144,35 +151,39 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
 		KDNode<double> *& result,
 		double& best_dist, size_t N, size_t level, bool verbose) {
 	if(best_dist == 0.0) return;
-	if(root == NULL || root->get_size() != N) {
+	if(root == NULL || root->size() != N) {
 		if(verbose) {
 			cout << "Reached a leaf" << endl;
 			if(root) cout << "ID:" << root->id << endl;
 		}
 		return;
 	}
+	if(verbose)
+		cout << "Visting node " << root->id << " with best is " << best_dist << endl;
 
-	double d = kd_distance(root,query,N,verbose);
-	double d1 = root->get_data_at(level) - query->get_data_at(level);
+	double d = kd_distance(root,query,verbose);
+	double d1 = root->at(level) - query->at(level);
 
 	if(result == NULL || d < best_dist) {
 		best_dist = d;
 		result = root;
 	}
 
-	level = (level + 1) % N;
+	size_t l = (level + 1) % N;
 	if(d1 >= 0.0) {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,l,verbose);
 	} else {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,l,verbose);
 	}
 
 	if(fabs(d1) >= best_dist) return;
+	if(verbose)
+		cout << "Right branch of node " << root->id << endl;
 
 	if(d1 >= 0.0) {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,l,verbose);
 	} else {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,l,verbose);
 	}
 }
 
@@ -191,16 +202,18 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
 		KDNode<double> *& result, double& best_dist,
 		double alpha, size_t N, size_t level, bool verbose) {
 	if(best_dist == 0.0) return;
-	if(root == NULL || root->get_size() != N) {
+	if(root == NULL || root->size() != N) {
 		if(verbose) {
 			cout << "Reached a leaf" << endl;
 			if(root) cout << "ID:" << root->id << endl;
 		}
 		return;
 	}
+	if(verbose)
+		cout << "Visting node " << root->id << endl;
 
-	double d = kd_distance(root,query,N,verbose);
-	double d1 = root->get_data_at(level) - query->get_data_at(level);
+	double d = kd_distance(root,query,verbose);
+	double d1 = root->at(level) - query->at(level);
 
 	if(result == NULL || d < best_dist) {
 		best_dist = d;
@@ -214,7 +227,7 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
 		nn_search(root->right,query,result,best_dist,N,level,verbose);
 	}
 
-	if(fabs(d1) * alpha >= best_dist) return;
+	if(fabs(d1) * alpha > best_dist) return;
 
 	if(d1 >= 0.0) {
 		nn_search(root->right,query,result,best_dist,N,level,verbose);
