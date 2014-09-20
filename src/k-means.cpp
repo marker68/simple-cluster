@@ -174,7 +174,7 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
-	make_random_tree(root,centroids,k,d,0,0,verbose);
+	make_random_tree(root,centroids,k,d,0,verbose);
 	if(root == nullptr) return;
 
 	KDNode<double> query(d);
@@ -182,9 +182,10 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 	for(i = 0; i < N; i++) {
 		KDNode<double> * nn = nullptr;
 		double min = DBL_MAX;
+		size_t visited = 0;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
-		nn_search(root,&query,nn,min,d,0,verbose);
+		nn_search(root,&query,nn,min,d,0,visited,verbose);
 		tmp = nn->id;
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
@@ -207,7 +208,7 @@ void assign_to_closest_centroid_3(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, double alpha, bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
-	make_random_tree(root,centroids,k,d,0,0,verbose);
+	make_random_tree(root,centroids,k,d,0,verbose);
 	if(root == nullptr) return;
 
 	KDNode<double> query(d);
@@ -215,9 +216,10 @@ void assign_to_closest_centroid_3(size_t d, size_t N, size_t k,
 	for(i = 0; i < N; i++) {
 		KDNode<double> * nn = nullptr;
 		double min = DBL_MAX;
+		size_t visited = 0;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
-		ann_search(root,&query,nn,min,alpha,d,0,verbose);
+		ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
 		tmp = nn->id;
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
@@ -305,15 +307,13 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 		copy_array_2<double>(c_tmp,centroids,k,d);
 		i++;
 		if(i >= iters ||
-				(e - e_prev < error && e - e_prev > -error)) break;
-		//				(e < error && e > -error)) break;
+				(e - e_prev < error && e - e_prev > -error) ||
+				(e < error && e > -error)) break;
 	}
 
 	if(verbose)
 		cout << "Finished clustering with error is " <<
 		e << " after " << i << " iterations." << endl;
-
-//	dealloc_array_2<double>(c_tmp,k);
 }
 
 /**

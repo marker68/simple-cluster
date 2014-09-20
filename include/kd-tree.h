@@ -82,9 +82,6 @@ public:
 	 * The destructor
 	 */
 	virtual ~KDNode() {
-		::delete data;
-		::delete left;
-		::delete right;
 	}
 
 	/**
@@ -133,11 +130,11 @@ size_t find_median(double **, size_t, size_t, size_t, bool);
 void make_balanced_tree(KDNode<double> *&, double **,
 		size_t, size_t, size_t, size_t, bool);
 void make_random_tree(KDNode<double> *&, double **,
-		size_t, size_t, size_t, size_t, bool);
+		size_t, size_t, size_t, bool);
 void nn_search(KDNode<double> *, KDNode<double> *,
-		KDNode<double> *&, double&, size_t, size_t, bool);
+		KDNode<double> *&, double&, size_t, size_t, size_t&, bool);
 void ann_search(KDNode<double> *, KDNode<double> *,
-		KDNode<double> *&, double&, double, size_t, size_t, bool);
+		KDNode<double> *&, double&, double, size_t, size_t, size_t&, bool);
 void linear_search(double **, double *, size_t&,
 		double&, size_t, size_t, bool);
 
@@ -153,6 +150,9 @@ void linear_search(double **, double *, size_t&,
 template<typename DataType>
 void kd_insert(KDNode<DataType> *& root, DataType * _data,
 		size_t N, size_t level, size_t _id, bool verbose) {
+	// Pre-check
+	if(N <= 0) return;
+	level %= N;
 	if(root == nullptr) {
 		root = ::new KDNode<DataType>(N);
 		root->add_data(_data);

@@ -61,7 +61,7 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 10000;
+		N = 1000;
 		d = 128;
 		k = 256;
 		int i, j;
@@ -165,15 +165,31 @@ TEST_F(KmeansTest, DISABLED_test5) {
 	assign_to_closest_centroid_3(d,N,k,data,seeds,clusters,100.0,false);
 }
 
-TEST_F(KmeansTest, DISABLED_test6) {
+TEST_F(KmeansTest, test6) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::ANN_KD_TREE,N,k,criteria,d,
+			data,centroids,clusters,seeds,false);
+	cout << "ANN: Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
+}
+
+TEST_F(KmeansTest, test7) {
 	KmeansCriteria criteria = {2.0,1.0,100};
 	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::NN_KD_TREE,N,k,criteria,d,
 			data,centroids,clusters,seeds,false);
-	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
+	cout << "NN: Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
 }
 
-TEST_F(KmeansTest, test7) {
+TEST_F(KmeansTest, test8) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::LINEAR,N,k,criteria,d,
+			data,centroids,clusters,seeds,false);
+	cout << "LINEAR: Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
+}
+
+TEST_F(KmeansTest, test9) {
 	Mat _data;
 	convert_array_to_mat(data,_data,N,d);
 	_data.convertTo(_data,CV_32F);

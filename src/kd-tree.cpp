@@ -107,7 +107,7 @@ void make_balanced_tree(KDNode<double> *& root, double ** data,
 	}
 	size_t id = find_median(data,M,N,level,verbose);
 
-	kd_insert<double>(root,data[id],N,level,id+base,verbose);
+	kd_insert<double>(root,data[id],N,0,id+base,verbose);
 	make_balanced_tree(root,data,id,N,(level+1)%N,base,verbose);
 	if(id < M - 1) make_balanced_tree(root,&data[id+1],
 			M - id - 1,N,(level+1)%N,base+id+1,verbose);
@@ -123,7 +123,7 @@ void make_balanced_tree(KDNode<double> *& root, double ** data,
  * @param verbose just for debugging
  */
 void make_random_tree(KDNode<double> *& root, double ** data,
-		size_t M, size_t N, size_t level,size_t base, bool verbose) {
+		size_t M, size_t N, size_t base, bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
@@ -131,10 +131,10 @@ void make_random_tree(KDNode<double> *& root, double ** data,
 	}
 	size_t id = M >> 1;
 
-	kd_insert<double>(root,data[id],N,level,id+base,verbose);
-	make_random_tree(root,data,id,N,(level+1)%N,base,verbose);
+	kd_insert<double>(root,data[id],N,0,id+base,verbose);
+	make_random_tree(root,data,id,N,base,verbose);
 	if(id < M - 1) make_random_tree(root,&data[id+1],
-			M - id - 1,N,(level+1)%N,base+id+1,verbose);
+			M - id - 1,N,base+id+1,verbose);
 }
 
 /**
@@ -145,11 +145,13 @@ void make_random_tree(KDNode<double> *& root, double ** data,
  * @param best_dist the best distance
  * @param N the size of the input
  * @param level the cut-plane level
+ * @param visited (for debugging) to detect how many nodes are visited
  * @param verbose for debugging
  */
 void nn_search(KDNode<double> * root, KDNode<double> * query,
 		KDNode<double> *& result,
-		double& best_dist, size_t N, size_t level, bool verbose) {
+		double& best_dist, size_t N,
+		size_t level, size_t& visited, bool verbose) {
 	if(best_dist == 0.0) return;
 	if(root == nullptr || root->size() != N) {
 		if(verbose) {
@@ -163,6 +165,7 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
 
 	double d = kd_distance(root,query,verbose);
 	double d1 = root->at(level) - query->at(level);
+	visited++;
 
 	if(result == nullptr || d < best_dist) {
 		best_dist = d;
@@ -171,9 +174,9 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
 
 	size_t l = (level + 1) % N;
 	if(d1 >= 0.0) {
-		nn_search(root->left,query,result,best_dist,N,l,verbose);
+		nn_search(root->left,query,result,best_dist,N,l,visited,verbose);
 	} else {
-		nn_search(root->right,query,result,best_dist,N,l,verbose);
+		nn_search(root->right,query,result,best_dist,N,l,visited,verbose);
 	}
 
 	if(fabs(d1) >= best_dist) return;
@@ -181,9 +184,9 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
 		cout << "Right branch of node " << root->id << endl;
 
 	if(d1 >= 0.0) {
-		nn_search(root->right,query,result,best_dist,N,l,verbose);
+		nn_search(root->right,query,result,best_dist,N,l,visited,verbose);
 	} else {
-		nn_search(root->left,query,result,best_dist,N,l,verbose);
+		nn_search(root->left,query,result,best_dist,N,l,visited,verbose);
 	}
 }
 
@@ -196,11 +199,12 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
  * @param alpha the parameter that set the quality of nearest neighbor
  * @param N the size of the input
  * @param level the cut-plane level
+ * @param visited (for debugging) to detect how many nodes are visited
  * @param verbose for debugging
  */
 void ann_search(KDNode<double> * root, KDNode<double> * query,
 		KDNode<double> *& result, double& best_dist,
-		double alpha, size_t N, size_t level, bool verbose) {
+		double alpha, size_t N, size_t level, size_t& visited, bool verbose) {
 	if(best_dist == 0.0) return;
 	if(root == nullptr || root->size() != N) {
 		if(verbose) {
@@ -214,6 +218,7 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
 
 	double d = kd_distance(root,query,verbose);
 	double d1 = root->at(level) - query->at(level);
+	visited++;
 
 	if(result == nullptr || d < best_dist) {
 		best_dist = d;
@@ -222,17 +227,17 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
 
 	level = (level + 1) % N;
 	if(d1 >= 0.0) {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,level,visited,verbose);
 	} else {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,level,visited,verbose);
 	}
 
 	if(fabs(d1) * alpha > best_dist) return;
 
 	if(d1 >= 0.0) {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,level,visited,verbose);
 	} else {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,level,visited,verbose);
 	}
 }
 
