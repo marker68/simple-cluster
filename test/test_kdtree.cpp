@@ -43,7 +43,7 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 100000;
+		N = 1000;
 		d = 2;
 		int i, j;
 
@@ -98,7 +98,7 @@ TEST_F(KDTreeTest, DISABLED_test1) {
 }
 
 TEST_F(KDTreeTest, DISABLED_test2) {
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	double d[][2] = {{2.0,3.0},{4.0,3.0},{7.0,9.0}};
 	for(int i = 0; i < 3; i++) {
 		kd_insert(root,d[i],2,0,i,false);
@@ -118,54 +118,52 @@ TEST_F(KDTreeTest, DISABLED_test3) {
 }
 
 TEST_F(KDTreeTest, DISABLED_test4) {
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	make_balanced_tree(root,data,N,d,0,0,false);
 	kd_travel(root,d,0);
 }
 
 TEST_F(KDTreeTest, DISABLED_test5) {
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	make_random_tree(root,data,N,d,0,0,false);
 	kd_travel(root,d,0);
 }
 
 TEST_F(KDTreeTest, test6) {
 	size_t loop = 1;
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	make_random_tree(root,data,N,d,0,0,false);
 	//	kd_travel<double>(root,d,0);
 	KDNode<double> * query = ::new KDNode<double>(d);
 	size_t pos = 10;
 	query->add_data(data[pos]);
 	for(int i = 0; i < loop; i++) {
-		KDNode<double> * result = NULL;
+		KDNode<double> * result = nullptr;
 		double best_dist = DBL_MAX;
 		nn_search(root,query,result,best_dist,d,0,false);
-		//		EXPECT_EQ(0.0,best_dist);
-		cout << "best distances " << best_dist << endl;
+		EXPECT_EQ(0.0,best_dist);
 	}
 }
 
 TEST_F(KDTreeTest, DISABLED_test7) {
 	size_t loop = 1;
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	make_balanced_tree(root,data,N,d,0,0,false);
 	//	kd_travel<double>(root,d,0);
 	KDNode<double> * query = ::new KDNode<double>(d);
 	size_t pos = 10;
 	query->add_data(data[pos]);
 	for(int i = 0; i < loop; i++) {
-		KDNode<double> * result = NULL;
+		KDNode<double> * result = nullptr;
 		double best_dist = DBL_MAX;
 		nn_search(root,query,result,best_dist,d,0,false);
-		//		EXPECT_EQ(0.0,best_dist);
-		cout << "best distances " << best_dist << endl;
+		EXPECT_EQ(0.0,best_dist);
 	}
 }
 
 TEST_F(KDTreeTest, test8) {
 	size_t loop = 1;
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	make_balanced_tree(root,data,N,d,0,0,false);
 	size_t pos = 10;
 	for(int i = 0; i < loop; i++) {
@@ -173,7 +171,6 @@ TEST_F(KDTreeTest, test8) {
 		double best_dist = DBL_MAX;
 		linear_search(data,data[pos],best,best_dist,N,d,true);
 		EXPECT_EQ(0.0,best_dist);
-		cout << "best distances " << best_dist << endl;
 	}
 }
 
@@ -196,14 +193,14 @@ TEST_F(KDTreeTest, DISABLED_test9) {
 
 TEST_F(KDTreeTest, test10) {
 	size_t loop = 1;
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	make_random_tree(root,data,N,d,0,0,false);
 	//	kd_travel<double>(root,d,0);
 	KDNode<double> * query = ::new KDNode<double>(d);
 	size_t pos = 10;
 	query->add_data(data[pos]);
 	for(int i = 0; i < loop; i++) {
-		KDNode<double> * result = NULL;
+		KDNode<double> * result = nullptr;
 		double best_dist = DBL_MAX;
 		ann_search(root,query,result,best_dist,1.5,d,0,false);
 		cout << "best distances " << best_dist << endl;

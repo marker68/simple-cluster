@@ -107,7 +107,7 @@ bool init_vector(vector<DataType>& vec, size_t N) {
  */
 template<typename DataType>
 bool copy_array(DataType * from, DataType *& to, size_t N) {
-	if(from == NULL || to == NULL)
+	if(from == nullptr || to == nullptr)
 		return false;
 	for(size_t i = 0; i < N; i++) {
 		to[i] = from[i];
@@ -125,7 +125,7 @@ bool copy_array(DataType * from, DataType *& to, size_t N) {
  */
 template<typename DataType>
 bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
-	if(from == NULL || to == NULL)
+	if(from == nullptr || to == nullptr)
 		return false;
 	for(size_t i = 0; i < M; i++) {
 		if(!copy_array<DataType>(from[i],to[i],N)) {

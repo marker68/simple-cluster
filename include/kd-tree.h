@@ -62,7 +62,7 @@ public:
 		dimension = _d;
 		data = (DataType *)::operator new(_d * sizeof(DataType));
 		id = 0;
-		left = right = NULL;
+		left = right = nullptr;
 	}
 
 	/**
@@ -153,7 +153,7 @@ void linear_search(double **, double *, size_t&,
 template<typename DataType>
 void kd_insert(KDNode<DataType> *& root, DataType * _data,
 		size_t N, size_t level, size_t _id, bool verbose) {
-	if(root == NULL) {
+	if(root == nullptr) {
 		root = ::new KDNode<DataType>(N);
 		root->add_data(_data);
 		root->id = _id;
@@ -183,7 +183,7 @@ void kd_insert(KDNode<DataType> *& root, DataType * _data,
  */
 template<typename DataType>
 void kd_travel(KDNode<DataType> * root, size_t N, size_t level) {
-	if(root == NULL) {
+	if(root == nullptr) {
 		cout << "Reached a leaf at level " << level << endl;
 		return;
 	}

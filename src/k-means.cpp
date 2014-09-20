@@ -164,7 +164,7 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
  * This solution uses kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
- * @param k the numbe rof clusters
+ * @param k the number of clusters
  * @param data input data
  * @param centroids the centroids
  * @param clusters the clusters
@@ -173,14 +173,14 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
 void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, tmp;
-	KDNode<double> * root = NULL;
-	make_balanced_tree(root,centroids,k,d,0,0,verbose);
-	if(root == NULL) return;
+	KDNode<double> * root = nullptr;
+	make_random_tree(root,centroids,k,d,0,0,verbose);
+	if(root == nullptr) return;
 
 	KDNode<double> query(d);
 
 	for(i = 0; i < N; i++) {
-		KDNode<double> * nn = NULL;
+		KDNode<double> * nn = nullptr;
 		double min = DBL_MAX;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
@@ -206,14 +206,14 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
 void assign_to_closest_centroid_3(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, double alpha, bool verbose) {
 	size_t i, tmp;
-	KDNode<double> * root = NULL;
+	KDNode<double> * root = nullptr;
 	make_random_tree(root,centroids,k,d,0,0,verbose);
-	if(root == NULL) return;
+	if(root == nullptr) return;
 
 	KDNode<double> query(d);
 
 	for(i = 0; i < N; i++) {
-		KDNode<double> * nn = NULL;
+		KDNode<double> * nn = nullptr;
 		double min = DBL_MAX;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
@@ -250,7 +250,7 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 		exit(1);
 	}
 
-	if(seeds == NULL) {
+	if(seeds == nullptr) {
 		init_array_2<double>(seeds,k,d);
 	}
 
@@ -313,7 +313,7 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 		cout << "Finished clustering with error is " <<
 		e << " after " << i << " iterations." << endl;
 
-	dealloc_array_2<double>(c_tmp,k);
+//	dealloc_array_2<double>(c_tmp,k);
 }
 
 /**

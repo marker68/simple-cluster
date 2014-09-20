@@ -116,7 +116,7 @@ double * mean_vector(double ** data, const i_vector index,
 	size_t size = index.size();
 
 	double * tmp = (double *)calloc(d,sizeof(double));
-	if(tmp == NULL) {
+	if(tmp == nullptr) {
 		cerr << "Cannot allocate memory" << endl;
 		exit(1);
 	}
@@ -140,7 +140,7 @@ double * mean_vector(double ** data, const i_vector index,
  */
 unsigned long get_millisecond_time() {
 	struct timeval tv;
-	if(gettimeofday(&tv, NULL) != 0) return 0;
+	if(gettimeofday(&tv, nullptr) != 0) return 0;
 	return (unsigned long)((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
 }
 

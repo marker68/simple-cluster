@@ -151,7 +151,7 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
 		KDNode<double> *& result,
 		double& best_dist, size_t N, size_t level, bool verbose) {
 	if(best_dist == 0.0) return;
-	if(root == NULL || root->size() != N) {
+	if(root == nullptr || root->size() != N) {
 		if(verbose) {
 			cout << "Reached a leaf" << endl;
 			if(root) cout << "ID:" << root->id << endl;
@@ -164,7 +164,7 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
 	double d = kd_distance(root,query,verbose);
 	double d1 = root->at(level) - query->at(level);
 
-	if(result == NULL || d < best_dist) {
+	if(result == nullptr || d < best_dist) {
 		best_dist = d;
 		result = root;
 	}
@@ -202,7 +202,7 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
 		KDNode<double> *& result, double& best_dist,
 		double alpha, size_t N, size_t level, bool verbose) {
 	if(best_dist == 0.0) return;
-	if(root == NULL || root->size() != N) {
+	if(root == nullptr || root->size() != N) {
 		if(verbose) {
 			cout << "Reached a leaf" << endl;
 			if(root) cout << "ID:" << root->id << endl;
@@ -215,7 +215,7 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
 	double d = kd_distance(root,query,verbose);
 	double d1 = root->at(level) - query->at(level);
 
-	if(result == NULL || d < best_dist) {
+	if(result == nullptr || d < best_dist) {
 		best_dist = d;
 		result = root;
 	}

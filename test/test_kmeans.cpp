@@ -63,7 +63,7 @@ protected:
 	static void SetUpTestCase() {
 		N = 10000;
 		d = 128;
-		k = 4096;
+		k = 256;
 		int i, j;
 
 		// For generating random numbers
@@ -165,10 +165,10 @@ TEST_F(KmeansTest, DISABLED_test5) {
 	assign_to_closest_centroid_3(d,N,k,data,seeds,clusters,100.0,false);
 }
 
-TEST_F(KmeansTest, test6) {
+TEST_F(KmeansTest, DISABLED_test6) {
 	KmeansCriteria criteria = {2.0,1.0,100};
 	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::ANN_KD_TREE,N,k,criteria,d,
+			KmeansAssignType::NN_KD_TREE,N,k,criteria,d,
 			data,centroids,clusters,seeds,false);
 	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
 }
