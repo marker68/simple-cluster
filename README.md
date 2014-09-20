@@ -12,7 +12,7 @@ The purpose of this project is to provide a more flexible interface for clusteri
 
 ### Prerequisites
 
-* An Unix or Windows Operating System. Tested on Mac OS X 10.9 and Ubuntu 14.04.
+* An Unix or Windows([Cygwin](https://www.cygwin.com/) not native Windows with an MSVC compiler) Operating System. Tested on Mac OS X 10.9 and Ubuntu 14.04.
 * [CMake](http://www.cmake.org/) 2.8 or newer. For UNIX users, check your CMake version in terminal by `cmake -version`.
 * An C++ compiler that supports C++ 11.
 * [OpenCV](http://opencv.org/downloads.html) 2.4.8 or newer. This library is used for testing only. Just for comparing the performance with our implementations.
