@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <vector>
+#include <exception>
 #include <math.h>
 #include <sys/time.h>
 #include "utilities.h"
@@ -40,9 +41,14 @@ namespace SimpleCluster {
 double distance(double * x, double * y, size_t d) {
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
-	for(i = 0; i < d; i++) {
-		tmp = x[i] - y[i];
-		dis += tmp * tmp;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = x[i] - y[i];
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
 	}
 
 	return sqrt(dis);
@@ -58,9 +64,14 @@ double distance(double * x, double * y, size_t d) {
 double distance_square(double * x, double * y, size_t d) {
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
-	for(i = 0; i < d; i++) {
-		tmp = x[i] - y[i];
-		dis += tmp * tmp;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = x[i] - y[i];
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
 	}
 
 	return dis;
@@ -81,20 +92,30 @@ double * mean_vector(double ** data, const int * index,
 	}
 
 	double * tmp = (double *)calloc(d, sizeof(double));
-	if(tmp == NULL) {
+	if(tmp == nullptr) {
 		cerr << "Cannot allocate memory" << endl;
 		exit(1);
 	}
 
-	for(i = 0; i < size; i++) {
-		j = index[i];
-		for(k = 0; k < d; k++) {
-			tmp[k] += data[j][k];
+	try {
+		for(i = 0; i < size; i++) {
+			j = index[i];
+			for(k = 0; k < d; k++) {
+				tmp[k] += data[j][k];
+			}
 		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
 	}
 
-	for(i = 0; i < d; i++) {
-		tmp[i] /= static_cast<double>(size);
+	try {
+		for(i = 0; i < d; i++) {
+			tmp[i] /= static_cast<double>(size);
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
 	}
 
 	return tmp;
@@ -121,15 +142,25 @@ double * mean_vector(double ** data, const i_vector index,
 		exit(1);
 	}
 
-	for(i = 0; i < size; i++) {
-		j = index[i];
-		for(k = 0; k < d; k++) {
-			tmp[k] += data[j][k];
+	try {
+		for(i = 0; i < size; i++) {
+			j = index[i];
+			for(k = 0; k < d; k++) {
+				tmp[k] += data[j][k];
+			}
 		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
 	}
 
-	for(i = 0; i < d; i++) {
-		tmp[i] /= static_cast<double>(size);
+	try {
+		for(i = 0; i < d; i++) {
+			tmp[i] /= static_cast<double>(size);
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
 	}
 
 	return tmp;
@@ -152,11 +183,16 @@ unsigned long get_millisecond_time() {
  */
 void print_vector(double ** data, size_t d, size_t N) {
 	size_t i, j;
-	for(i = 0; i < N; i++) {
-		cout << "Data point " << i << ":";
-		for(j = 0; j < d; j++)
-			cout << data[i][j] << " ";
-		cout << endl;
+	try {
+		for(i = 0; i < N; i++) {
+			cout << "Data point " << i << ":";
+			for(j = 0; j < d; j++)
+				cout << data[i][j] << " ";
+			cout << endl;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return;
 	}
 }
 }

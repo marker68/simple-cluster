@@ -26,6 +26,7 @@
 
 #include <iostream>
 #include <vector>
+#include <exception>
 
 using namespace std;
 
@@ -53,9 +54,14 @@ template<typename DataType>
 bool init_array(DataType *& arr, size_t N) {
 	if(N <= 0)
 		return false;
-	arr = (DataType *)::operator  new(N * sizeof(DataType));
-	for(size_t i = 0; i < N; i++) {
-		::new(arr + i) DataType;
+	try {
+		arr = (DataType *)::operator  new(N * sizeof(DataType));
+		for(size_t i = 0; i < N; i++) {
+			::new(arr + i) DataType;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 
 	return true;
@@ -71,12 +77,17 @@ template<typename DataType>
 bool init_array_2(DataType **& arr, size_t M, size_t N) {
 	if(M <= 0 || N <= 0)
 		return false;
-	arr = (DataType **)::operator  new(M * sizeof(DataType *));
-	for(size_t i = 0; i < M; i++) {
-		::new(arr + i) DataType *;
-		arr[i] = (DataType *)::operator new(N * sizeof(DataType));
-		for(size_t j = 0; j < N; j++)
-			::new(arr[i] + j) DataType;
+	try {
+		arr = (DataType **)::operator  new(M * sizeof(DataType *));
+		for(size_t i = 0; i < M; i++) {
+			::new(arr + i) DataType *;
+			arr[i] = (DataType *)::operator new(N * sizeof(DataType));
+			for(size_t j = 0; j < N; j++)
+				::new(arr[i] + j) DataType;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 
 	return true;
@@ -109,8 +120,13 @@ template<typename DataType>
 bool copy_array(DataType * from, DataType *& to, size_t N) {
 	if(from == nullptr || to == nullptr)
 		return false;
-	for(size_t i = 0; i < N; i++) {
-		to[i] = from[i];
+	try {
+		for(size_t i = 0; i < N; i++) {
+			to[i] = from[i];
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 	return true;
 }
@@ -127,10 +143,15 @@ template<typename DataType>
 bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
 	if(from == nullptr || to == nullptr)
 		return false;
-	for(size_t i = 0; i < M; i++) {
-		if(!copy_array<DataType>(from[i],to[i],N)) {
-			return false;
+	try {
+		for(size_t i = 0; i < M; i++) {
+			if(!copy_array<DataType>(from[i],to[i],N)) {
+				return false;
+			}
 		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 	return true;
 }
@@ -143,9 +164,14 @@ bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
  */
 template<typename DataType>
 bool dealloc_array_2(DataType **& arr, size_t M) {
-	for(size_t i = 0; i < M; i++)
-		::delete arr[i];
-	::delete arr;
+	try {
+		for(size_t i = 0; i < M; i++)
+			::delete arr[i];
+		::delete arr;
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
+	}
 	return true;
 }
 
@@ -161,9 +187,14 @@ void swap(DataType * data, int m, int n, size_t N) {
 		perror("Out of bounds!\n");
 		exit(1);
 	}
-	DataType c = data[m];
-	data[m] = data[n];
-	data[n] = c;
+	try {
+		DataType c = data[m];
+		data[m] = data[n];
+		data[n] = c;
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
 }
 
 /**
@@ -180,10 +211,20 @@ template<typename DataType>
 int partition(DataType * data, DataType pivot, size_t N, int (*compare)(const DataType *, const DataType *)) {
 	int i=0, j=N-1;
 	while(i <= j) {
-		while((*compare)(&data[i],&pivot) < 0)
-			i++;
-		while((*compare)(&data[j],&pivot) >= 0)
-			j--;
+		try {
+			while((*compare)(&data[i],&pivot) < 0)
+				i++;
+		} catch(exception& e) {
+			cerr << "Got an exception: " << e.what() << " at i = " << i << endl;
+			exit(1);
+		}
+		try {
+			while((*compare)(&data[j],&pivot) >= 0)
+				j--;
+		} catch(exception& e) {
+			cerr << "Got an exception: " << e.what() << " at j = " << j << endl;
+			exit(1);
+		}
 		if(i <= j) {
 			swap(data,i,j,N);
 			i++;

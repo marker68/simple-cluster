@@ -22,6 +22,7 @@
  */
 
 #include <iostream>
+#include <exception>
 #include <algorithm>
 #include <vector>
 #include <random>
@@ -92,7 +93,10 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k,
 	size_t tmp = int_dis(gen);
 
 	double * d_tmp;
-	init_array<double>(d_tmp,d);
+	if(!init_array<double>(d_tmp,d)) {
+		cerr << "d_tmp: Cannot allocate the memory" << endl;
+		exit(1);
+	}
 	copy_array<double>(data[tmp],seeds[0],d);
 	double * distances;
 	init_array<double>(distances,N);
@@ -114,13 +118,14 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k,
 		}
 		uniform_real_distribution<double> real_dis(0, sum);
 		pivot = real_dis(gen);
+
 		for(i = 0; i < N - 1; i++) {
 			sum1 = sum_distances[i];
 			sum2 = sum_distances[i + 1];
 			if(sum1 < pivot && pivot <= sum2)
 				break;
 		}
-		copy_array<double>(data[i+1],d_tmp,d);
+		copy_array<double>(data[(i+1)%N],d_tmp,d);
 		copy_array<double>(d_tmp,seeds[count++],d);
 		// Update the distances
 		if(count < k) {
