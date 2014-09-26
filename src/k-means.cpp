@@ -288,12 +288,35 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 
 	while (1) {
 		// Assign the data points to clusters
-		if(assign == KmeansAssignType::LINEAR)
-			linear_assign(d,N,k,data,centroids,clusters,verbose);
-		else if(assign == KmeansAssignType::NN_KD_TREE)
-			kd_nn_assign(d,N,k,data,centroids,clusters,verbose);
-		else
-			kd_ann_assign(d,N,k,data,centroids,clusters,alpha,verbose);
+		size_t tmp, visited;
+		double min = 0.0;
+		KDNode<double> * root = nullptr;
+		KDNode<double> query(d);
+		if(assign != KmeansAssignType::LINEAR) {
+			make_random_tree(root,centroids,k,d,0,verbose);
+			if(root == nullptr) return;
+		}
+
+		for(size_t j = 0; j < N; j++) {
+			// Find the minimum distances between d_tmp and a centroid
+			if(assign == KmeansAssignType::LINEAR) {
+				linear_search(centroids,data[j],tmp,min,k,d,verbose);
+			} else {
+				KDNode<double> * nn = nullptr;
+				min = DBL_MAX;
+				visited = 0;
+				query.add_data(data[i]);
+				if(assign == KmeansAssignType::NN_KD_TREE) {
+					nn_search(root,&query,nn,min,d,0,visited,verbose);
+				} else {
+					ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
+				}
+				tmp = nn->id;
+			}
+			// Assign the data[i] into cluster tmp
+			clusters[tmp].push_back(static_cast<int>(j));
+		}
+
 		// Recalculate the centroids
 		for(size_t j = 0; j < k; j++) {
 			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],

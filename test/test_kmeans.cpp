@@ -61,7 +61,7 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 1000;
+		N = 10000;
 		d = 128;
 		k = 256;
 		int i, j;
