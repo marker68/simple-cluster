@@ -150,19 +150,19 @@ TEST_F(KmeansTest, DISABLED_test2) {
 TEST_F(KmeansTest, DISABLED_test3) {
 	random_seeds(d,N,k,data,seeds,true);
 	init_vector<i_vector>(clusters,k);
-	assign_to_closest_centroid(d,N,k,data,seeds,clusters,false);
+	linear_assign(d,N,k,data,seeds,clusters,false);
 }
 
 TEST_F(KmeansTest, DISABLED_test4) {
 	random_seeds(d,N,k,data,seeds,true);
 	init_vector<i_vector>(clusters,k);
-	assign_to_closest_centroid_2(d,N,k,data,seeds,clusters,false);
+	kd_nn_assign(d,N,k,data,seeds,clusters,false);
 }
 
 TEST_F(KmeansTest, DISABLED_test5) {
 	random_seeds(d,N,k,data,seeds,true);
 	init_vector<i_vector>(clusters,k);
-	assign_to_closest_centroid_3(d,N,k,data,seeds,clusters,100.0,false);
+	kd_ann_assign(d,N,k,data,seeds,clusters,100.0,false);
 }
 
 TEST_F(KmeansTest, test6) {

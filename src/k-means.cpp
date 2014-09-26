@@ -149,7 +149,7 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k,
  * @param clusters the clusters
  * @param verbose for debugging
  */
-void assign_to_closest_centroid(size_t d, size_t N, size_t k,
+void linear_assign(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, tmp;
 
@@ -175,7 +175,7 @@ void assign_to_closest_centroid(size_t d, size_t N, size_t k,
  * @param clusters the clusters
  * @param verbose for debugging
  */
-void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
+void kd_nn_assign(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
@@ -209,7 +209,7 @@ void assign_to_closest_centroid_2(size_t d, size_t N, size_t k,
  * @param clusters the clusters
  * @param verbose for debugging
  */
-void assign_to_closest_centroid_3(size_t d, size_t N, size_t k,
+void kd_ann_assign(size_t d, size_t N, size_t k,
 		double ** data, double ** centroids, vector<i_vector>& clusters, double alpha, bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
@@ -289,11 +289,11 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 	while (1) {
 		// Assign the data points to clusters
 		if(assign == KmeansAssignType::LINEAR)
-			assign_to_closest_centroid(d,N,k,data,centroids,clusters,verbose);
+			linear_assign(d,N,k,data,centroids,clusters,verbose);
 		else if(assign == KmeansAssignType::NN_KD_TREE)
-			assign_to_closest_centroid_2(d,N,k,data,centroids,clusters,verbose);
+			kd_nn_assign(d,N,k,data,centroids,clusters,verbose);
 		else
-			assign_to_closest_centroid_3(d,N,k,data,centroids,clusters,alpha,verbose);
+			kd_ann_assign(d,N,k,data,centroids,clusters,alpha,verbose);
 		// Recalculate the centroids
 		for(size_t j = 0; j < k; j++) {
 			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],

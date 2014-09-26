@@ -66,11 +66,11 @@ enum class KmeansType {
 
 void random_seeds(size_t, size_t, size_t, double **, double **&, bool);
 void kmeans_pp_seeds(size_t, size_t, size_t, double **, double **&, bool);
-void assign_to_closest_centroid(size_t, size_t, size_t, double **,
+void linear_assign(size_t, size_t, size_t, double **,
 		double **, vector<i_vector>&, bool);
-void assign_to_closest_centroid_2(size_t, size_t, size_t, double **,
+void kd_nn_assign(size_t, size_t, size_t, double **,
 		double **, vector<i_vector>&, bool);
-void assign_to_closest_centroid_3(size_t, size_t, size_t, double **,
+void kd_ann_assign(size_t, size_t, size_t, double **,
 		double **, vector<i_vector>&, double, bool);
 void simple_k_means(KmeansType, KmeansAssignType, size_t, size_t, KmeansCriteria,size_t,
 		double **, double **&,
