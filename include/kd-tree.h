@@ -88,7 +88,9 @@ public:
 	 * Insert a new data into the vector of the node
 	 * @param _d The data to be inserted
 	 */
-	void add_data(DataType _d, size_t pos) {
+	void add_data(
+			DataType _d,
+			size_t pos) {
 		if(pos >= 0 && pos < dimension)
 			data[pos] = _d;
 	}
@@ -125,18 +127,58 @@ public:
 	}
 };
 
-double kd_distance(KDNode<double> *, KDNode<double> *, bool);
-size_t find_median(double **, size_t, size_t, size_t, bool);
-void make_balanced_tree(KDNode<double> *&, double **,
-		size_t, size_t, size_t, size_t, bool);
-void make_random_tree(KDNode<double> *&, double **,
-		size_t, size_t, size_t, bool);
-void nn_search(KDNode<double> *, KDNode<double> *,
-		KDNode<double> *&, double&, size_t, size_t, size_t&, bool);
-void ann_search(KDNode<double> *, KDNode<double> *,
-		KDNode<double> *&, double&, double, size_t, size_t, size_t&, bool);
-void linear_search(double **, double *, size_t&,
-		double&, size_t, size_t, bool);
+double kd_distance(
+		KDNode<double> *,
+		KDNode<double> *,
+		bool);
+size_t find_median(
+		double **,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void make_balanced_tree(
+		KDNode<double> *&,
+		double **,
+		size_t,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void make_random_tree(
+		KDNode<double> *&,
+		double **,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void nn_search(
+		KDNode<double> *,
+		KDNode<double> *,
+		KDNode<double> *&,
+		double&,
+		size_t,
+		size_t,
+		size_t&,
+		bool);
+void ann_search(
+		KDNode<double> *,
+		KDNode<double> *,
+		KDNode<double> *&,
+		double&,
+		double,
+		size_t,
+		size_t,
+		size_t&,
+		bool);
+void linear_search(
+		double **,
+		double *,
+		size_t&,
+		double&,
+		size_t,
+		size_t,
+		bool);
 
 /**
  * Insert a node into the kd-tree
@@ -148,8 +190,13 @@ void linear_search(double **, double *, size_t&,
  * @verbose true to print verbose. Just for debugging.
  */
 template<typename DataType>
-void kd_insert(KDNode<DataType> *& root, DataType * _data,
-		size_t N, size_t level, size_t _id, bool verbose) {
+void kd_insert(
+		KDNode<DataType> *& root,
+		DataType * _data,
+		size_t N,
+		size_t level,
+		size_t _id,
+		bool verbose) {
 	// Pre-check
 	if(N <= 0) return;
 	level %= N;
@@ -182,7 +229,10 @@ void kd_insert(KDNode<DataType> *& root, DataType * _data,
  * @param level the cut-plane level
  */
 template<typename DataType>
-void kd_travel(KDNode<DataType> * root, size_t N, size_t level) {
+void kd_travel(
+		KDNode<DataType> * root,
+		size_t N,
+		size_t level) {
 	if(root == nullptr) {
 		cout << "Reached a leaf at level " << level << endl;
 		return;

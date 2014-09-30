@@ -40,15 +40,20 @@ namespace SimpleCluster {
 
 /**
  * Create random seeds for k-means
- * @param d the dimensions of the data
- * @param N the number of the data
- * @param k the numbe rof clusters
  * @param data input data
  * @param seeds the seeds
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the number of clusters
  * @param verbose for debugging
  */
-void random_seeds(size_t d, size_t N, size_t k,
-		double ** data, double **& seeds, bool verbose) {
+void random_seeds(
+		double ** data,
+		double **& seeds,
+		size_t d,
+		size_t N,
+		size_t k,
+		bool verbose) {
 	size_t i, j;
 	int tmp[k];
 
@@ -83,8 +88,13 @@ void random_seeds(size_t d, size_t N, size_t k,
  * @param seeds the seeds
  * @param verbose for debugging
  */
-void kmeans_pp_seeds(size_t d, size_t N, size_t k,
-		double ** data, double **& seeds, bool verbose) {
+void kmeans_pp_seeds(
+		double ** data,
+		double **& seeds,
+		size_t d,
+		size_t N,
+		size_t k,
+		bool verbose) {
 	// For generating random numbers
 	random_device rd;
 	mt19937 gen(rd());
@@ -149,8 +159,14 @@ void kmeans_pp_seeds(size_t d, size_t N, size_t k,
  * @param clusters the clusters
  * @param verbose for debugging
  */
-void linear_assign(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
+void linear_assign(
+		double ** data,
+		double ** centroids,
+		vector<i_vector>& clusters,
+		size_t d,
+		size_t N,
+		size_t k,
+		bool verbose) {
 	size_t i, tmp;
 
 	double min = 0.0;
@@ -175,8 +191,14 @@ void linear_assign(size_t d, size_t N, size_t k,
  * @param clusters the clusters
  * @param verbose for debugging
  */
-void kd_nn_assign(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, vector<i_vector>& clusters, bool verbose) {
+void kd_nn_assign(
+		double ** data,
+		double ** centroids,
+		vector<i_vector>& clusters,
+		size_t d,
+		size_t N,
+		size_t k,
+		bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
 	make_random_tree(root,centroids,k,d,0,verbose);
@@ -209,8 +231,15 @@ void kd_nn_assign(size_t d, size_t N, size_t k,
  * @param clusters the clusters
  * @param verbose for debugging
  */
-void kd_ann_assign(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids, vector<i_vector>& clusters, double alpha, bool verbose) {
+void kd_ann_assign(
+		double ** data,
+		double ** centroids,
+		vector<i_vector>& clusters,
+		size_t d,
+		size_t N,
+		size_t k,
+		double alpha,
+		bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
 	make_random_tree(root,centroids,k,d,0,verbose);
@@ -242,14 +271,22 @@ void kd_ann_assign(size_t d, size_t N, size_t k,
  * @param criteria the criteria
  * @param data input data
  * @param centroids the centroids
- * @param clusters the clusters
+ * @param label the labels of data points
  * @param seeds the initial centroids = the seeds
  * @param verbose for debugging
  */
-void simple_k_means(KmeansType type, KmeansAssignType assign,
-		size_t N, size_t k, KmeansCriteria criteria,size_t d,
-		double ** data, double **& centroids,
-		vector<i_vector>& clusters, double **& seeds, bool verbose) {
+void simple_k_means(
+		double ** data,
+		double **& centroids,
+		int *& label,
+		double **& seeds,
+		KmeansType type,
+		KmeansAssignType assign,
+		KmeansCriteria criteria,
+		size_t N,
+		size_t k,
+		size_t d,
+		bool verbose) {
 	// Pre-check conditions
 	if (N < k) {
 		if(verbose)
@@ -264,9 +301,9 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 	// Seeding
 	// In case of defective seeds from users, we should overwrite it by kmeans++ seeds
 	if (type == KmeansType::RANDOM_SEEDS) {
-		random_seeds(d,N,k,data,seeds,verbose);
+		random_seeds(data,seeds,d,N,k,verbose);
 	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
-		kmeans_pp_seeds(d,N,k,data,seeds,verbose);
+		kmeans_pp_seeds(data,seeds,d,N,k,verbose);
 	}
 
 	if(verbose)
@@ -277,16 +314,30 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 	double error = criteria.accuracy, e = error, e_prev = 0.0;
 	double alpha = criteria.alpha;
 
-	double ** c_tmp;
-	init_array_2<double>(c_tmp,k,d);
-	init_vector<i_vector>(clusters,k);
+//	double ** c_tmp;
+//	init_array_2<double>(c_tmp,k,d);
 
-	double tmp = 0.0;
+	// Variables for Greg's method
+	double * moved;
+	double * closest;
+	double * upper;
+	double * lower;
+	size_t * size;
+
+	init_array<double>(moved,k);
+	init_array<double>(closest,k);
+	init_array<double>(upper,N);
+	init_array<double>(lower,N);
+	init_array<size_t>(size,k);
 
 	// Initialize the centroids
 	copy_array_2<double>(seeds,centroids,k,d);
 
 	while (1) {
+		// Initialize
+		for(size_t j = 0; j < k; j++) {
+			size[j] = 0;
+		}
 		// Assign the data points to clusters
 		size_t tmp, visited;
 		double min = 0.0;
@@ -298,14 +349,14 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 		}
 
 		for(size_t j = 0; j < N; j++) {
-			// Find the minimum distances between d_tmp and a centroid
+			// Assign the data to clusters
 			if(assign == KmeansAssignType::LINEAR) {
 				linear_search(centroids,data[j],tmp,min,k,d,verbose);
 			} else {
 				KDNode<double> * nn = nullptr;
 				min = DBL_MAX;
 				visited = 0;
-				query.add_data(data[i]);
+				query.add_data(data[j]);
 				if(assign == KmeansAssignType::NN_KD_TREE) {
 					nn_search(root,&query,nn,min,d,0,visited,verbose);
 				} else {
@@ -314,32 +365,27 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
 				tmp = nn->id;
 			}
 			// Assign the data[i] into cluster tmp
-			clusters[tmp].push_back(static_cast<int>(j));
+			label[j] = tmp;
+			size[tmp]++;
 		}
 
 		// Recalculate the centroids
-		for(size_t j = 0; j < k; j++) {
-			double * d_tmp = SimpleCluster::mean_vector(data,clusters[j],
-					d,centroids[j]);
-			copy_array<double>(d_tmp,c_tmp[j],d);
-		}
+		all_mean_vector(data,label,size,centroids,moved,d,N,k);
 		// Calculate the distortion
 		e_prev = e;
 		e = 0.0;
 		for(size_t j = 0; j < k; j++) {
-			tmp = SimpleCluster::distance_square(centroids[j],c_tmp[j],d);
-			e += tmp;
+			e += moved[j];
 		}
 		e = sqrt(e);
-
-		copy_array_2<double>(c_tmp,centroids,k,d);
 		i++;
 		if(i >= iters ||
-				(e - e_prev < error && e - e_prev > -error) ||
-				(e < error && e > -error)) break;
+//				(e - e_prev < error && e - e_prev > -error) ||
+				(e < error && e > -error)
+				) break;
 	}
 
-	if(verbose)
+//	if(verbose)
 		cout << "Finished clustering with error is " <<
 		e << " after " << i << " iterations." << endl;
 }
@@ -348,29 +394,24 @@ void simple_k_means(KmeansType type, KmeansAssignType assign,
  * Calculate the distortion of a set of clusters.
  * @param d the dimensions of the data
  * @param N the number of the data
- * @param k the numbe rof clusters
+ * @param k the number of clusters
  * @param data input data
  * @param centroids the centroids
  * @param clusters the clusters
  * @param verbose for debugging
  */
-double distortion(size_t d, size_t N, size_t k,
-		double ** data, double ** centroids,
-		vector<i_vector> clusters, bool verbose) {
+double distortion(
+		double ** data,
+		double ** centroids,
+		int * label,
+		size_t d,
+		size_t N,
+		size_t k,
+		bool verbose) {
 	double e = 0.0;
-	size_t i, j = 0;
-	i_vector i_tmp;
-
-	for(i = 0; i < k; i++) {
-		i_tmp = clusters[i];
-		while(j < i_tmp.size()) {
-			e += SimpleCluster::distance_square(centroids[i], data[i_tmp[j]], d);
-			++j;
-		}
+	for(size_t i = 0; i < N; i++) {
+		e += distance_square(data[i],centroids[label[i]],d);
 	}
-
-	i_tmp.clear();
-
 	return sqrt(e);
 }
 }

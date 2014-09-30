@@ -89,6 +89,11 @@ protected:
 			cerr << "Cannot allocate memory for centroids data!" << endl;
 			exit(1);
 		}
+		label = (int *)calloc(N,sizeof(int));
+		if(label == NULL) {
+			cerr << "Cannot allocate memory for label data!" << endl;
+			exit(1);
+		}
 		//		print_vector(data,d,N);
 	}
 
@@ -108,14 +113,7 @@ protected:
 			cerr << "centroids: Deallocating failed!" << endl;
 			exit(1);
 		}
-
-		vector<i_vector>::iterator it = clusters.begin();
-		vector<i_vector>::iterator ie = clusters.end();
-		while(it != ie) {
-			(*it).clear();
-			++it;
-		}
-		clusters.clear();
+		::delete label;
 	}
 
 	// You can define per-test set-up and tear-down logic as usual.
@@ -127,69 +125,63 @@ public:
 	static double ** data;
 	static double ** seeds;
 	static double ** centroids;
-	static vector<i_vector> clusters;
+	static int * label;
 	static int N, d, k;
 };
 
 double ** KmeansTest::data;
 double ** KmeansTest::seeds;
 double ** KmeansTest::centroids;
-vector<i_vector> KmeansTest::clusters;
+int * KmeansTest::label;
 int KmeansTest::N;
 int KmeansTest::d;
 int KmeansTest::k;
 
 TEST_F(KmeansTest, DISABLED_test1) {
-	random_seeds(d,N,k,data,seeds,true);
+	random_seeds(data,seeds,d,N,k,true);
 }
 
 TEST_F(KmeansTest, DISABLED_test2) {
-	kmeans_pp_seeds(d,N,k,data,seeds,true);
+	kmeans_pp_seeds(data,seeds,d,N,k,true);
 }
 
-TEST_F(KmeansTest, DISABLED_test3) {
-	random_seeds(d,N,k,data,seeds,true);
-	init_vector<i_vector>(clusters,k);
-	linear_assign(d,N,k,data,seeds,clusters,false);
+TEST_F(KmeansTest, test3) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(
+			data,centroids,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::ANN_KD_TREE,
+			criteria,
+			N,k,d,
+			false);
+	cout << "NN: Distortion is " << distortion(data,centroids,label,d,N,k,false) << endl;
 }
 
-TEST_F(KmeansTest, DISABLED_test4) {
-	random_seeds(d,N,k,data,seeds,true);
-	init_vector<i_vector>(clusters,k);
-	kd_nn_assign(d,N,k,data,seeds,clusters,false);
+TEST_F(KmeansTest, test4) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(
+			data,centroids,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::NN_KD_TREE,
+			criteria,
+			N,k,d,
+			false);
+	cout << "NN: Distortion is " << distortion(data,centroids,label,d,N,k,false) << endl;
 }
 
-TEST_F(KmeansTest, DISABLED_test5) {
-	random_seeds(d,N,k,data,seeds,true);
-	init_vector<i_vector>(clusters,k);
-	kd_ann_assign(d,N,k,data,seeds,clusters,100.0,false);
+TEST_F(KmeansTest, test5) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(
+			data,centroids,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::LINEAR,
+			criteria,
+			N,k,d,
+			false);
+	cout << "NN: Distortion is " << distortion(data,centroids,label,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, test6) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::ANN_KD_TREE,N,k,criteria,d,
-			data,centroids,clusters,seeds,false);
-	cout << "ANN: Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
-}
-
-TEST_F(KmeansTest, test7) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::NN_KD_TREE,N,k,criteria,d,
-			data,centroids,clusters,seeds,false);
-	cout << "NN: Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
-}
-
-TEST_F(KmeansTest, test8) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::LINEAR,N,k,criteria,d,
-			data,centroids,clusters,seeds,false);
-	cout << "LINEAR: Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
-}
-
-TEST_F(KmeansTest, test9) {
 	Mat _data;
 	convert_array_to_mat(data,_data,N,d);
 	_data.convertTo(_data,CV_32F);

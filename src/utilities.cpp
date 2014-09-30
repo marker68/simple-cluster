@@ -38,7 +38,10 @@ namespace SimpleCluster {
  * @param d
  * @return the distance between x and y in d dimensional space
  */
-double distance(double * x, double * y, size_t d) {
+double distance(
+		double * x,
+		double * y,
+		size_t d) {
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
 	try {
@@ -61,7 +64,10 @@ double distance(double * x, double * y, size_t d) {
  * @param d
  * @return the square of distance between x and y in d dimensional space
  */
-double distance_square(double * x, double * y, size_t d) {
+double distance_square(
+		double * x,
+		double * y,
+		size_t d) {
 	size_t i;
 	double dis = 0.0, tmp = 0.0;
 	try {
@@ -78,14 +84,68 @@ double distance_square(double * x, double * y, size_t d) {
 }
 
 /**
+ * Calculate all the mean vectors
+ * @param data
+ * @param label
+ * @param size
+ * @param d
+ * @param N
+ * @param k
+ * @param centroids
+ * @return nothing
+ */
+void all_mean_vector(
+		double ** data,
+		int * label,
+		size_t * size,
+		double **& centroids,
+		double *& moved,
+		size_t d,
+		size_t N,
+		size_t k) {
+	size_t i, j, t;
+	double * tmp;
+	double ** c_tmp;
+	init_array_2<double>(c_tmp,k,d);
+	for(i = 0; i < k; i++) {
+		for(j = 0; j < d; j++) {
+			c_tmp[i][j] = 0.0;
+		}
+	}
+	for(i = 0; i < N; i++) {
+		t = label[i];
+		tmp = data[t];
+		for(j = 0; j < d; j++) {
+			c_tmp[t][j] += tmp[j];
+		}
+	}
+	for(i = 0; i < k; i++) {
+		t = size[i];
+		if(t > 0) {
+			for(j = 0; j < d; j++) {
+				c_tmp[i][j] /= t;
+			}
+			moved[i] = distance_square(c_tmp[i],centroids[i],d);
+			copy_array<double>(c_tmp[i],centroids[i],d);
+		} else moved[i] = 0.0;
+	}
+}
+
+/**
  * Calculate the mean of a cluster
  * @param data
  * @param index
  * @param d
+ * @param size
+ * @param centroid
  * @return the mean posize_t of a cluster
  */
-double * mean_vector(double ** data, const int * index,
-		size_t d, size_t size, double * centroid) {
+double * mean_vector(
+		double ** data,
+		const int * index,
+		double * centroid,
+		size_t d,
+		size_t size) {
 	size_t i, j = 0, k;
 	if(size <= 0) {
 		return centroid;
@@ -124,12 +184,15 @@ double * mean_vector(double ** data, const int * index,
 /**
  * Calculate the mean of a cluster
  * @param data
- * @param index a vetcor of integers
+ * @param index a vector of integers
  * @param d
  * @return the mean posize_t of a cluster
  */
-double * mean_vector(double ** data, const i_vector index,
-		size_t d, double * centroid) {
+double * mean_vector(
+		double ** data,
+		const i_vector index,
+		double * centroid,
+		size_t d) {
 	size_t i, j = 0, k;
 	if(index.size() <= 0) {
 		return centroid;
@@ -181,7 +244,10 @@ unsigned long get_millisecond_time() {
  * @param d the number of dimensions
  * @param N the size of the input
  */
-void print_vector(double ** data, size_t d, size_t N) {
+void print_vector(
+		double ** data,
+		size_t d,
+		size_t N) {
 	size_t i, j;
 	try {
 		for(i = 0; i < N; i++) {

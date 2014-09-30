@@ -121,8 +121,8 @@ TEST_F(UtilTest, test5) {
 		index2[i] = i;
 
 	double * tmp = (double *)calloc(d,sizeof(double));
-	double * v1 = mean_vector(data,index,d,5,tmp);
-	double * v2 = mean_vector(data,index2,d,5,tmp);
+	double * v1 = mean_vector(data,index,tmp,d,5);
+	double * v2 = mean_vector(data,index2,tmp,d,5);
 	EXPECT_EQ(0.0, distance(v1,v2,d));
 
 	free(index2);

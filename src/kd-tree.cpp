@@ -39,7 +39,10 @@ namespace SimpleCluster {
  * @param verbose Just for debugging
  * @return the distance between two KDNode if no error occurs, otherwise return DBL_MAX
  */
-double kd_distance(KDNode<double> * _a, KDNode<double> * _b, bool verbose) {
+double kd_distance(
+		KDNode<double> * _a,
+		KDNode<double> * _b,
+		bool verbose) {
 	double * a = _a->get_data();
 	double * b = _b->get_data();
 	size_t N = _a->size();
@@ -58,7 +61,9 @@ double kd_distance(KDNode<double> * _a, KDNode<double> * _b, bool verbose) {
  * A comparator
  * @param _a, _b two float numbers
  */
-int compare_double(const double * _a, const double * _b) {
+int compare_double(
+		const double * _a,
+		const double * _b) {
 	if(*_a > *_b) return 1;
 	else if(*_a < *_b) return -1;
 	else return 0;
@@ -72,7 +77,12 @@ int compare_double(const double * _a, const double * _b) {
  * @param verbose just for debugging
  * @return the index of the median
  */
-size_t find_median(double ** data, size_t M, size_t N, size_t id, bool verbose) {
+size_t find_median(
+		double ** data,
+		size_t M,
+		size_t N,
+		size_t id,
+		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
@@ -98,8 +108,14 @@ size_t find_median(double ** data, size_t M, size_t N, size_t id, bool verbose) 
  * @param base the base index to be added
  * @param verbose just for debugging
  */
-void make_balanced_tree(KDNode<double> *& root, double ** data,
-		size_t M, size_t N, size_t level, size_t base, bool verbose) {
+void make_balanced_tree(
+		KDNode<double> *& root,
+		double ** data,
+		size_t M,
+		size_t N,
+		size_t level,
+		size_t base,
+		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
@@ -122,8 +138,13 @@ void make_balanced_tree(KDNode<double> *& root, double ** data,
  * @param base the base index to be added
  * @param verbose just for debugging
  */
-void make_random_tree(KDNode<double> *& root, double ** data,
-		size_t M, size_t N, size_t base, bool verbose) {
+void make_random_tree(
+		KDNode<double> *& root,
+		double ** data,
+		size_t M,
+		size_t N,
+		size_t base,
+		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
@@ -148,10 +169,15 @@ void make_random_tree(KDNode<double> *& root, double ** data,
  * @param visited (for debugging) to detect how many nodes are visited
  * @param verbose for debugging
  */
-void nn_search(KDNode<double> * root, KDNode<double> * query,
+void nn_search(
+		KDNode<double> * root,
+		KDNode<double> * query,
 		KDNode<double> *& result,
-		double& best_dist, size_t N,
-		size_t level, size_t& visited, bool verbose) {
+		double& best_dist,
+		size_t N,
+		size_t level,
+		size_t& visited,
+		bool verbose) {
 	if(best_dist == 0.0) return;
 	if(root == nullptr || root->size() != N) {
 		if(verbose) {
@@ -202,9 +228,16 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
  * @param visited (for debugging) to detect how many nodes are visited
  * @param verbose for debugging
  */
-void ann_search(KDNode<double> * root, KDNode<double> * query,
-		KDNode<double> *& result, double& best_dist,
-		double alpha, size_t N, size_t level, size_t& visited, bool verbose) {
+void ann_search(
+		KDNode<double> * root,
+		KDNode<double> * query,
+		KDNode<double> *& result,
+		double& best_dist,
+		double alpha,
+		size_t N,
+		size_t level,
+		size_t& visited,
+		bool verbose) {
 	if(best_dist == 0.0) return;
 	if(root == nullptr || root->size() != N) {
 		if(verbose) {
@@ -251,8 +284,14 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
  * @param d the dimensions
  * @param verbose for debugging
  */
-void linear_search(double ** data, double * query, size_t& best,
-		double& best_dist, size_t N, size_t d, bool verbose) {
+void linear_search(
+		double ** data,
+		double * query,
+		size_t& best,
+		double& best_dist,
+		size_t N,
+		size_t d,
+		bool verbose) {
 	if(N <= 0 || d <= 0) {
 		if(verbose)
 			cerr << "Wrong size" << endl;

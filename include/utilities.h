@@ -37,12 +37,39 @@ namespace SimpleCluster {
 typedef vector<double> d_vector;
 typedef vector<int> i_vector;
 
-double distance(double *, double *, size_t);
-double distance_square(double *, double *, size_t);
-double * mean_vector(double **, const int *, size_t, size_t, double *);
-double * mean_vector(double **, const i_vector, size_t, double *);
+double distance(
+		double *,
+		double *,
+		size_t);
+double distance_square(
+		double *,
+		double *,
+		size_t);
+void all_mean_vector(
+		double **,
+		int *,
+		size_t *,
+		double **&,
+		double *&,
+		size_t,
+		size_t,
+		size_t);
+double * mean_vector(
+		double **,
+		const int *,
+		double *,
+		size_t,
+		size_t);
+double * mean_vector(
+		double **,
+		const i_vector,
+		double *,
+		size_t);
 unsigned long get_millisecond_time();
-void print_vector(double **, size_t, size_t);
+void print_vector(
+		double **,
+		size_t,
+		size_t);
 
 /**
  * Initialize an 1-D array.
@@ -51,7 +78,9 @@ void print_vector(double **, size_t, size_t);
  * @return true if the array was initalized successfully, otherwise return false.
  */
 template<typename DataType>
-bool init_array(DataType *& arr, size_t N) {
+bool init_array(
+		DataType *& arr,
+		size_t N) {
 	if(N <= 0)
 		return false;
 	try {
@@ -74,7 +103,10 @@ bool init_array(DataType *& arr, size_t N) {
  * @return true if the array was initalized successfully, otherwise return false.
  */
 template<typename DataType>
-bool init_array_2(DataType **& arr, size_t M, size_t N) {
+bool init_array_2(
+		DataType **& arr,
+		size_t M,
+		size_t N) {
 	if(M <= 0 || N <= 0)
 		return false;
 	try {
@@ -100,7 +132,9 @@ bool init_array_2(DataType **& arr, size_t M, size_t N) {
  * @return true if everything's OK, otherwise return false
  */
 template<typename DataType>
-bool init_vector(vector<DataType>& vec, size_t N) {
+bool init_vector(
+		vector<DataType>& vec,
+		size_t N) {
 	DataType tmp;
 	vec.clear();
 	for(size_t i = 0; i < N; i++) {
@@ -117,7 +151,10 @@ bool init_vector(vector<DataType>& vec, size_t N) {
  * @return true if copy was succeeded, otherwise return false.
  */
 template<typename DataType>
-bool copy_array(DataType * from, DataType *& to, size_t N) {
+bool copy_array(
+		DataType * from,
+		DataType *& to,
+		size_t N) {
 	if(from == nullptr || to == nullptr)
 		return false;
 	try {
@@ -140,7 +177,11 @@ bool copy_array(DataType * from, DataType *& to, size_t N) {
  * @return true if copy was succeeded, otherwise return false.
  */
 template<typename DataType>
-bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
+bool copy_array_2(
+		DataType ** from,
+		DataType **& to,
+		size_t M,
+		size_t N) {
 	if(from == nullptr || to == nullptr)
 		return false;
 	try {
@@ -163,7 +204,9 @@ bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
  * @return true if everything's OK, otherwise return false.
  */
 template<typename DataType>
-bool dealloc_array_2(DataType **& arr, size_t M) {
+bool dealloc_array_2(
+		DataType **& arr,
+		size_t M) {
 	try {
 		for(size_t i = 0; i < M; i++)
 			::delete arr[i];
@@ -182,7 +225,11 @@ bool dealloc_array_2(DataType **& arr, size_t M) {
  * @param N the size of data
  */
 template<typename DataType>
-void swap(DataType * data, int m, int n, size_t N) {
+void swap(
+		DataType * data,
+		int m,
+		int n,
+		size_t N) {
 	if(m < 0 || n < 0 || m >= N || n >= N) {
 		perror("Out of bounds!\n");
 		exit(1);
@@ -208,7 +255,11 @@ void swap(DataType * data, int m, int n, size_t N) {
  * @return the index of the separator
  */
 template<typename DataType>
-int partition(DataType * data, DataType pivot, size_t N, int (*compare)(const DataType *, const DataType *)) {
+int partition(
+		DataType * data,
+		DataType pivot,
+		size_t N,
+		int (*compare)(const DataType *, const DataType *)) {
 	int i=0, j=N-1;
 	while(i <= j) {
 		try {
@@ -242,7 +293,10 @@ int partition(DataType * data, DataType pivot, size_t N, int (*compare)(const Da
  * @param compare the comparator
  */
 template<typename DataType>
-void bbsort(DataType * data, size_t N, int (*compare)(const DataType *, const DataType *)) {
+void bbsort(
+		DataType * data,
+		size_t N,
+		int (*compare)(const DataType *, const DataType *)) {
 	if(N < 2) return;
 	bool swapped = true;
 	int i, j = 0;
@@ -272,7 +326,11 @@ void bbsort(DataType * data, size_t N, int (*compare)(const DataType *, const Da
  * @return the index of the k-th smallest element
  */
 template<typename DataType>
-size_t quick_select_k(DataType * data, size_t N, size_t k, int (*compare)(const DataType*, const DataType*)) {
+size_t quick_select_k(
+		DataType * data,
+		size_t N,
+		size_t k,
+		int (*compare)(const DataType*, const DataType*)) {
 	if(k >= N) {
 		fprintf(stderr, "Out of bounds!\n");
 		exit(1);

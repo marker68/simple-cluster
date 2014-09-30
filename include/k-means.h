@@ -64,19 +64,65 @@ enum class KmeansType {
 	USER_SEEDS // take the seeds from input
 };
 
-void random_seeds(size_t, size_t, size_t, double **, double **&, bool);
-void kmeans_pp_seeds(size_t, size_t, size_t, double **, double **&, bool);
-void linear_assign(size_t, size_t, size_t, double **,
-		double **, vector<i_vector>&, bool);
-void kd_nn_assign(size_t, size_t, size_t, double **,
-		double **, vector<i_vector>&, bool);
-void kd_ann_assign(size_t, size_t, size_t, double **,
-		double **, vector<i_vector>&, double, bool);
-void simple_k_means(KmeansType, KmeansAssignType, size_t, size_t, KmeansCriteria,size_t,
-		double **, double **&,
-		vector<i_vector>&, double **&, bool);
-double distortion(size_t d, size_t N, size_t k,
-		double **, double **, vector<i_vector>, bool);
+void random_seeds(
+		double **,
+		double **&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void kmeans_pp_seeds(
+		double **,
+		double **&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void linear_assign(
+		double **,
+		double **,
+		vector<i_vector>&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void kd_nn_assign(
+		double **,
+		double **,
+		vector<i_vector>&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void kd_ann_assign(
+		double **,
+		double **,
+		vector<i_vector>&,
+		size_t,
+		size_t,
+		size_t,
+		double,
+		bool);
+void simple_k_means(
+		double **,
+		double **&,
+		int *&,
+		double **&,
+		KmeansType,
+		KmeansAssignType,
+		KmeansCriteria,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+double distortion(
+		double **,
+		double **,
+		int *,
+		size_t,
+		size_t,
+		size_t,
+		bool);
 }
 
 #endif /* K_MEANS_H_ */
