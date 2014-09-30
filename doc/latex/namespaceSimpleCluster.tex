@@ -33,19 +33,19 @@ enum \hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}{random\+\_\+seeds} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$\&, bool)
+void \hyperlink{namespaceSimpleCluster_a7220a80d5dfa93f7bee701a9abd606e9}{random\+\_\+seeds} (double $\ast$$\ast$, double $\ast$$\ast$\&, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-void \hyperlink{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}{kmeans\+\_\+pp\+\_\+seeds} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$\&, bool)
+void \hyperlink{namespaceSimpleCluster_a26dcc8efa5e3bd2663d90c07c8910ada}{kmeans\+\_\+pp\+\_\+seeds} (double $\ast$$\ast$, double $\ast$$\ast$\&, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-void \hyperlink{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}{assign\+\_\+to\+\_\+closest\+\_\+centroid} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, bool)
+void \hyperlink{namespaceSimpleCluster_a8576edc91afddb43f8afbeb432ef71f1}{linear\+\_\+assign} (double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-void \hyperlink{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, bool)
+void \hyperlink{namespaceSimpleCluster_a2b33da107293a0437ecae4e2f4a542f7}{kd\+\_\+nn\+\_\+assign} (double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-void \hyperlink{namespaceSimpleCluster_ae3eb269fbf66080b629b367254abe6b7}{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+3} (size\+\_\+t, size\+\_\+t, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, double, bool)
+void \hyperlink{namespaceSimpleCluster_a8c738770af7344c7547016a6b8859463}{kd\+\_\+ann\+\_\+assign} (double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$ \&, size\+\_\+t, size\+\_\+t, size\+\_\+t, double, bool)
 \item 
-void \hyperlink{namespaceSimpleCluster_a7bc3ccce11e60fd93ee92a1c4095c337}{simple\+\_\+k\+\_\+means} (\hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\+Type}, \hyperlink{namespaceSimpleCluster_a1ad2d6129171ff9a5ee57f48b5f3f6e1}{Kmeans\+Assign\+Type}, size\+\_\+t, size\+\_\+t, \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\+Criteria}, size\+\_\+t, double $\ast$$\ast$, double $\ast$$\ast$\&, vector$<$ i\+\_\+vector $>$ \&, double $\ast$$\ast$\&, bool)
+void \hyperlink{namespaceSimpleCluster_a81cc95b28c2dbf13507df024fe8213fe}{simple\+\_\+k\+\_\+means} (double $\ast$$\ast$, double $\ast$$\ast$\&, int $\ast$\&, double $\ast$$\ast$\&, \hyperlink{namespaceSimpleCluster_a8a8f57121b69a7b43575e4d6a53928e2}{Kmeans\+Type}, \hyperlink{namespaceSimpleCluster_a1ad2d6129171ff9a5ee57f48b5f3f6e1}{Kmeans\+Assign\+Type}, \hyperlink{structSimpleCluster_1_1KmeansCriteria}{Kmeans\+Criteria}, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
-double \hyperlink{namespaceSimpleCluster_a2b5ed423662d1968e1af5262812d7ca8}{distortion} (size\+\_\+t d, size\+\_\+t N, size\+\_\+t k, double $\ast$$\ast$, double $\ast$$\ast$, vector$<$ i\+\_\+vector $>$, bool)
+double \hyperlink{namespaceSimpleCluster_a906f27865548931fd05261b39021af1e}{distortion} (double $\ast$$\ast$, double $\ast$$\ast$, int $\ast$, size\+\_\+t, size\+\_\+t, size\+\_\+t, bool)
 \item 
 double \hyperlink{namespaceSimpleCluster_ab268f110e34b3762c1de5b7fe4eda10c}{kd\+\_\+distance} (\hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$, \hyperlink{classSimpleCluster_1_1KDNode}{K\+D\+Node}$<$ double $>$ $\ast$, bool)
 \item 
@@ -69,9 +69,11 @@ double \hyperlink{namespaceSimpleCluster_a32994022b5f131b488b98d00fdb40a1f}{dist
 \item 
 double \hyperlink{namespaceSimpleCluster_a2b7cf8225bcc829f7f0717292d49e0f0}{distance\+\_\+square} (double $\ast$, double $\ast$, size\+\_\+t)
 \item 
-double $\ast$ \hyperlink{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}{mean\+\_\+vector} (double $\ast$$\ast$, const int $\ast$, size\+\_\+t, size\+\_\+t, double $\ast$)
+void \hyperlink{namespaceSimpleCluster_a5f88fe7b4c442430fed84643d9ff83dd}{all\+\_\+mean\+\_\+vector} (double $\ast$$\ast$, int $\ast$, size\+\_\+t $\ast$, double $\ast$$\ast$\&, double $\ast$\&, size\+\_\+t, size\+\_\+t, size\+\_\+t)
 \item 
-double $\ast$ \hyperlink{namespaceSimpleCluster_aee4546894b94aa53a606f5a436db8c7f}{mean\+\_\+vector} (double $\ast$$\ast$, const i\+\_\+vector, size\+\_\+t, double $\ast$)
+double $\ast$ \hyperlink{namespaceSimpleCluster_af5f08f98d4d441cb169fd228b58c4c79}{mean\+\_\+vector} (double $\ast$$\ast$, const int $\ast$, double $\ast$, size\+\_\+t, size\+\_\+t)
+\item 
+double $\ast$ \hyperlink{namespaceSimpleCluster_a6a6a4eba291860493d325b5b94a3a74b}{mean\+\_\+vector} (double $\ast$$\ast$, const i\+\_\+vector, double $\ast$, size\+\_\+t)
 \item 
 unsigned long \hyperlink{namespaceSimpleCluster_a00c790e51730b0e775438fe6c5ccc2c6}{get\+\_\+millisecond\+\_\+time} ()
 \item 
@@ -116,6 +118,40 @@ Types of assigning methods \hypertarget{namespaceSimpleCluster_a8a8f57121b69a7b4
 Types of the k-\/means seeding 
 
 \subsection{Function Documentation}
+\hypertarget{namespaceSimpleCluster_a5f88fe7b4c442430fed84643d9ff83dd}{\index{Simple\+Cluster@{Simple\+Cluster}!all\+\_\+mean\+\_\+vector@{all\+\_\+mean\+\_\+vector}}
+\index{all\+\_\+mean\+\_\+vector@{all\+\_\+mean\+\_\+vector}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{all\+\_\+mean\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::all\+\_\+mean\+\_\+vector (
+\begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{int $\ast$}]{label, }
+\item[{size\+\_\+t $\ast$}]{size, }
+\item[{double $\ast$$\ast$\&}]{centroids, }
+\item[{double $\ast$\&}]{moved, }
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a5f88fe7b4c442430fed84643d9ff83dd}
+Calculate all the mean vectors 
+\begin{DoxyParams}{Parameters}
+{\em data} & \\
+\hline
+{\em label} & \\
+\hline
+{\em size} & \\
+\hline
+{\em d} & \\
+\hline
+{\em N} & \\
+\hline
+{\em k} & \\
+\hline
+{\em centroids} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+nothing 
+\end{DoxyReturn}
 \hypertarget{namespaceSimpleCluster_ad1d8cb188a5d775379be76009a662fc8}{\index{Simple\+Cluster@{Simple\+Cluster}!ann\+\_\+search@{ann\+\_\+search}}
 \index{ann\+\_\+search@{ann\+\_\+search}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{ann\+\_\+search}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::ann\+\_\+search (
@@ -148,97 +184,6 @@ Search for the approximate nearest neighbor in the kd-\/tree
 {\em level} & the cut-\/plane level \\
 \hline
 {\em visited} & (for debugging) to detect how many nodes are visited \\
-\hline
-{\em verbose} & for debugging \\
-\hline
-\end{DoxyParams}
-\hypertarget{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}{\index{Simple\+Cluster@{Simple\+Cluster}!assign\+\_\+to\+\_\+closest\+\_\+centroid@{assign\+\_\+to\+\_\+closest\+\_\+centroid}}
-\index{assign\+\_\+to\+\_\+closest\+\_\+centroid@{assign\+\_\+to\+\_\+closest\+\_\+centroid}!Simple\+Cluster@{Simple\+Cluster}}
-\subsubsection[{assign\+\_\+to\+\_\+closest\+\_\+centroid}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::assign\+\_\+to\+\_\+closest\+\_\+centroid (
-\begin{DoxyParamCaption}
-\item[{size\+\_\+t}]{d, }
-\item[{size\+\_\+t}]{N, }
-\item[{size\+\_\+t}]{k, }
-\item[{double $\ast$$\ast$}]{data, }
-\item[{double $\ast$$\ast$}]{centroids, }
-\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
-\item[{bool}]{verbose}
-\end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_aca74ac04af2feab94c72dcfe7a26fd9f}
-After having a set of centroids, we need to assign data into each cluster respectively. This solution uses linear search to assign data. 
-\begin{DoxyParams}{Parameters}
-{\em d} & the dimensions of the data \\
-\hline
-{\em N} & the number of the data \\
-\hline
-{\em k} & the numbe rof clusters \\
-\hline
-{\em data} & input data \\
-\hline
-{\em centroids} & the centroids \\
-\hline
-{\em clusters} & the clusters \\
-\hline
-{\em verbose} & for debugging \\
-\hline
-\end{DoxyParams}
-\hypertarget{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}{\index{Simple\+Cluster@{Simple\+Cluster}!assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2@{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2}}
-\index{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2@{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2}!Simple\+Cluster@{Simple\+Cluster}}
-\subsubsection[{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+2 (
-\begin{DoxyParamCaption}
-\item[{size\+\_\+t}]{d, }
-\item[{size\+\_\+t}]{N, }
-\item[{size\+\_\+t}]{k, }
-\item[{double $\ast$$\ast$}]{data, }
-\item[{double $\ast$$\ast$}]{centroids, }
-\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
-\item[{bool}]{verbose}
-\end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_af66bb5dcaeacf5d9a3856fbf793115d5}
-After having a set of centroids, we need to assign data into each cluster respectively. This solution uses kd-\/tree search to assign data. 
-\begin{DoxyParams}{Parameters}
-{\em d} & the dimensions of the data \\
-\hline
-{\em N} & the number of the data \\
-\hline
-{\em k} & the number of clusters \\
-\hline
-{\em data} & input data \\
-\hline
-{\em centroids} & the centroids \\
-\hline
-{\em clusters} & the clusters \\
-\hline
-{\em verbose} & for debugging \\
-\hline
-\end{DoxyParams}
-\hypertarget{namespaceSimpleCluster_ae3eb269fbf66080b629b367254abe6b7}{\index{Simple\+Cluster@{Simple\+Cluster}!assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+3@{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+3}}
-\index{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+3@{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+3}!Simple\+Cluster@{Simple\+Cluster}}
-\subsubsection[{assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+3}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::assign\+\_\+to\+\_\+closest\+\_\+centroid\+\_\+3 (
-\begin{DoxyParamCaption}
-\item[{size\+\_\+t}]{d, }
-\item[{size\+\_\+t}]{N, }
-\item[{size\+\_\+t}]{k, }
-\item[{double $\ast$$\ast$}]{data, }
-\item[{double $\ast$$\ast$}]{centroids, }
-\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
-\item[{double}]{alpha, }
-\item[{bool}]{verbose}
-\end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_ae3eb269fbf66080b629b367254abe6b7}
-After having a set of centroids, we need to assign data into each cluster respectively. This solution uses A\+N\+N kd-\/tree search to assign data. 
-\begin{DoxyParams}{Parameters}
-{\em d} & the dimensions of the data \\
-\hline
-{\em N} & the number of the data \\
-\hline
-{\em k} & the numbe rof clusters \\
-\hline
-{\em data} & input data \\
-\hline
-{\em centroids} & the centroids \\
-\hline
-{\em clusters} & the clusters \\
 \hline
 {\em verbose} & for debugging \\
 \hline
@@ -379,26 +324,26 @@ Calculate the square of distance between two vectors
 \begin{DoxyReturn}{Returns}
 the square of distance between x and y in d dimensional space 
 \end{DoxyReturn}
-\hypertarget{namespaceSimpleCluster_a2b5ed423662d1968e1af5262812d7ca8}{\index{Simple\+Cluster@{Simple\+Cluster}!distortion@{distortion}}
+\hypertarget{namespaceSimpleCluster_a906f27865548931fd05261b39021af1e}{\index{Simple\+Cluster@{Simple\+Cluster}!distortion@{distortion}}
 \index{distortion@{distortion}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{distortion}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\+Cluster\+::distortion (
 \begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$}]{centroids, }
+\item[{int $\ast$}]{label, }
 \item[{size\+\_\+t}]{d, }
 \item[{size\+\_\+t}]{N, }
 \item[{size\+\_\+t}]{k, }
-\item[{double $\ast$$\ast$}]{data, }
-\item[{double $\ast$$\ast$}]{centroids, }
-\item[{vector$<$ i\+\_\+vector $>$}]{clusters, }
 \item[{bool}]{verbose}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_a2b5ed423662d1968e1af5262812d7ca8}
+)}}\label{namespaceSimpleCluster_a906f27865548931fd05261b39021af1e}
 Calculate the distortion of a set of clusters. 
 \begin{DoxyParams}{Parameters}
 {\em d} & the dimensions of the data \\
 \hline
 {\em N} & the number of the data \\
 \hline
-{\em k} & the numbe rof clusters \\
+{\em k} & the number of clusters \\
 \hline
 {\em data} & input data \\
 \hline
@@ -496,6 +441,37 @@ Initialize a vector.
 \begin{DoxyReturn}{Returns}
 true if everything's O\+K, otherwise return false 
 \end{DoxyReturn}
+\hypertarget{namespaceSimpleCluster_a8c738770af7344c7547016a6b8859463}{\index{Simple\+Cluster@{Simple\+Cluster}!kd\+\_\+ann\+\_\+assign@{kd\+\_\+ann\+\_\+assign}}
+\index{kd\+\_\+ann\+\_\+assign@{kd\+\_\+ann\+\_\+assign}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{kd\+\_\+ann\+\_\+assign}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::kd\+\_\+ann\+\_\+assign (
+\begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$}]{centroids, }
+\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{double}]{alpha, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a8c738770af7344c7547016a6b8859463}
+After having a set of centroids, we need to assign data into each cluster respectively. This solution uses A\+N\+N kd-\/tree search to assign data. 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
 \hypertarget{namespaceSimpleCluster_ab268f110e34b3762c1de5b7fe4eda10c}{\index{Simple\+Cluster@{Simple\+Cluster}!kd\+\_\+distance@{kd\+\_\+distance}}
 \index{kd\+\_\+distance@{kd\+\_\+distance}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{kd\+\_\+distance}]{\setlength{\rightskip}{0pt plus 5cm}double Simple\+Cluster\+::kd\+\_\+distance (
@@ -540,6 +516,36 @@ Insert a node into the kd-\/tree
 {\em \+\_\+id} & the index of the new node  true to print verbose. Just for debugging. \\
 \hline
 \end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a2b33da107293a0437ecae4e2f4a542f7}{\index{Simple\+Cluster@{Simple\+Cluster}!kd\+\_\+nn\+\_\+assign@{kd\+\_\+nn\+\_\+assign}}
+\index{kd\+\_\+nn\+\_\+assign@{kd\+\_\+nn\+\_\+assign}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{kd\+\_\+nn\+\_\+assign}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::kd\+\_\+nn\+\_\+assign (
+\begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$}]{centroids, }
+\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a2b33da107293a0437ecae4e2f4a542f7}
+After having a set of centroids, we need to assign data into each cluster respectively. This solution uses kd-\/tree search to assign data. 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the number of clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
 \hypertarget{namespaceSimpleCluster_addb0a17c2b98fa9a4847e598dac6971a}{\index{Simple\+Cluster@{Simple\+Cluster}!kd\+\_\+travel@{kd\+\_\+travel}}
 \index{kd\+\_\+travel@{kd\+\_\+travel}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{kd\+\_\+travel}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Data\+Type $>$ void Simple\+Cluster\+::kd\+\_\+travel (
@@ -558,18 +564,18 @@ Traveling in the kd-\/tree
 {\em level} & the cut-\/plane level \\
 \hline
 \end{DoxyParams}
-\hypertarget{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}{\index{Simple\+Cluster@{Simple\+Cluster}!kmeans\+\_\+pp\+\_\+seeds@{kmeans\+\_\+pp\+\_\+seeds}}
+\hypertarget{namespaceSimpleCluster_a26dcc8efa5e3bd2663d90c07c8910ada}{\index{Simple\+Cluster@{Simple\+Cluster}!kmeans\+\_\+pp\+\_\+seeds@{kmeans\+\_\+pp\+\_\+seeds}}
 \index{kmeans\+\_\+pp\+\_\+seeds@{kmeans\+\_\+pp\+\_\+seeds}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{kmeans\+\_\+pp\+\_\+seeds}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::kmeans\+\_\+pp\+\_\+seeds (
 \begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$\&}]{seeds, }
 \item[{size\+\_\+t}]{d, }
 \item[{size\+\_\+t}]{N, }
 \item[{size\+\_\+t}]{k, }
-\item[{double $\ast$$\ast$}]{data, }
-\item[{double $\ast$$\ast$\&}]{seeds, }
 \item[{bool}]{verbose}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_ab1abfee692e0476f34c72ac18a68bf17}
+)}}\label{namespaceSimpleCluster_a26dcc8efa5e3bd2663d90c07c8910ada}
 Create seeds for k-\/means++ 
 \begin{DoxyParams}{Parameters}
 {\em d} & the dimensions of the data \\
@@ -581,6 +587,36 @@ Create seeds for k-\/means++
 {\em data} & input data \\
 \hline
 {\em seeds} & the seeds \\
+\hline
+{\em verbose} & for debugging \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespaceSimpleCluster_a8576edc91afddb43f8afbeb432ef71f1}{\index{Simple\+Cluster@{Simple\+Cluster}!linear\+\_\+assign@{linear\+\_\+assign}}
+\index{linear\+\_\+assign@{linear\+\_\+assign}!Simple\+Cluster@{Simple\+Cluster}}
+\subsubsection[{linear\+\_\+assign}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::linear\+\_\+assign (
+\begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$}]{centroids, }
+\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
+\item[{size\+\_\+t}]{d, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{bool}]{verbose}
+\end{DoxyParamCaption}
+)}}\label{namespaceSimpleCluster_a8576edc91afddb43f8afbeb432ef71f1}
+After having a set of centroids, we need to assign data into each cluster respectively. This solution uses linear search to assign data. 
+\begin{DoxyParams}{Parameters}
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the numbe rof clusters \\
+\hline
+{\em data} & input data \\
+\hline
+{\em centroids} & the centroids \\
+\hline
+{\em clusters} & the clusters \\
 \hline
 {\em verbose} & for debugging \\
 \hline
@@ -670,17 +706,17 @@ Create a random kd-\/tree
 {\em verbose} & just for debugging \\
 \hline
 \end{DoxyParams}
-\hypertarget{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}{\index{Simple\+Cluster@{Simple\+Cluster}!mean\+\_\+vector@{mean\+\_\+vector}}
+\hypertarget{namespaceSimpleCluster_af5f08f98d4d441cb169fd228b58c4c79}{\index{Simple\+Cluster@{Simple\+Cluster}!mean\+\_\+vector@{mean\+\_\+vector}}
 \index{mean\+\_\+vector@{mean\+\_\+vector}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{mean\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}double $\ast$ Simple\+Cluster\+::mean\+\_\+vector (
 \begin{DoxyParamCaption}
 \item[{double $\ast$$\ast$}]{data, }
 \item[{const int $\ast$}]{index, }
+\item[{double $\ast$}]{centroid, }
 \item[{size\+\_\+t}]{d, }
-\item[{size\+\_\+t}]{size, }
-\item[{double $\ast$}]{centroid}
+\item[{size\+\_\+t}]{size}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_a88d267f1612b952f290e0b3861360d53}
+)}}\label{namespaceSimpleCluster_af5f08f98d4d441cb169fd228b58c4c79}
 Calculate the mean of a cluster 
 \begin{DoxyParams}{Parameters}
 {\em data} & \\
@@ -689,25 +725,29 @@ Calculate the mean of a cluster
 \hline
 {\em d} & \\
 \hline
+{\em size} & \\
+\hline
+{\em centroid} & \\
+\hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 the mean posize\+\_\+t of a cluster 
 \end{DoxyReturn}
-\hypertarget{namespaceSimpleCluster_aee4546894b94aa53a606f5a436db8c7f}{\index{Simple\+Cluster@{Simple\+Cluster}!mean\+\_\+vector@{mean\+\_\+vector}}
+\hypertarget{namespaceSimpleCluster_a6a6a4eba291860493d325b5b94a3a74b}{\index{Simple\+Cluster@{Simple\+Cluster}!mean\+\_\+vector@{mean\+\_\+vector}}
 \index{mean\+\_\+vector@{mean\+\_\+vector}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{mean\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}double $\ast$ Simple\+Cluster\+::mean\+\_\+vector (
 \begin{DoxyParamCaption}
 \item[{double $\ast$$\ast$}]{data, }
 \item[{const i\+\_\+vector}]{index, }
-\item[{size\+\_\+t}]{d, }
-\item[{double $\ast$}]{centroid}
+\item[{double $\ast$}]{centroid, }
+\item[{size\+\_\+t}]{d}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_aee4546894b94aa53a606f5a436db8c7f}
+)}}\label{namespaceSimpleCluster_a6a6a4eba291860493d325b5b94a3a74b}
 Calculate the mean of a cluster 
 \begin{DoxyParams}{Parameters}
 {\em data} & \\
 \hline
-{\em index} & a vetcor of integers \\
+{\em index} & a vector of integers \\
 \hline
 {\em d} & \\
 \hline
@@ -814,50 +854,50 @@ Select k+1-\/th smallest member of an array \+: Quick\+Select by Hoare. This one
 \begin{DoxyReturn}{Returns}
 the index of the k-\/th smallest element 
 \end{DoxyReturn}
-\hypertarget{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}{\index{Simple\+Cluster@{Simple\+Cluster}!random\+\_\+seeds@{random\+\_\+seeds}}
+\hypertarget{namespaceSimpleCluster_a7220a80d5dfa93f7bee701a9abd606e9}{\index{Simple\+Cluster@{Simple\+Cluster}!random\+\_\+seeds@{random\+\_\+seeds}}
 \index{random\+\_\+seeds@{random\+\_\+seeds}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{random\+\_\+seeds}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::random\+\_\+seeds (
 \begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{data, }
+\item[{double $\ast$$\ast$\&}]{seeds, }
 \item[{size\+\_\+t}]{d, }
 \item[{size\+\_\+t}]{N, }
 \item[{size\+\_\+t}]{k, }
-\item[{double $\ast$$\ast$}]{data, }
-\item[{double $\ast$$\ast$\&}]{seeds, }
 \item[{bool}]{verbose}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_aa3c1fa27364305d35f14eb0b6b984a10}
+)}}\label{namespaceSimpleCluster_a7220a80d5dfa93f7bee701a9abd606e9}
 Create random seeds for k-\/means 
 \begin{DoxyParams}{Parameters}
-{\em d} & the dimensions of the data \\
-\hline
-{\em N} & the number of the data \\
-\hline
-{\em k} & the numbe rof clusters \\
-\hline
 {\em data} & input data \\
 \hline
 {\em seeds} & the seeds \\
 \hline
+{\em d} & the dimensions of the data \\
+\hline
+{\em N} & the number of the data \\
+\hline
+{\em k} & the number of clusters \\
+\hline
 {\em verbose} & for debugging \\
 \hline
 \end{DoxyParams}
-\hypertarget{namespaceSimpleCluster_a7bc3ccce11e60fd93ee92a1c4095c337}{\index{Simple\+Cluster@{Simple\+Cluster}!simple\+\_\+k\+\_\+means@{simple\+\_\+k\+\_\+means}}
+\hypertarget{namespaceSimpleCluster_a81cc95b28c2dbf13507df024fe8213fe}{\index{Simple\+Cluster@{Simple\+Cluster}!simple\+\_\+k\+\_\+means@{simple\+\_\+k\+\_\+means}}
 \index{simple\+\_\+k\+\_\+means@{simple\+\_\+k\+\_\+means}!Simple\+Cluster@{Simple\+Cluster}}
 \subsubsection[{simple\+\_\+k\+\_\+means}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Cluster\+::simple\+\_\+k\+\_\+means (
 \begin{DoxyParamCaption}
-\item[{Kmeans\+Type}]{type, }
-\item[{Kmeans\+Assign\+Type}]{assign, }
-\item[{size\+\_\+t}]{N, }
-\item[{size\+\_\+t}]{k, }
-\item[{Kmeans\+Criteria}]{criteria, }
-\item[{size\+\_\+t}]{d, }
 \item[{double $\ast$$\ast$}]{data, }
 \item[{double $\ast$$\ast$\&}]{centroids, }
-\item[{vector$<$ i\+\_\+vector $>$ \&}]{clusters, }
+\item[{int $\ast$\&}]{label, }
 \item[{double $\ast$$\ast$\&}]{seeds, }
+\item[{Kmeans\+Type}]{type, }
+\item[{Kmeans\+Assign\+Type}]{assign, }
+\item[{Kmeans\+Criteria}]{criteria, }
+\item[{size\+\_\+t}]{N, }
+\item[{size\+\_\+t}]{k, }
+\item[{size\+\_\+t}]{d, }
 \item[{bool}]{verbose}
 \end{DoxyParamCaption}
-)}}\label{namespaceSimpleCluster_a7bc3ccce11e60fd93ee92a1c4095c337}
+)}}\label{namespaceSimpleCluster_a81cc95b28c2dbf13507df024fe8213fe}
 The k-\/means method\+: a description of the method can be found at \href{http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html}{\tt http\+://home.\+deib.\+polimi.\+it/matteucc/\+Clustering/tutorial\+\_\+html/kmeans.\+html} 
 \begin{DoxyParams}{Parameters}
 {\em type} & the type of seeding method \\
@@ -876,7 +916,7 @@ The k-\/means method\+: a description of the method can be found at \href{http:/
 \hline
 {\em centroids} & the centroids \\
 \hline
-{\em clusters} & the clusters \\
+{\em label} & the labels of data points \\
 \hline
 {\em seeds} & the initial centroids = the seeds \\
 \hline
