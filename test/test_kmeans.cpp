@@ -154,7 +154,7 @@ TEST_F(KmeansTest, test3) {
 			criteria,
 			N,k,d,
 			false);
-	cout << "NN: Distortion is " << distortion(data,centroids,label,d,N,k,false) << endl;
+	cout << "ANN: Distortion is " << distortion(data,centroids,label,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, test4) {
@@ -178,7 +178,7 @@ TEST_F(KmeansTest, test5) {
 			criteria,
 			N,k,d,
 			false);
-	cout << "NN: Distortion is " << distortion(data,centroids,label,d,N,k,false) << endl;
+	cout << "LINEAR: Distortion is " << distortion(data,centroids,label,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, test6) {
