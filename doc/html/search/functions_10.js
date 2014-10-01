@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7ekdnode',['~KDNode',['../classSimpleCluster_1_1KDNode.html#a997a7e9b6cb385f9a8978a081244f34b',1,'SimpleCluster::KDNode']]]
+  ['update_5fcenter',['update_center',['../namespaceSimpleCluster.html#a250fa0fe5d53131d30a98b0c22ce611b',1,'SimpleCluster']]]
 ];
