@@ -54,6 +54,13 @@ void all_mean_vector(
 		size_t,
 		size_t,
 		size_t);
+void update_center(
+		double **,
+		size_t *,
+		double **&,
+		double *&,
+		size_t,
+		size_t);
 double * mean_vector(
 		double **,
 		const int *,

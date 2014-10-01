@@ -36,6 +36,9 @@
 
 using namespace std;
 
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a>b?b:a
+
 namespace SimpleCluster {
 
 /**
@@ -148,20 +151,20 @@ void kmeans_pp_seeds(
 }
 
 /**
- * After having a set of centroids,
+ * After having a set of centers,
  * we need to assign data into each cluster respectively.
  * This solution uses linear search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
  * @param k the numbe rof clusters
  * @param data input data
- * @param centroids the centroids
+ * @param centers the centers
  * @param clusters the clusters
  * @param verbose for debugging
  */
 void linear_assign(
 		double ** data,
-		double ** centroids,
+		double ** centers,
 		vector<i_vector>& clusters,
 		size_t d,
 		size_t N,
@@ -173,27 +176,27 @@ void linear_assign(
 
 	for(i = 0; i < N; i++) {
 		// Find the minimum distances between d_tmp and a centroid
-		linear_search(centroids,data[i],tmp,min,k,d,verbose);
+		linear_search(centers,data[i],tmp,min,k,d,verbose);
 		// Assign the data[i] into cluster tmp
 		clusters[tmp].push_back(static_cast<int>(i));
 	}
 }
 
 /**
- * After having a set of centroids,
+ * After having a set of centers,
  * we need to assign data into each cluster respectively.
  * This solution uses kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
  * @param k the number of clusters
  * @param data input data
- * @param centroids the centroids
+ * @param centers the centers
  * @param clusters the clusters
  * @param verbose for debugging
  */
 void kd_nn_assign(
 		double ** data,
-		double ** centroids,
+		double ** centers,
 		vector<i_vector>& clusters,
 		size_t d,
 		size_t N,
@@ -201,7 +204,7 @@ void kd_nn_assign(
 		bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
-	make_random_tree(root,centroids,k,d,0,verbose);
+	make_random_tree(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
 
 	KDNode<double> query(d);
@@ -220,20 +223,20 @@ void kd_nn_assign(
 }
 
 /**
- * After having a set of centroids,
+ * After having a set of centers,
  * we need to assign data into each cluster respectively.
  * This solution uses ANN kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
  * @param k the numbe rof clusters
  * @param data input data
- * @param centroids the centroids
+ * @param centers the centers
  * @param clusters the clusters
  * @param verbose for debugging
  */
 void kd_ann_assign(
 		double ** data,
-		double ** centroids,
+		double ** centers,
 		vector<i_vector>& clusters,
 		size_t d,
 		size_t N,
@@ -242,7 +245,7 @@ void kd_ann_assign(
 		bool verbose) {
 	size_t i, tmp;
 	KDNode<double> * root = nullptr;
-	make_random_tree(root,centroids,k,d,0,verbose);
+	make_random_tree(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
 
 	KDNode<double> query(d);
@@ -260,6 +263,71 @@ void kd_ann_assign(
 	}
 }
 
+
+/**
+ * Initialize for Greg's method
+ * @param data the point data
+ * @param centers the centers of clusters
+ * @param sum vector sum of all points in each cluster
+ * @param upper upper bound on the distance between point data and its assigned center
+ * @param lower lower bound on the distance between point data and its second closest center
+ * @param label the label of point data that specify its assigned cluster
+ * @param N the size of data set
+ * @param k the number of clusters
+ * @param d the number of dimensions
+ * @param verbose enable it to see the log
+ * @return nothing
+ */
+void greg_initialize(
+		double ** data,
+		double ** centers,
+		double **& sum,
+		double *& upper,
+		double *& lower,
+		int *& label,
+		size_t *& size,
+		size_t N,
+		size_t k,
+		size_t d,
+		bool verbose) {
+	size_t tmp = -1;
+	double min = DBL_MAX;
+	double min2 = DBL_MAX;
+	double d_tmp;
+
+	// Initializing size and vector sum
+	for(size_t i = 0; i < k; i++) {
+		size[i] = 0;
+		for(size_t j = 0; j < d; j++) {
+			sum[i][j] = 0.0;
+		}
+	}
+
+	for(size_t i = 0; i < N; i++) {
+		for(size_t j = 0; j < k; j++) {
+			d_tmp = SimpleCluster::distance(centers[j],data[i],d);
+			if(min >= d_tmp) {
+				min2 = min;
+				min = d_tmp;
+				tmp = j;
+			} else {
+				if(min2 > d_tmp) min2 = d_tmp;
+			}
+		}
+		label[i] = tmp; // Update the label
+		upper[i] = min; // Update the upper bound on this distance
+		lower[i] = min2; // Update the lower bound on this distance
+
+		// Update the size
+		size[tmp]++;
+
+		// Update the vector sum
+		for(size_t j = 0; j < d; j++) {
+			sum[tmp][j] += data[i][j];
+		}
+	}
+}
+
 /**
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
@@ -270,14 +338,14 @@ void kd_ann_assign(
  * @param k the number of clusters
  * @param criteria the criteria
  * @param data input data
- * @param centroids the centroids
+ * @param centers the centers
  * @param label the labels of data points
- * @param seeds the initial centroids = the seeds
+ * @param seeds the initial centers = the seeds
  * @param verbose for debugging
  */
 void simple_k_means(
 		double ** data,
-		double **& centroids,
+		double **& centers,
 		int *& label,
 		double **& seeds,
 		KmeansType type,
@@ -299,7 +367,6 @@ void simple_k_means(
 	}
 
 	// Seeding
-	// In case of defective seeds from users, we should overwrite it by kmeans++ seeds
 	if (type == KmeansType::RANDOM_SEEDS) {
 		random_seeds(data,seeds,d,N,k,verbose);
 	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
@@ -314,63 +381,100 @@ void simple_k_means(
 	double error = criteria.accuracy, e = error, e_prev = 0.0;
 	double alpha = criteria.alpha;
 
-//	double ** c_tmp;
-//	init_array_2<double>(c_tmp,k,d);
-
 	// Variables for Greg's method
+	double ** c_sum;
 	double * moved;
 	double * closest;
 	double * upper;
 	double * lower;
 	size_t * size;
 
+	init_array_2<double>(c_sum,k,d);
 	init_array<double>(moved,k);
 	init_array<double>(closest,k);
 	init_array<double>(upper,N);
 	init_array<double>(lower,N);
 	init_array<size_t>(size,k);
 
-	// Initialize the centroids
-	copy_array_2<double>(seeds,centroids,k,d);
+	// Initialize the centers
+	copy_array_2<double>(seeds,centers,k,d);
+	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,verbose);
 
 	while (1) {
-		// Initialize
-		for(size_t j = 0; j < k; j++) {
-			size[j] = 0;
-		}
 		// Assign the data points to clusters
 		size_t tmp, visited;
-		double min = 0.0;
+		double min, min2, min_tmp, d_tmp, m;
+		// Update the closest distances
+		for(size_t j = 0; j < k; j++) {
+			min2 = min = DBL_MAX;
+			for(size_t t = 0; t < k, t != j; t++) {
+				min_tmp = SimpleCluster::distance(centers[j],centers[t],d);
+				if(min > min_tmp) min = min_tmp;
+			}
+			closest[j] = min;
+		}
+
 		KDNode<double> * root = nullptr;
 		KDNode<double> query(d);
 		if(assign != KmeansAssignType::LINEAR) {
-			make_random_tree(root,centroids,k,d,0,verbose);
+			make_random_tree(root,centers,k,d,0,verbose);
 			if(root == nullptr) return;
 		}
 
 		for(size_t j = 0; j < N; j++) {
-			// Assign the data to clusters
-			if(assign == KmeansAssignType::LINEAR) {
-				linear_search(centroids,data[j],tmp,min,k,d,verbose);
-			} else {
-				KDNode<double> * nn = nullptr;
-				min = DBL_MAX;
-				visited = 0;
-				query.add_data(data[j]);
-				if(assign == KmeansAssignType::NN_KD_TREE) {
-					nn_search(root,&query,nn,min,d,0,visited,verbose);
-				} else {
-					ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
+			// Update m for bound test
+			d_tmp = closest[label[j]]/2.0;
+			m = MAX(d_tmp,lower[j]);
+			// First bound test
+			if(upper[j] > m) {
+				// We need to tighten the upper bound
+				upper[j] = SimpleCluster::distance(data[j],centers[label[j]],d);
+				// Second bound test
+				if(upper[j] > m) {
+					size_t l = label[j];
+					// Assign the data to clusters
+//					if(assign == KmeansAssignType::LINEAR) {
+						for(size_t t = 0; t < k; t++) {
+							d_tmp = SimpleCluster::distance(centers[t],data[j],d);
+							if(min >= d_tmp) {
+								min2 = min;
+								min = d_tmp;
+								tmp = j;
+							} else {
+								if(min2 > d_tmp) min2 = d_tmp;
+							}
+						}
+//					} else {
+//						KDNode<double> * nn = nullptr;
+//						min = DBL_MAX;
+//						visited = 0;
+//						query.add_data(data[j]);
+//						if(assign == KmeansAssignType::NN_KD_TREE) {
+//							nn_search(root,&query,nn,min,d,0,visited,verbose);
+//						} else {
+//							ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
+//						}
+//						tmp = nn->id;
+//					}
+					// Assign the data[i] into cluster tmp
+					label[j] = tmp; // Update the label
+					upper[j] = min; // Update the upper bound on this distance
+					lower[j] = min2; // Update the lower bound on this distance
+
+					if(l != tmp) {
+						size[tmp]++;
+						size[l]--;
+						for(size_t t = 0; t < d; t++) {
+							c_sum[tmp][t] += data[j][t];
+							c_sum[l][t] -= data[j][t];
+						}
+					}
 				}
-				tmp = nn->id;
 			}
-			// Assign the data[i] into cluster tmp
-			label[j] = tmp;
-			size[tmp]++;
 		}
 
-		// Recalculate the centroids
-		all_mean_vector(data,label,size,centroids,moved,d,N,k);
+		// Recalculate the centers
+		update_center(c_sum,size,centers,moved,k,d);
 		// Calculate the distortion
 		e_prev = e;
 		e = 0.0;
@@ -380,14 +484,13 @@ void simple_k_means(
 		e = sqrt(e);
 		i++;
 		if(i >= iters ||
-//				(e - e_prev < error && e - e_prev > -error) ||
-				(e < error && e > -error)
-				) break;
+				//				(e - e_prev < error && e - e_prev > -error) ||
+				(e < error && e > -error)) break;
 	}
 
-//	if(verbose)
-		cout << "Finished clustering with error is " <<
-		e << " after " << i << " iterations." << endl;
+	//	if(verbose)
+	cout << "Finished clustering with error is " <<
+			e << " after " << i << " iterations." << endl;
 }
 
 /**
@@ -396,13 +499,13 @@ void simple_k_means(
  * @param N the number of the data
  * @param k the number of clusters
  * @param data input data
- * @param centroids the centroids
+ * @param centers the centers
  * @param clusters the clusters
  * @param verbose for debugging
  */
 double distortion(
 		double ** data,
-		double ** centroids,
+		double ** centers,
 		int * label,
 		size_t d,
 		size_t N,
@@ -410,7 +513,7 @@ double distortion(
 		bool verbose) {
 	double e = 0.0;
 	for(size_t i = 0; i < N; i++) {
-		e += distance_square(data[i],centroids[label[i]],d);
+		e += distance_square(data[i],centers[label[i]],d);
 	}
 	return sqrt(e);
 }

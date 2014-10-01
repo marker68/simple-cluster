@@ -103,6 +103,19 @@ void kd_ann_assign(
 		size_t,
 		double,
 		bool);
+void greg_initialize(
+		double **,
+		double **,
+		double **&,
+		double *&,
+		double *&,
+		int *&,
+		size_t *&,
+		size_t,
+		size_t,
+		size_t,
+		bool
+		);
 void simple_k_means(
 		double **,
 		double **&,
