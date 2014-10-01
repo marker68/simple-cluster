@@ -29,6 +29,8 @@
 
 using namespace std;
 
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a>b?b:a
 /**
  * Cluster methods' space
  */
@@ -116,6 +118,20 @@ void greg_initialize(
 		size_t,
 		bool
 		);
+void update_center(
+		double **,
+		size_t *,
+		double **&,
+		double *&,
+		size_t,
+		size_t);
+void update_bounds(
+		double *,
+		int *,
+		double *&,
+		double *&,
+		size_t,
+		size_t);
 void simple_k_means(
 		double **,
 		double **&,

@@ -132,34 +132,6 @@ void all_mean_vector(
 }
 
 /**
- * Update the centers
- * @param sum vector sum of all points in the cluster
- * @param size the size of each cluster
- * @param centers the centers of clusters
- * @param moved the distances that centers moved
- * @param k the number of clusters
- * @param d the number of dimensions
- * @return nothing
- */
-void update_center(
-		double ** sum,
-		size_t * size,
-		double **& centers,
-		double *& moved,
-		size_t k,
-		size_t d) {
-	double * c_tmp;
-	init_array<double>(c_tmp,d);
-	for(size_t i = 0; i < k; i++) {
-		copy_array<double>(centers[i],c_tmp,d);
-		for(size_t j = 0; j < d; j++) {
-			if(size[i] > 0) centers[i][j] /= static_cast<double>(size[i]);
-		}
-		moved[i] = SimpleCluster::distance(c_tmp,centers[i],d);
-	}
-}
-
-/**
  * Calculate the mean of a cluster
  * @param data
  * @param index

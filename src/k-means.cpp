@@ -36,9 +36,6 @@
 
 using namespace std;
 
-#define MAX(a,b) a>b?a:b
-#define MIN(a,b) a>b?b:a
-
 namespace SimpleCluster {
 
 /**
@@ -329,6 +326,79 @@ void greg_initialize(
 }
 
 /**
+ * Update the centers
+ * @param sum vector sum of all points in the cluster
+ * @param size the size of each cluster
+ * @param centers the centers of clusters
+ * @param moved the distances that centers moved
+ * @param k the number of clusters
+ * @param d the number of dimensions
+ * @return nothing
+ */
+void update_center(
+		double ** sum,
+		size_t * size,
+		double **& centers,
+		double *& moved,
+		size_t k,
+		size_t d) {
+	double * c_tmp;
+	init_array<double>(c_tmp,d);
+	for(size_t i = 0; i < k; i++) {
+		copy_array<double>(centers[i],c_tmp,d);
+		for(size_t j = 0; j < d; j++) {
+			if(size[i] > 0) centers[i][j] /= static_cast<double>(size[i]);
+		}
+		moved[i] = SimpleCluster::distance(c_tmp,centers[i],d);
+	}
+}
+
+/**
+ * Update the bounds
+ * @param moved the distances that centers moved
+ * @param label the labels of point data
+ * @param upper
+ * @param lower
+ * @param N
+ * @param k
+ * @param d
+ */
+void update_bounds(
+		double * moved,
+		int * label,
+		double *& upper,
+		double *& lower,
+		size_t N,
+		size_t k) {
+	size_t r = 0, r2 = 0;
+	double max = 0.0, max2 = 0.0;
+	for(size_t i = 0; i < k; i++) {
+		if(max <= moved[i]) {
+			max2 = max;
+			max = moved[i];
+			r2 = r;
+			r = i;
+		} else {
+			if(max2 <= moved[i]) {
+				max2 = moved[i];
+				r2 = i;
+			}
+		}
+	}
+	for(size_t i = 0; i < N; i++) {
+		upper[i] += moved[label[i]];
+		double sub = 0.0;
+		if(r == label[i]) {
+			sub = moved[r2];
+		} else {
+			sub = moved[r];
+		}
+		lower[i] = fabs(lower[i] - sub);
+//		cout << "lower " << i << ":" << lower[i] << endl;
+	}
+}
+
+/**
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
  * @param type the type of seeding method
@@ -414,12 +484,12 @@ void simple_k_means(
 			closest[j] = min;
 		}
 
-		KDNode<double> * root = nullptr;
-		KDNode<double> query(d);
-		if(assign != KmeansAssignType::LINEAR) {
-			make_random_tree(root,centers,k,d,0,verbose);
-			if(root == nullptr) return;
-		}
+//		KDNode<double> * root = nullptr;
+//		KDNode<double> query(d);
+//		if(assign != KmeansAssignType::LINEAR) {
+//			make_random_tree(root,centers,k,d,0,verbose);
+//			if(root == nullptr) return;
+//		}
 
 		for(size_t j = 0; j < N; j++) {
 			// Update m for bound test
@@ -433,29 +503,30 @@ void simple_k_means(
 				if(upper[j] > m) {
 					size_t l = label[j];
 					// Assign the data to clusters
-//					if(assign == KmeansAssignType::LINEAR) {
-						for(size_t t = 0; t < k; t++) {
-							d_tmp = SimpleCluster::distance(centers[t],data[j],d);
-							if(min >= d_tmp) {
-								min2 = min;
-								min = d_tmp;
-								tmp = j;
-							} else {
-								if(min2 > d_tmp) min2 = d_tmp;
-							}
+					//					if(assign == KmeansAssignType::LINEAR) {
+					for(size_t t = 0; t < k; t++) {
+						d_tmp = SimpleCluster::distance(centers[t],data[j],d);
+						if(min >= d_tmp) {
+							min2 = min;
+							min = d_tmp;
+							tmp = j;
+						} else {
+							if(min2 > d_tmp) min2 = d_tmp;
 						}
-//					} else {
-//						KDNode<double> * nn = nullptr;
-//						min = DBL_MAX;
-//						visited = 0;
-//						query.add_data(data[j]);
-//						if(assign == KmeansAssignType::NN_KD_TREE) {
-//							nn_search(root,&query,nn,min,d,0,visited,verbose);
-//						} else {
-//							ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
-//						}
-//						tmp = nn->id;
-//					}
+					}
+					//					} else {
+					//						KDNode<double> * nn = nullptr;
+					//						min = DBL_MAX;
+					//						visited = 0;
+					//						query.add_data(data[j]);
+					//						if(assign == KmeansAssignType::NN_KD_TREE) {
+					//							nn_search(root,&query,nn,min,d,0,visited,verbose);
+					//						} else {
+					//							ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
+					//						}
+					//						tmp = nn->id;
+					//					}
+
 					// Assign the data[i] into cluster tmp
 					label[j] = tmp; // Update the label
 					upper[j] = min; // Update the upper bound on this distance
@@ -473,8 +544,12 @@ void simple_k_means(
 			}
 		}
 
-		// Recalculate the centers
+		// Move the centers
 		update_center(c_sum,size,centers,moved,k,d);
+
+		// Update the bounds
+		update_bounds(moved,label,upper,lower,N,k);
+
 		// Calculate the distortion
 		e_prev = e;
 		e = 0.0;
@@ -484,7 +559,7 @@ void simple_k_means(
 		e = sqrt(e);
 		i++;
 		if(i >= iters ||
-				//				(e - e_prev < error && e - e_prev > -error) ||
+//				(e - e_prev < error && e - e_prev > -error) ||
 				(e < error && e > -error)) break;
 	}
 
