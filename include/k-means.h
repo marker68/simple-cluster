@@ -29,15 +29,13 @@
 
 using namespace std;
 
-#define MAX(a,b) a>b?a:b
-#define MIN(a,b) a>b?b:a
 /**
  * Cluster methods' space
  */
 namespace SimpleCluster {
 
 typedef vector<double> d_vector;
-typedef vector<int> i_vector;
+typedef vector<size_t> i_vector;
 
 /**
  * Criteria
@@ -111,7 +109,7 @@ void greg_initialize(
 		double **&,
 		double *&,
 		double *&,
-		int *&,
+		size_t *&,
 		size_t *&,
 		size_t,
 		size_t,
@@ -127,7 +125,7 @@ void update_center(
 		size_t);
 void update_bounds(
 		double *,
-		int *,
+		size_t *,
 		double *&,
 		double *&,
 		size_t,
@@ -135,7 +133,7 @@ void update_bounds(
 void simple_k_means(
 		double **,
 		double **&,
-		int *&,
+		size_t *&,
 		double **&,
 		KmeansType,
 		KmeansAssignType,
@@ -147,7 +145,7 @@ void simple_k_means(
 double distortion(
 		double **,
 		double **,
-		int *,
+		size_t *,
 		size_t,
 		size_t,
 		size_t,

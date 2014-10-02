@@ -89,7 +89,7 @@ protected:
 			cerr << "Cannot allocate memory for centroids data!" << endl;
 			exit(1);
 		}
-		label = (int *)calloc(N,sizeof(int));
+		label = (size_t *)calloc(N,sizeof(size_t));
 		if(label == NULL) {
 			cerr << "Cannot allocate memory for label data!" << endl;
 			exit(1);
@@ -125,17 +125,17 @@ public:
 	static double ** data;
 	static double ** seeds;
 	static double ** centroids;
-	static int * label;
-	static int N, d, k;
+	static size_t * label;
+	static size_t N, d, k;
 };
 
 double ** KmeansTest::data;
 double ** KmeansTest::seeds;
 double ** KmeansTest::centroids;
-int * KmeansTest::label;
-int KmeansTest::N;
-int KmeansTest::d;
-int KmeansTest::k;
+size_t * KmeansTest::label;
+size_t KmeansTest::N;
+size_t KmeansTest::d;
+size_t KmeansTest::k;
 
 TEST_F(KmeansTest, DISABLED_test1) {
 	random_seeds(data,seeds,d,N,k,true);

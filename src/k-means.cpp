@@ -36,6 +36,9 @@
 
 using namespace std;
 
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a>b?b:a
+
 namespace SimpleCluster {
 
 /**
@@ -55,19 +58,19 @@ void random_seeds(
 		size_t k,
 		bool verbose) {
 	size_t i, j;
-	int tmp[k];
+	size_t tmp[k];
 
 	// For generating random numbers
 	random_device rd;
 	mt19937 gen(rd());
 
 	for(i = 0; i < k; i++)
-		tmp[i] = static_cast<int>(i);
+		tmp[i] = static_cast<size_t>(i);
 	for(i = k; i < N; i++) {
-		uniform_int_distribution<> int_dis(i,N-1);
-		j = int_dis(gen);
+		uniform_int_distribution<> size_t_dis(i,N-1);
+		j = size_t_dis(gen);
 		if(j < k)
-			tmp[j] = static_cast<int>(i);
+			tmp[j] = static_cast<size_t>(i);
 	}
 
 	for(i = 0; i < k; i++) {
@@ -99,8 +102,8 @@ void kmeans_pp_seeds(
 	random_device rd;
 	mt19937 gen(rd());
 
-	uniform_int_distribution<size_t> int_dis(0, N - 1);
-	size_t tmp = int_dis(gen);
+	uniform_int_distribution<size_t> size_t_dis(0, N - 1);
+	size_t tmp = size_t_dis(gen);
 
 	double * d_tmp;
 	if(!init_array<double>(d_tmp,d)) {
@@ -149,11 +152,11 @@ void kmeans_pp_seeds(
 
 /**
  * After having a set of centers,
- * we need to assign data into each cluster respectively.
+ * we need to assign data size_to each cluster respectively.
  * This solution uses linear search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
- * @param k the numbe rof clusters
+ * @param k the number of clusters
  * @param data input data
  * @param centers the centers
  * @param clusters the clusters
@@ -174,14 +177,14 @@ void linear_assign(
 	for(i = 0; i < N; i++) {
 		// Find the minimum distances between d_tmp and a centroid
 		linear_search(centers,data[i],tmp,min,k,d,verbose);
-		// Assign the data[i] into cluster tmp
-		clusters[tmp].push_back(static_cast<int>(i));
+		// Assign the data[i] size_to cluster tmp
+		clusters[tmp].push_back(static_cast<size_t>(i));
 	}
 }
 
 /**
  * After having a set of centers,
- * we need to assign data into each cluster respectively.
+ * we need to assign data size_to each cluster respectively.
  * This solution uses kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
@@ -214,18 +217,18 @@ void kd_nn_assign(
 		// Find the minimum distances between d_tmp and a centroid
 		nn_search(root,&query,nn,min,d,0,visited,verbose);
 		tmp = nn->id;
-		// Assign the data[i] into cluster tmp
-		clusters[tmp].push_back(static_cast<int>(i));
+		// Assign the data[i] size_to cluster tmp
+		clusters[tmp].push_back(static_cast<size_t>(i));
 	}
 }
 
 /**
  * After having a set of centers,
- * we need to assign data into each cluster respectively.
+ * we need to assign data size_to each cluster respectively.
  * This solution uses ANN kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
- * @param k the numbe rof clusters
+ * @param k the number of clusters
  * @param data input data
  * @param centers the centers
  * @param clusters the clusters
@@ -255,8 +258,8 @@ void kd_ann_assign(
 		// Find the minimum distances between d_tmp and a centroid
 		ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
 		tmp = nn->id;
-		// Assign the data[i] into cluster tmp
-		clusters[tmp].push_back(static_cast<int>(i));
+		// Assign the data[i] size_to cluster tmp
+		clusters[tmp].push_back(static_cast<size_t>(i));
 	}
 }
 
@@ -265,10 +268,10 @@ void kd_ann_assign(
  * Initialize for Greg's method
  * @param data the point data
  * @param centers the centers of clusters
- * @param sum vector sum of all points in each cluster
- * @param upper upper bound on the distance between point data and its assigned center
- * @param lower lower bound on the distance between point data and its second closest center
- * @param label the label of point data that specify its assigned cluster
+ * @param sum vector sum of all posize_ts in each cluster
+ * @param upper upper bound on the distance between posize_t data and its assigned center
+ * @param lower lower bound on the distance between posize_t data and its second closest center
+ * @param label the label of posize_t data that specify its assigned cluster
  * @param N the size of data set
  * @param k the number of clusters
  * @param d the number of dimensions
@@ -281,7 +284,7 @@ void greg_initialize(
 		double **& sum,
 		double *& upper,
 		double *& lower,
-		int *& label,
+		size_t *& label,
 		size_t *& size,
 		size_t N,
 		size_t k,
@@ -327,7 +330,7 @@ void greg_initialize(
 
 /**
  * Update the centers
- * @param sum vector sum of all points in the cluster
+ * @param sum vector sum of all posize_ts in the cluster
  * @param size the size of each cluster
  * @param centers the centers of clusters
  * @param moved the distances that centers moved
@@ -356,7 +359,7 @@ void update_center(
 /**
  * Update the bounds
  * @param moved the distances that centers moved
- * @param label the labels of point data
+ * @param label the labels of posize_t data
  * @param upper
  * @param lower
  * @param N
@@ -365,7 +368,7 @@ void update_center(
  */
 void update_bounds(
 		double * moved,
-		int * label,
+		size_t * label,
 		double *& upper,
 		double *& lower,
 		size_t N,
@@ -394,7 +397,6 @@ void update_bounds(
 			sub = moved[r];
 		}
 		lower[i] = fabs(lower[i] - sub);
-//		cout << "lower " << i << ":" << lower[i] << endl;
 	}
 }
 
@@ -409,14 +411,14 @@ void update_bounds(
  * @param criteria the criteria
  * @param data input data
  * @param centers the centers
- * @param label the labels of data points
+ * @param label the labels of data posize_ts
  * @param seeds the initial centers = the seeds
  * @param verbose for debugging
  */
 void simple_k_means(
 		double ** data,
 		double **& centers,
-		int *& label,
+		size_t *& label,
 		double **& seeds,
 		KmeansType type,
 		KmeansAssignType assign,
@@ -471,7 +473,8 @@ void simple_k_means(
 	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,verbose);
 
 	while (1) {
-		// Assign the data points to clusters
+		cout << "i = " << i << endl;
+		// Assign the data posize_ts to clusters
 		size_t tmp, visited;
 		double min, min2, min_tmp, d_tmp, m;
 		// Update the closest distances
@@ -497,6 +500,7 @@ void simple_k_means(
 			m = MAX(d_tmp,lower[j]);
 			// First bound test
 			if(upper[j] > m) {
+				cout << j << endl;
 				// We need to tighten the upper bound
 				upper[j] = SimpleCluster::distance(data[j],centers[label[j]],d);
 				// Second bound test
@@ -527,7 +531,7 @@ void simple_k_means(
 					//						tmp = nn->id;
 					//					}
 
-					// Assign the data[i] into cluster tmp
+					// Assign the data[i] size_to cluster tmp
 					label[j] = tmp; // Update the label
 					upper[j] = min; // Update the upper bound on this distance
 					lower[j] = min2; // Update the lower bound on this distance
@@ -581,7 +585,7 @@ void simple_k_means(
 double distortion(
 		double ** data,
 		double ** centers,
-		int * label,
+		size_t * label,
 		size_t d,
 		size_t N,
 		size_t k,

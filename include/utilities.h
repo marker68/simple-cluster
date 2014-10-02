@@ -35,7 +35,7 @@ using namespace std;
  */
 namespace SimpleCluster {
 typedef vector<double> d_vector;
-typedef vector<int> i_vector;
+typedef vector<size_t> i_vector;
 
 double distance(
 		double *,
