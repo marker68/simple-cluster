@@ -36,9 +36,6 @@
 
 using namespace std;
 
-#define MAX(a,b) a>b?a:b
-#define MIN(a,b) a>b?b:a
-
 namespace SimpleCluster {
 
 /**
@@ -51,8 +48,8 @@ namespace SimpleCluster {
  * @param verbose for debugging
  */
 void random_seeds(
-		double ** data,
-		double **& seeds,
+		float ** data,
+		float **& seeds,
 		size_t d,
 		size_t N,
 		size_t k,
@@ -74,7 +71,7 @@ void random_seeds(
 	}
 
 	for(i = 0; i < k; i++) {
-		if(!copy_array<double>(data[tmp[i]],seeds[i],d)) {
+		if(!copy_array<float>(data[tmp[i]],seeds[i],d)) {
 			if(verbose)
 				cerr << "Cannot copy array! The program exit now!" << endl;
 			exit(1);
@@ -92,8 +89,8 @@ void random_seeds(
  * @param verbose for debugging
  */
 void kmeans_pp_seeds(
-		double ** data,
-		double **& seeds,
+		float ** data,
+		float **& seeds,
 		size_t d,
 		size_t N,
 		size_t k,
@@ -105,23 +102,23 @@ void kmeans_pp_seeds(
 	uniform_int_distribution<size_t> size_t_dis(0, N - 1);
 	size_t tmp = size_t_dis(gen);
 
-	double * d_tmp;
-	if(!init_array<double>(d_tmp,d)) {
+	float * d_tmp;
+	if(!init_array<float>(d_tmp,d)) {
 		cerr << "d_tmp: Cannot allocate the memory" << endl;
 		exit(1);
 	}
-	copy_array<double>(data[tmp],seeds[0],d);
-	double * distances;
-	init_array<double>(distances,N);
-	double * sum_distances;
-	init_array<double>(sum_distances,N);
+	copy_array<float>(data[tmp],seeds[0],d);
+	float * distances;
+	init_array<float>(distances,N);
+	float * sum_distances;
+	init_array<float>(sum_distances,N);
 	size_t i;
 	for(i = 0; i < N; i++) {
 		distances[i] = SimpleCluster::distance_square(data[i], d_tmp, d);
 		sum_distances[i] = 0.0;
 	}
 
-	double sum, tmp2, sum1, sum2, pivot;
+	float sum, tmp2, sum1, sum2, pivot;
 	size_t count = 1;
 	while(count < k) {
 		sum = 0.0;
@@ -129,7 +126,7 @@ void kmeans_pp_seeds(
 			sum += distances[i];
 			sum_distances[i] = sum;
 		}
-		uniform_real_distribution<double> real_dis(0, sum);
+		uniform_real_distribution<float> real_dis(0, sum);
 		pivot = real_dis(gen);
 
 		for(i = 0; i < N - 1; i++) {
@@ -138,8 +135,8 @@ void kmeans_pp_seeds(
 			if(sum1 < pivot && pivot <= sum2)
 				break;
 		}
-		copy_array<double>(data[(i+1)%N],d_tmp,d);
-		copy_array<double>(d_tmp,seeds[count++],d);
+		copy_array<float>(data[(i+1)%N],d_tmp,d);
+		copy_array<float>(d_tmp,seeds[count++],d);
 		// Update the distances
 		if(count < k) {
 			for(i = 0; i < N; i++) {
@@ -163,8 +160,8 @@ void kmeans_pp_seeds(
  * @param verbose for debugging
  */
 void linear_assign(
-		double ** data,
-		double ** centers,
+		float ** data,
+		float ** centers,
 		vector<i_vector>& clusters,
 		size_t d,
 		size_t N,
@@ -172,7 +169,7 @@ void linear_assign(
 		bool verbose) {
 	size_t i, tmp;
 
-	double min = 0.0;
+	float min = 0.0;
 
 	for(i = 0; i < N; i++) {
 		// Find the minimum distances between d_tmp and a centroid
@@ -195,23 +192,23 @@ void linear_assign(
  * @param verbose for debugging
  */
 void kd_nn_assign(
-		double ** data,
-		double ** centers,
+		float ** data,
+		float ** centers,
 		vector<i_vector>& clusters,
 		size_t d,
 		size_t N,
 		size_t k,
 		bool verbose) {
 	size_t i, tmp;
-	KDNode<double> * root = nullptr;
+	KDNode<float> * root = nullptr;
 	make_random_tree(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
 
-	KDNode<double> query(d);
+	KDNode<float> query(d);
 
 	for(i = 0; i < N; i++) {
-		KDNode<double> * nn = nullptr;
-		double min = DBL_MAX;
+		KDNode<float> * nn = nullptr;
+		float min = DBL_MAX;
 		size_t visited = 0;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
@@ -235,24 +232,24 @@ void kd_nn_assign(
  * @param verbose for debugging
  */
 void kd_ann_assign(
-		double ** data,
-		double ** centers,
+		float ** data,
+		float ** centers,
 		vector<i_vector>& clusters,
 		size_t d,
 		size_t N,
 		size_t k,
-		double alpha,
+		float alpha,
 		bool verbose) {
 	size_t i, tmp;
-	KDNode<double> * root = nullptr;
+	KDNode<float> * root = nullptr;
 	make_random_tree(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
 
-	KDNode<double> query(d);
+	KDNode<float> query(d);
 
 	for(i = 0; i < N; i++) {
-		KDNode<double> * nn = nullptr;
-		double min = DBL_MAX;
+		KDNode<float> * nn = nullptr;
+		float min = DBL_MAX;
 		size_t visited = 0;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
@@ -279,11 +276,11 @@ void kd_ann_assign(
  * @return nothing
  */
 void greg_initialize(
-		double ** data,
-		double ** centers,
-		double **& sum,
-		double *& upper,
-		double *& lower,
+		float ** data,
+		float ** centers,
+		float **& sum,
+		float *& upper,
+		float *& lower,
 		size_t *& label,
 		size_t *& size,
 		size_t N,
@@ -291,9 +288,9 @@ void greg_initialize(
 		size_t d,
 		bool verbose) {
 	size_t tmp = -1;
-	double min = DBL_MAX;
-	double min2 = DBL_MAX;
-	double d_tmp;
+	float min = DBL_MAX;
+	float min2 = DBL_MAX;
+	float d_tmp;
 
 	// Initializing size and vector sum
 	for(size_t i = 0; i < k; i++) {
@@ -311,7 +308,7 @@ void greg_initialize(
 				min = d_tmp;
 				tmp = j;
 			} else {
-				if(min2 > d_tmp) min2 = d_tmp;
+				if(min2 >= d_tmp) min2 = d_tmp;
 			}
 		}
 		label[i] = tmp; // Update the label
@@ -339,18 +336,18 @@ void greg_initialize(
  * @return nothing
  */
 void update_center(
-		double ** sum,
+		float ** sum,
 		size_t * size,
-		double **& centers,
-		double *& moved,
+		float **& centers,
+		float *& moved,
 		size_t k,
 		size_t d) {
-	double * c_tmp;
-	init_array<double>(c_tmp,d);
+	float * c_tmp;
+	init_array<float>(c_tmp,d);
 	for(size_t i = 0; i < k; i++) {
-		copy_array<double>(centers[i],c_tmp,d);
+		copy_array<float>(centers[i],c_tmp,d);
 		for(size_t j = 0; j < d; j++) {
-			if(size[i] > 0) centers[i][j] /= static_cast<double>(size[i]);
+			if(size[i] > 0) centers[i][j] = sum[i][j] / static_cast<float>(size[i]);
 		}
 		moved[i] = SimpleCluster::distance(c_tmp,centers[i],d);
 	}
@@ -367,34 +364,32 @@ void update_center(
  * @param d
  */
 void update_bounds(
-		double * moved,
+		float * moved,
 		size_t * label,
-		double *& upper,
-		double *& lower,
+		float *& upper,
+		float *& lower,
 		size_t N,
 		size_t k) {
-	size_t r = 0, r2 = 0;
-	double max = 0.0, max2 = 0.0;
+	size_t r = 0;
+	float max = 0.0, max2 = 0.0;
 	for(size_t i = 0; i < k; i++) {
 		if(max <= moved[i]) {
 			max2 = max;
 			max = moved[i];
-			r2 = r;
 			r = i;
 		} else {
 			if(max2 <= moved[i]) {
 				max2 = moved[i];
-				r2 = i;
 			}
 		}
 	}
 	for(size_t i = 0; i < N; i++) {
 		upper[i] += moved[label[i]];
-		double sub = 0.0;
+		float sub = 0.0;
 		if(r == label[i]) {
-			sub = moved[r2];
+			sub = max2;
 		} else {
-			sub = moved[r];
+			sub = max;
 		}
 		lower[i] = fabs(lower[i] - sub);
 	}
@@ -411,15 +406,15 @@ void update_bounds(
  * @param criteria the criteria
  * @param data input data
  * @param centers the centers
- * @param label the labels of data posize_ts
+ * @param label the labels of data points
  * @param seeds the initial centers = the seeds
  * @param verbose for debugging
  */
 void simple_k_means(
-		double ** data,
-		double **& centers,
+		float ** data,
+		float **& centers,
 		size_t *& label,
-		double **& seeds,
+		float **& seeds,
 		KmeansType type,
 		KmeansAssignType assign,
 		KmeansCriteria criteria,
@@ -435,7 +430,7 @@ void simple_k_means(
 	}
 
 	if(seeds == nullptr) {
-		init_array_2<double>(seeds,k,d);
+		init_array_2<float>(seeds,k,d);
 	}
 
 	// Seeding
@@ -450,33 +445,32 @@ void simple_k_means(
 
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0;
-	double error = criteria.accuracy, e = error, e_prev = 0.0;
-	double alpha = criteria.alpha;
+	float error = criteria.accuracy, e;
+	float alpha = criteria.alpha;
 
 	// Variables for Greg's method
-	double ** c_sum;
-	double * moved;
-	double * closest;
-	double * upper;
-	double * lower;
+	float ** c_sum;
+	float * moved;
+	float * closest;
+	float * upper;
+	float * lower;
 	size_t * size;
 
-	init_array_2<double>(c_sum,k,d);
-	init_array<double>(moved,k);
-	init_array<double>(closest,k);
-	init_array<double>(upper,N);
-	init_array<double>(lower,N);
+	init_array_2<float>(c_sum,k,d);
+	init_array<float>(moved,k);
+	init_array<float>(closest,k);
+	init_array<float>(upper,N);
+	init_array<float>(lower,N);
 	init_array<size_t>(size,k);
 
 	// Initialize the centers
-	copy_array_2<double>(seeds,centers,k,d);
+	copy_array_2<float>(seeds,centers,k,d);
 	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,verbose);
 
 	while (1) {
-		cout << "i = " << i << endl;
 		// Assign the data posize_ts to clusters
 		size_t tmp, visited;
-		double min, min2, min_tmp, d_tmp, m;
+		float min, min2, min_tmp, d_tmp, m;
 		// Update the closest distances
 		for(size_t j = 0; j < k; j++) {
 			min2 = min = DBL_MAX;
@@ -487,25 +481,25 @@ void simple_k_means(
 			closest[j] = min;
 		}
 
-//		KDNode<double> * root = nullptr;
-//		KDNode<double> query(d);
-//		if(assign != KmeansAssignType::LINEAR) {
-//			make_random_tree(root,centers,k,d,0,verbose);
-//			if(root == nullptr) return;
-//		}
+		//		KDNode<float> * root = nullptr;
+		//		KDNode<float> query(d);
+		//		if(assign != KmeansAssignType::LINEAR) {
+		//			make_random_tree(root,centers,k,d,0,verbose);
+		//			if(root == nullptr) return;
+		//		}
 
 		for(size_t j = 0; j < N; j++) {
 			// Update m for bound test
 			d_tmp = closest[label[j]]/2.0;
-			m = MAX(d_tmp,lower[j]);
+			m = std::max(d_tmp,lower[j]);
 			// First bound test
 			if(upper[j] > m) {
-				cout << j << endl;
 				// We need to tighten the upper bound
 				upper[j] = SimpleCluster::distance(data[j],centers[label[j]],d);
 				// Second bound test
 				if(upper[j] > m) {
 					size_t l = label[j];
+					min2 = min = DBL_MAX;
 					// Assign the data to clusters
 					//					if(assign == KmeansAssignType::LINEAR) {
 					for(size_t t = 0; t < k; t++) {
@@ -513,13 +507,13 @@ void simple_k_means(
 						if(min >= d_tmp) {
 							min2 = min;
 							min = d_tmp;
-							tmp = j;
+							tmp = t;
 						} else {
 							if(min2 > d_tmp) min2 = d_tmp;
 						}
 					}
 					//					} else {
-					//						KDNode<double> * nn = nullptr;
+					//						KDNode<float> * nn = nullptr;
 					//						min = DBL_MAX;
 					//						visited = 0;
 					//						query.add_data(data[j]);
@@ -539,6 +533,9 @@ void simple_k_means(
 					if(l != tmp) {
 						size[tmp]++;
 						size[l]--;
+						if(size[l] == 0 && verbose)
+							cout << "An empty cluster was found!"
+									" label = " << l << endl;
 						for(size_t t = 0; t < d; t++) {
 							c_sum[tmp][t] += data[j][t];
 							c_sum[l][t] -= data[j][t];
@@ -555,21 +552,23 @@ void simple_k_means(
 		update_bounds(moved,label,upper,lower,N,k);
 
 		// Calculate the distortion
-		e_prev = e;
 		e = 0.0;
 		for(size_t j = 0; j < k; j++) {
 			e += moved[j];
 		}
 		e = sqrt(e);
+		if(verbose)
+			cout << "Iterator " << i
+			<< "-th with error = " << e
+			<< " and distortion = " << distortion(data,centers,label,d,N,k,false)
+			<< endl;
 		i++;
-		if(i >= iters ||
-//				(e - e_prev < error && e - e_prev > -error) ||
-				(e < error && e > -error)) break;
+		if(i >= iters || e < error) break;
 	}
 
-	//	if(verbose)
-	cout << "Finished clustering with error is " <<
-			e << " after " << i << " iterations." << endl;
+	if(verbose)
+		cout << "Finished clustering with error is " <<
+		e << " after " << i << " iterations." << endl;
 }
 
 /**
@@ -582,15 +581,15 @@ void simple_k_means(
  * @param clusters the clusters
  * @param verbose for debugging
  */
-double distortion(
-		double ** data,
-		double ** centers,
+float distortion(
+		float ** data,
+		float ** centers,
 		size_t * label,
 		size_t d,
 		size_t N,
 		size_t k,
 		bool verbose) {
-	double e = 0.0;
+	float e = 0.0;
 	for(size_t i = 0; i < N; i++) {
 		e += distance_square(data[i],centers[label[i]],d);
 	}

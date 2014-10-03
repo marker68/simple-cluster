@@ -127,55 +127,55 @@ public:
 	}
 };
 
-double kd_distance(
-		KDNode<double> *,
-		KDNode<double> *,
+float kd_distance(
+		KDNode<float> *,
+		KDNode<float> *,
 		bool);
 size_t find_median(
-		double **,
+		float **,
 		size_t,
 		size_t,
 		size_t,
 		bool);
 void make_balanced_tree(
-		KDNode<double> *&,
-		double **,
+		KDNode<float> *&,
+		float **,
 		size_t,
 		size_t,
 		size_t,
 		size_t,
 		bool);
 void make_random_tree(
-		KDNode<double> *&,
-		double **,
+		KDNode<float> *&,
+		float **,
 		size_t,
 		size_t,
 		size_t,
 		bool);
 void nn_search(
-		KDNode<double> *,
-		KDNode<double> *,
-		KDNode<double> *&,
-		double&,
+		KDNode<float> *,
+		KDNode<float> *,
+		KDNode<float> *&,
+		float&,
 		size_t,
 		size_t,
 		size_t&,
 		bool);
 void ann_search(
-		KDNode<double> *,
-		KDNode<double> *,
-		KDNode<double> *&,
-		double&,
-		double,
+		KDNode<float> *,
+		KDNode<float> *,
+		KDNode<float> *&,
+		float&,
+		float,
 		size_t,
 		size_t,
 		size_t&,
 		bool);
 void linear_search(
-		double **,
-		double *,
+		float **,
+		float *,
 		size_t&,
-		double&,
+		float&,
 		size_t,
 		size_t,
 		bool);

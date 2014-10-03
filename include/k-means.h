@@ -34,15 +34,15 @@ using namespace std;
  */
 namespace SimpleCluster {
 
-typedef vector<double> d_vector;
+typedef vector<float> d_vector;
 typedef vector<size_t> i_vector;
 
 /**
  * Criteria
  */
 typedef struct {
-	double alpha;
-	double accuracy;
+	float alpha;
+	float accuracy;
 	int iterations;
 } KmeansCriteria;
 
@@ -65,50 +65,50 @@ enum class KmeansType {
 };
 
 void random_seeds(
-		double **,
-		double **&,
+		float **,
+		float **&,
 		size_t,
 		size_t,
 		size_t,
 		bool);
 void kmeans_pp_seeds(
-		double **,
-		double **&,
+		float **,
+		float **&,
 		size_t,
 		size_t,
 		size_t,
 		bool);
 void linear_assign(
-		double **,
-		double **,
+		float **,
+		float **,
 		vector<i_vector>&,
 		size_t,
 		size_t,
 		size_t,
 		bool);
 void kd_nn_assign(
-		double **,
-		double **,
+		float **,
+		float **,
 		vector<i_vector>&,
 		size_t,
 		size_t,
 		size_t,
 		bool);
 void kd_ann_assign(
-		double **,
-		double **,
+		float **,
+		float **,
 		vector<i_vector>&,
 		size_t,
 		size_t,
 		size_t,
-		double,
+		float,
 		bool);
 void greg_initialize(
-		double **,
-		double **,
-		double **&,
-		double *&,
-		double *&,
+		float **,
+		float **,
+		float **&,
+		float *&,
+		float *&,
 		size_t *&,
 		size_t *&,
 		size_t,
@@ -117,24 +117,24 @@ void greg_initialize(
 		bool
 		);
 void update_center(
-		double **,
+		float **,
 		size_t *,
-		double **&,
-		double *&,
+		float **&,
+		float *&,
 		size_t,
 		size_t);
 void update_bounds(
-		double *,
+		float *,
 		size_t *,
-		double *&,
-		double *&,
+		float *&,
+		float *&,
 		size_t,
 		size_t);
 void simple_k_means(
-		double **,
-		double **&,
+		float **,
+		float **&,
 		size_t *&,
-		double **&,
+		float **&,
 		KmeansType,
 		KmeansAssignType,
 		KmeansCriteria,
@@ -142,9 +142,9 @@ void simple_k_means(
 		size_t,
 		size_t,
 		bool);
-double distortion(
-		double **,
-		double **,
+float distortion(
+		float **,
+		float **,
 		size_t *,
 		size_t,
 		size_t,

@@ -34,40 +34,40 @@ using namespace std;
  * The main namespace
  */
 namespace SimpleCluster {
-typedef vector<double> d_vector;
+typedef vector<float> d_vector;
 typedef vector<size_t> i_vector;
 
-double distance(
-		double *,
-		double *,
+float distance(
+		float *,
+		float *,
 		size_t);
-double distance_square(
-		double *,
-		double *,
+float distance_square(
+		float *,
+		float *,
 		size_t);
 void all_mean_vector(
-		double **,
+		float **,
 		int *,
 		size_t *,
-		double **&,
-		double *&,
+		float **&,
+		float *&,
 		size_t,
 		size_t,
 		size_t);
-double * mean_vector(
-		double **,
+float * mean_vector(
+		float **,
 		const int *,
-		double *,
+		float *,
 		size_t,
 		size_t);
-double * mean_vector(
-		double **,
+float * mean_vector(
+		float **,
 		const i_vector,
-		double *,
+		float *,
 		size_t);
 unsigned long get_millisecond_time();
 void print_vector(
-		double **,
+		float **,
 		size_t,
 		size_t);
 

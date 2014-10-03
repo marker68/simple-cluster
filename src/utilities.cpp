@@ -38,12 +38,12 @@ namespace SimpleCluster {
  * @param d
  * @return the distance between x and y in d dimensional space
  */
-double distance(
-		double * x,
-		double * y,
+float distance(
+		float * x,
+		float * y,
 		size_t d) {
 	size_t i;
-	double dis = 0.0, tmp = 0.0;
+	float dis = 0.0, tmp = 0.0;
 	try {
 		for(i = 0; i < d; i++) {
 			tmp = x[i] - y[i];
@@ -64,12 +64,12 @@ double distance(
  * @param d
  * @return the square of distance between x and y in d dimensional space
  */
-double distance_square(
-		double * x,
-		double * y,
+float distance_square(
+		float * x,
+		float * y,
 		size_t d) {
 	size_t i;
-	double dis = 0.0, tmp = 0.0;
+	float dis = 0.0, tmp = 0.0;
 	try {
 		for(i = 0; i < d; i++) {
 			tmp = x[i] - y[i];
@@ -95,18 +95,18 @@ double distance_square(
  * @return nothing
  */
 void all_mean_vector(
-		double ** data,
+		float ** data,
 		int * label,
 		size_t * size,
-		double **& centroids,
-		double *& moved,
+		float **& centroids,
+		float *& moved,
 		size_t d,
 		size_t N,
 		size_t k) {
 	size_t i, j, t;
-	double * tmp;
-	double ** c_tmp;
-	init_array_2<double>(c_tmp,k,d);
+	float * tmp;
+	float ** c_tmp;
+	init_array_2<float>(c_tmp,k,d);
 	for(i = 0; i < k; i++) {
 		for(j = 0; j < d; j++) {
 			c_tmp[i][j] = 0.0;
@@ -126,7 +126,7 @@ void all_mean_vector(
 				c_tmp[i][j] /= t;
 			}
 			moved[i] = distance_square(c_tmp[i],centroids[i],d);
-			copy_array<double>(c_tmp[i],centroids[i],d);
+			copy_array<float>(c_tmp[i],centroids[i],d);
 		} else moved[i] = 0.0;
 	}
 }
@@ -140,10 +140,10 @@ void all_mean_vector(
  * @param centroid
  * @return the mean posize_t of a cluster
  */
-double * mean_vector(
-		double ** data,
+float * mean_vector(
+		float ** data,
 		const int * index,
-		double * centroid,
+		float * centroid,
 		size_t d,
 		size_t size) {
 	size_t i, j = 0, k;
@@ -151,7 +151,7 @@ double * mean_vector(
 		return centroid;
 	}
 
-	double * tmp = (double *)calloc(d, sizeof(double));
+	float * tmp = (float *)calloc(d, sizeof(float));
 	if(tmp == nullptr) {
 		cerr << "Cannot allocate memory" << endl;
 		exit(1);
@@ -171,7 +171,7 @@ double * mean_vector(
 
 	try {
 		for(i = 0; i < d; i++) {
-			tmp[i] /= static_cast<double>(size);
+			tmp[i] /= static_cast<float>(size);
 		}
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
@@ -188,10 +188,10 @@ double * mean_vector(
  * @param d
  * @return the mean posize_t of a cluster
  */
-double * mean_vector(
-		double ** data,
+float * mean_vector(
+		float ** data,
 		const i_vector index,
-		double * centroid,
+		float * centroid,
 		size_t d) {
 	size_t i, j = 0, k;
 	if(index.size() <= 0) {
@@ -199,7 +199,7 @@ double * mean_vector(
 	}
 	size_t size = index.size();
 
-	double * tmp = (double *)calloc(d,sizeof(double));
+	float * tmp = (float *)calloc(d,sizeof(float));
 	if(tmp == nullptr) {
 		cerr << "Cannot allocate memory" << endl;
 		exit(1);
@@ -219,7 +219,7 @@ double * mean_vector(
 
 	try {
 		for(i = 0; i < d; i++) {
-			tmp[i] /= static_cast<double>(size);
+			tmp[i] /= static_cast<float>(size);
 		}
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
@@ -245,7 +245,7 @@ unsigned long get_millisecond_time() {
  * @param N the size of the input
  */
 void print_vector(
-		double ** data,
+		float ** data,
 		size_t d,
 		size_t N) {
 	size_t i, j;
