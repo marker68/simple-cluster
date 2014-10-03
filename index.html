@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Simple-k-means by marker68</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Simple-k-means</h1>
+        <h2>A simple implementation for clustering methods such as k-means, EM algorithm, ...</h2>
+        <a href="https://github.com/marker68/simple-k-means" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="simple-clusters" class="anchor" href="#simple-clusters"><span class="octicon octicon-link"></span></a>Simple Clusters</h1>
+
+<h2>
+<a name="what-is-this" class="anchor" href="#what-is-this"><span class="octicon octicon-link"></span></a>What is this?</h2>
+
+<p>This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
+The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.</p>
+
+<p>The purpose of this project is to provide a more flexible interface for clustering methods. In OpenCV, the implementations of k-means algorithm is limited. Thus, I hope to this one will prodive an implementation with more choices for k-means. Sometimes, reducing the distortion is more important than improving the runtime performance. Other clustering methods will also be considered and be implemented. The input of many methods now are vectors, I hope to improve this issue soon, i.e let you input files.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a name="prerequisites" class="anchor" href="#prerequisites"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
+
+<ul>
+<li>An Unix or Windows(<a href="https://www.cygwin.com/">Cygwin</a> not native Windows with an MSVC compiler) Operating System. Tested on Mac OS X 10.9 and Ubuntu 14.04.</li>
+<li>
+<a href="http://www.cmake.org/">CMake</a> 2.8 or newer. For UNIX users, check your CMake version in terminal by <code>cmake -version</code>.</li>
+<li>An C++ compiler that supports C++ 11.</li>
+<li>
+<a href="http://opencv.org/downloads.html">OpenCV</a> 2.4.8 or newer. This library is used for testing only. Just for comparing the performance with our implementations.</li>
+</ul><h3>
+<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h3>
+
+<ul>
+<li>To build this project, just type:</li>
+</ul><div class="highlight highlight-bash"><pre><span class="nv">$ </span>cmake -H. -B&lt;where_you_want_to_save_CMake_build_files&gt;
+<span class="c">### Example</span>
+<span class="nv">$ </span>cmake -H. -Bbuild
+</pre></div>
+
+<p>on your terminal. This will generate CMake files under <code>build/</code> and binaries under <code>bin/</code>. Then type:</p>
+
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span>cmake --build &lt;the_location_of_CMake_build_files&gt; -- -j3
+</pre></div>
+
+<p>to generate the binaries.</p>
+
+<ul>
+<li>The above step would generate in <code>bin/</code> folder the following files: <code>libsimplecluster.*</code>,<code>test_*</code>. </li>
+<li>The <code>test_*</code> are unit test programs. You can review the source of unit tests in <code>test/</code>. They are also self-explained documentation for the common usage.</li>
+<li>An example to show you how to use this library: <a href="https://github.com/marker68/example-simplecluster">https://github.com/marker68/example-simplecluster</a>
+</li>
+</ul><h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>I welcome any contributions. First, read some materials like <a href="https://guides.github.com/activities/contributing-to-open-source/">How to contribute to an open source project?</a> or <a href="https://github.com/fuelphp/fuelphp/blob/master/CONTRIBUTING.md">an excellent example from FuelPHP</a>. I will work on this term later.</p>
+
+<h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>This project uses Doxygen to generate its documentation. You cand find it in <code>doc/</code> or an online version at <a href="http://simplecluster.tech-codes.com/">http://simplecluster.tech-codes.com/</a></p>
+
+<h2>
+<a name="references" class="anchor" href="#references"><span class="octicon octicon-link"></span></a>References</h2>
+
+<p>[1] S. P. Lloyd, "Least squares quantization in PCM",  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982</p>
+
+<p>[2] D. Arthur et al., "k-means++: the advantages of careful seeding",  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007</p>
+
+<p>[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees", Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<pre><code>    SIMPLE CLUSTERS: A simple library for clustering works.
+    Copyright (C) 2014 Nguyen Anh Tuan &lt;t_nguyen@hal.t.u-tokyo.ac.jp&gt;
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/marker68/simple-k-means/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/marker68/simple-k-means/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/marker68/simple-k-means"></a> is maintained by <a href="https://github.com/marker68">marker68</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
