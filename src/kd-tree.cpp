@@ -36,14 +36,24 @@ namespace SimpleCluster {
 /**
  * Calculate the distances between two KDNode
  * @param _a, _b the input KDNode
- * @param N the size of the vector
  * @param verbose Just for debugging
  * @return the distance between two KDNode if no error occurs, otherwise return DBL_MAX
  */
-double kd_distance(KDNode<double> * _a, KDNode<double> * _b, size_t N, bool verbose) {
-//	double tmp = 0.0, res = 0.0;
-	double * a = _a->get_data_array();
-	double * b = _b->get_data_array();
+float kd_distance(
+		KDNode<float> * _a,
+		KDNode<float> * _b,
+		bool verbose) {
+	float * a = _a->get_data();
+	float * b = _b->get_data();
+	size_t N = _a->size();
+	if(N != _b->size()) {
+		if(verbose) {
+			cerr << "Dimension are different" << endl;
+			cerr << "a has " << N << " dimensions" << endl;
+			cerr << "b has " << _b->size() << " dimensions" << endl;
+		}
+		exit(1);
+	}
 	return distance(a,b,N);
 }
 
@@ -51,7 +61,9 @@ double kd_distance(KDNode<double> * _a, KDNode<double> * _b, size_t N, bool verb
  * A comparator
  * @param _a, _b two float numbers
  */
-int compare_double(const double * _a, const double * _b) {
+int compare_float(
+		const float * _a,
+		const float * _b) {
 	if(*_a > *_b) return 1;
 	else if(*_a < *_b) return -1;
 	else return 0;
@@ -65,19 +77,24 @@ int compare_double(const double * _a, const double * _b) {
  * @param verbose just for debugging
  * @return the index of the median
  */
-size_t find_median(double ** data, size_t M, size_t N, size_t id, bool verbose) {
+size_t find_median(
+		float ** data,
+		size_t M,
+		size_t N,
+		size_t id,
+		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
 		return -1;
 	}
 	id = id % N;
-	double * arr = (double *)::operator new(M * sizeof(double));
+	float * arr = (float *)::operator new(M * sizeof(float));
 	for(size_t i = 0; i < M; i++) {
 		arr[i] = data[i][id];
 	}
 
-	size_t res = quick_select_k(arr,M,M >> 1,compare_double);
+	size_t res = quick_select_k(arr,M,M >> 1,compare_float);
 	::delete arr;
 	return res;
 }
@@ -91,8 +108,14 @@ size_t find_median(double ** data, size_t M, size_t N, size_t id, bool verbose) 
  * @param base the base index to be added
  * @param verbose just for debugging
  */
-void make_balanced_tree(KDNode<double> *& root, double ** data,
-		size_t M, size_t N, size_t level, size_t base, bool verbose) {
+void make_balanced_tree(
+		KDNode<float> *& root,
+		float ** data,
+		size_t M,
+		size_t N,
+		size_t level,
+		size_t base,
+		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
@@ -100,7 +123,7 @@ void make_balanced_tree(KDNode<double> *& root, double ** data,
 	}
 	size_t id = find_median(data,M,N,level,verbose);
 
-	kd_insert<double>(root,data[id],N,level,id+base,verbose);
+	kd_insert<float>(root,data[id],N,0,id+base,verbose);
 	make_balanced_tree(root,data,id,N,(level+1)%N,base,verbose);
 	if(id < M - 1) make_balanced_tree(root,&data[id+1],
 			M - id - 1,N,(level+1)%N,base+id+1,verbose);
@@ -115,8 +138,13 @@ void make_balanced_tree(KDNode<double> *& root, double ** data,
  * @param base the base index to be added
  * @param verbose just for debugging
  */
-void make_random_tree(KDNode<double> *& root, double ** data,
-		size_t M, size_t N, size_t level,size_t base, bool verbose) {
+void make_random_tree(
+		KDNode<float> *& root,
+		float ** data,
+		size_t M,
+		size_t N,
+		size_t base,
+		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
@@ -124,10 +152,10 @@ void make_random_tree(KDNode<double> *& root, double ** data,
 	}
 	size_t id = M >> 1;
 
-	kd_insert<double>(root,data[id],N,level,id+base,verbose);
-	make_random_tree(root,data,id,N,(level+1)%N,base,verbose);
+	kd_insert<float>(root,data[id],N,0,id+base,verbose);
+	make_random_tree(root,data,id,N,base,verbose);
 	if(id < M - 1) make_random_tree(root,&data[id+1],
-			M - id - 1,N,(level+1)%N,base+id+1,verbose);
+			M - id - 1,N,base+id+1,verbose);
 }
 
 /**
@@ -138,41 +166,53 @@ void make_random_tree(KDNode<double> *& root, double ** data,
  * @param best_dist the best distance
  * @param N the size of the input
  * @param level the cut-plane level
+ * @param visited (for debugging) to detect how many nodes are visited
  * @param verbose for debugging
  */
-void nn_search(KDNode<double> * root, KDNode<double> * query,
-		KDNode<double> *& result,
-		double& best_dist, size_t N, size_t level, bool verbose) {
+void nn_search(
+		KDNode<float> * root,
+		KDNode<float> * query,
+		KDNode<float> *& result,
+		float& best_dist,
+		size_t N,
+		size_t level,
+		size_t& visited,
+		bool verbose) {
 	if(best_dist == 0.0) return;
-	if(root == NULL || root->get_size() != N) {
+	if(root == nullptr || root->size() != N) {
 		if(verbose) {
 			cout << "Reached a leaf" << endl;
 			if(root) cout << "ID:" << root->id << endl;
 		}
 		return;
 	}
+	if(verbose)
+		cout << "Visting node " << root->id << " with best is " << best_dist << endl;
 
-	double d = kd_distance(root,query,N,verbose);
-	double d1 = root->get_data_at(level) - query->get_data_at(level);
+	float d = kd_distance(root,query,verbose);
+	float d1 = root->at(level) - query->at(level);
+	visited++;
 
-	if(result == NULL || d < best_dist) {
+	if(result == nullptr || d < best_dist) {
 		best_dist = d;
 		result = root;
 	}
 
-	level = (level + 1) % N;
+	size_t l = (level + 1) % N;
 	if(d1 >= 0.0) {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,l,visited,verbose);
 	} else {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,l,visited,verbose);
 	}
 
 	if(fabs(d1) >= best_dist) return;
+	if(verbose)
+		cout << "Right branch of node " << root->id << endl;
 
 	if(d1 >= 0.0) {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,l,visited,verbose);
 	} else {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,l,visited,verbose);
 	}
 }
 
@@ -185,41 +225,52 @@ void nn_search(KDNode<double> * root, KDNode<double> * query,
  * @param alpha the parameter that set the quality of nearest neighbor
  * @param N the size of the input
  * @param level the cut-plane level
+ * @param visited (for debugging) to detect how many nodes are visited
  * @param verbose for debugging
  */
-void ann_search(KDNode<double> * root, KDNode<double> * query,
-		KDNode<double> *& result, double& best_dist,
-		double alpha, size_t N, size_t level, bool verbose) {
+void ann_search(
+		KDNode<float> * root,
+		KDNode<float> * query,
+		KDNode<float> *& result,
+		float& best_dist,
+		float alpha,
+		size_t N,
+		size_t level,
+		size_t& visited,
+		bool verbose) {
 	if(best_dist == 0.0) return;
-	if(root == NULL || root->get_size() != N) {
+	if(root == nullptr || root->size() != N) {
 		if(verbose) {
 			cout << "Reached a leaf" << endl;
 			if(root) cout << "ID:" << root->id << endl;
 		}
 		return;
 	}
+	if(verbose)
+		cout << "Visting node " << root->id << endl;
 
-	double d = kd_distance(root,query,N,verbose);
-	double d1 = root->get_data_at(level) - query->get_data_at(level);
+	float d = kd_distance(root,query,verbose);
+	float d1 = root->at(level) - query->at(level);
+	visited++;
 
-	if(result == NULL || d < best_dist) {
+	if(result == nullptr || d < best_dist) {
 		best_dist = d;
 		result = root;
 	}
 
 	level = (level + 1) % N;
 	if(d1 >= 0.0) {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,level,visited,verbose);
 	} else {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,level,visited,verbose);
 	}
 
-	if(fabs(d1) * alpha >= best_dist) return;
+	if(fabs(d1) * alpha > best_dist) return;
 
 	if(d1 >= 0.0) {
-		nn_search(root->right,query,result,best_dist,N,level,verbose);
+		nn_search(root->right,query,result,best_dist,N,level,visited,verbose);
 	} else {
-		nn_search(root->left,query,result,best_dist,N,level,verbose);
+		nn_search(root->left,query,result,best_dist,N,level,visited,verbose);
 	}
 }
 
@@ -233,8 +284,14 @@ void ann_search(KDNode<double> * root, KDNode<double> * query,
  * @param d the dimensions
  * @param verbose for debugging
  */
-void linear_search(double ** data, double * query, size_t& best,
-		double& best_dist, size_t N, size_t d, bool verbose) {
+void linear_search(
+		float ** data,
+		float * query,
+		size_t& best,
+		float& best_dist,
+		size_t N,
+		size_t d,
+		bool verbose) {
 	if(N <= 0 || d <= 0) {
 		if(verbose)
 			cerr << "Wrong size" << endl;
@@ -242,7 +299,7 @@ void linear_search(double ** data, double * query, size_t& best,
 	}
 	best = 0;
 	best_dist = SimpleCluster::distance(query,data[0],d);
-	double tmp = 0.0;
+	float tmp = 0.0;
 	for(size_t i = 1; i < N; i++) {
 		tmp = SimpleCluster::distance(query,data[i],d);
 		if(tmp < best_dist) {

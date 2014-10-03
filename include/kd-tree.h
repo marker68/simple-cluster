@@ -37,7 +37,8 @@ namespace SimpleCluster {
 template<typename DataType>
 class KDNode {
 private:
-	vector<DataType> data;
+	DataType * data;
+	size_t dimension;
 public:
 	size_t id;
 	KDNode<DataType> * left, * right;
@@ -47,10 +48,8 @@ public:
 	 * @param other another KDNode
 	 */
 	KDNode(const KDNode<DataType>& other) {
-		size_t size = other.get_size();
-		for(size_t i = 0; i < size; i++) {
-			data.push_back(other.get_data_at(i));
-		}
+		dimension = other.size();
+		data = other.get_data();
 		left = other.left;
 		right = other.right;
 		id = other.id;
@@ -59,9 +58,11 @@ public:
 	/**
 	 * The default constructor
 	 */
-	KDNode() {
+	KDNode(size_t _d) {
+		dimension = _d;
+		data = (DataType *)::operator new(_d * sizeof(DataType));
 		id = 0;
-		left = right = NULL;
+		left = right = nullptr;
 	}
 
 	/**
@@ -69,11 +70,8 @@ public:
 	 * @param other another KDNode
 	 */
 	KDNode& operator= (const KDNode<DataType>& other) {
-		KDNode<DataType> tmp;
-		size_t size = other.get_size();
-		for(size_t i = 0; i < size; i++) {
-			tmp.add_data(other.get_data_at(i));
-		}
+		KDNode<DataType> tmp = ::new KDNode<DataType>(other.size());
+		tmp.add_data(other.get_data());
 		tmp.left = other.left;
 		tmp.right = other.right;
 		tmp.id = other.id;
@@ -84,17 +82,17 @@ public:
 	 * The destructor
 	 */
 	virtual ~KDNode() {
-		data.clear();
-		::delete left;
-		::delete right;
 	}
 
 	/**
 	 * Insert a new data into the vector of the node
 	 * @param _d The data to be inserted
 	 */
-	void add_data(DataType _d) {
-		data.push_back(_d);
+	void add_data(
+			DataType _d,
+			size_t pos) {
+		if(pos >= 0 && pos < dimension)
+			data[pos] = _d;
 	}
 
 	/**
@@ -102,60 +100,85 @@ public:
 	 * @param _d data to be inserted
 	 * @param N the size of the input
 	 */
-	void add_data(DataType * _d, size_t N) {
-		for(size_t i = 0; i < N; i++)
-			data.push_back(_d[i]);
-	}
-
-	/**
-	 * Clear the data in the node
-	 */
-	void clear_data() {
-		data.clear();
+	void add_data(DataType * _d) {
+		data = _d;
 	}
 
 	/**
 	 * get a component of the vector
 	 * @param _id index of the component
 	 */
-	DataType get_data_at(size_t _id) const{
+	DataType at(size_t _id) const{
 		return data[_id];
-	}
-
-	/**
-	 * Get all the vector data
-	 */
-	vector<DataType> get_data() {
-		return data;
 	}
 
 	/**
 	 * Get all data as array
 	 */
-	DataType * get_data_array() {
-		return &data[0];
+	DataType * get_data() const{
+		return data;
 	}
 
 	/**
 	 * Get the size or the dimensions of the vector
 	 */
-	size_t get_size() const{
-		return data.size();
+	size_t size() const{
+		return dimension;
 	}
 };
 
-double kd_distance(KDNode<double> *, KDNode<double> *, size_t, bool);
-size_t find_median(double **, size_t, size_t, size_t, bool);
-void make_balanced_tree(KDNode<double> *&, double **,
-		size_t, size_t, size_t, size_t, bool);
-void make_random_tree(KDNode<double> *&, double **,
-		size_t, size_t, size_t, size_t, bool);
-void nn_search(KDNode<double> *, KDNode<double> *,
-		KDNode<double> *&, double&, size_t, size_t, bool);
-void ann_search(KDNode<double> *, KDNode<double> *,
-		KDNode<double> *&, double&, double, size_t, size_t, bool);
-void linear_search(double **, double *, size_t&,
-		double&, size_t, size_t, bool);
+float kd_distance(
+		KDNode<float> *,
+		KDNode<float> *,
+		bool);
+size_t find_median(
+		float **,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void make_balanced_tree(
+		KDNode<float> *&,
+		float **,
+		size_t,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void make_random_tree(
+		KDNode<float> *&,
+		float **,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void nn_search(
+		KDNode<float> *,
+		KDNode<float> *,
+		KDNode<float> *&,
+		float&,
+		size_t,
+		size_t,
+		size_t&,
+		bool);
+void ann_search(
+		KDNode<float> *,
+		KDNode<float> *,
+		KDNode<float> *&,
+		float&,
+		float,
+		size_t,
+		size_t,
+		size_t&,
+		bool);
+void linear_search(
+		float **,
+		float *,
+		size_t&,
+		float&,
+		size_t,
+		size_t,
+		bool);
 
 /**
  * Insert a node into the kd-tree
@@ -167,14 +190,20 @@ void linear_search(double **, double *, size_t&,
  * @verbose true to print verbose. Just for debugging.
  */
 template<typename DataType>
-void kd_insert(KDNode<DataType> *& root, const DataType * _data,
-		size_t N, size_t level, size_t _id, bool verbose) {
-	if(root == NULL) {
-		root = ::new KDNode<DataType>();
-		for(size_t i = 0; i < N; i++) {
-			root->add_data(_data[i]);
-			root->id = _id;
-		}
+void kd_insert(
+		KDNode<DataType> *& root,
+		DataType * _data,
+		size_t N,
+		size_t level,
+		size_t _id,
+		bool verbose) {
+	// Pre-check
+	if(N <= 0) return;
+	level %= N;
+	if(root == nullptr) {
+		root = ::new KDNode<DataType>(N);
+		root->add_data(_data);
+		root->id = _id;
 		return;
 	}
 
@@ -186,9 +215,9 @@ void kd_insert(KDNode<DataType> *& root, const DataType * _data,
 		return;
 	}
 
-	if(root->get_data_at(level) < _data[level]) {
+	if(root->at(level) < _data[level]) {
 		kd_insert(root->right,_data,N,(level+1)%N,_id,verbose);
-	} else if(root->get_data_at(level) >= _data[level]) {
+	} else if(root->at(level) >= _data[level]) {
 		kd_insert(root->left,_data,N,(level+1)%N,_id,verbose);
 	}
 }
@@ -200,13 +229,16 @@ void kd_insert(KDNode<DataType> *& root, const DataType * _data,
  * @param level the cut-plane level
  */
 template<typename DataType>
-void kd_travel(KDNode<DataType> * root, size_t N, size_t level) {
-	if(root == NULL) {
+void kd_travel(
+		KDNode<DataType> * root,
+		size_t N,
+		size_t level) {
+	if(root == nullptr) {
 		cout << "Reached a leaf at level " << level << endl;
 		return;
 	}
 	cout << "visited a node " << root->id << " at level " << level << endl;
-	cout << "this node has " << root->get_size() << " dimensions" << endl;
+	cout << "this node has " << root->size() << " dimensions" << endl;
 	kd_travel(root->left,N,level+1);
 	kd_travel(root->right,N,level+1);
 	return;

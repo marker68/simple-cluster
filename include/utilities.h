@@ -26,6 +26,7 @@
 
 #include <iostream>
 #include <vector>
+#include <exception>
 
 using namespace std;
 
@@ -33,15 +34,42 @@ using namespace std;
  * The main namespace
  */
 namespace SimpleCluster {
-typedef vector<double> d_vector;
-typedef vector<int> i_vector;
+typedef vector<float> d_vector;
+typedef vector<size_t> i_vector;
 
-double distance(double *, double *, size_t);
-double distance_square(double *, double *, size_t);
-double * mean_vector(double **, const int *, size_t, size_t, double *);
-double * mean_vector(double **, const i_vector, size_t, double *);
+float distance(
+		float *,
+		float *,
+		size_t);
+float distance_square(
+		float *,
+		float *,
+		size_t);
+void all_mean_vector(
+		float **,
+		int *,
+		size_t *,
+		float **&,
+		float *&,
+		size_t,
+		size_t,
+		size_t);
+float * mean_vector(
+		float **,
+		const int *,
+		float *,
+		size_t,
+		size_t);
+float * mean_vector(
+		float **,
+		const i_vector,
+		float *,
+		size_t);
 unsigned long get_millisecond_time();
-void print_vector(double **, size_t, size_t);
+void print_vector(
+		float **,
+		size_t,
+		size_t);
 
 /**
  * Initialize an 1-D array.
@@ -50,12 +78,19 @@ void print_vector(double **, size_t, size_t);
  * @return true if the array was initalized successfully, otherwise return false.
  */
 template<typename DataType>
-bool init_array(DataType *& arr, size_t N) {
+bool init_array(
+		DataType *& arr,
+		size_t N) {
 	if(N <= 0)
 		return false;
-	arr = (DataType *)::operator  new(N * sizeof(DataType));
-	for(size_t i = 0; i < N; i++) {
-		::new(arr + i) DataType;
+	try {
+		arr = (DataType *)::operator  new(N * sizeof(DataType));
+		for(size_t i = 0; i < N; i++) {
+			::new(arr + i) DataType;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 
 	return true;
@@ -68,15 +103,23 @@ bool init_array(DataType *& arr, size_t N) {
  * @return true if the array was initalized successfully, otherwise return false.
  */
 template<typename DataType>
-bool init_array_2(DataType **& arr, size_t M, size_t N) {
+bool init_array_2(
+		DataType **& arr,
+		size_t M,
+		size_t N) {
 	if(M <= 0 || N <= 0)
 		return false;
-	arr = (DataType **)::operator  new(M * sizeof(DataType *));
-	for(size_t i = 0; i < M; i++) {
-		::new(arr + i) DataType *;
-		arr[i] = (DataType *)::operator new(N * sizeof(DataType));
-		for(size_t j = 0; j < N; j++)
-			::new(arr[i] + j) DataType;
+	try {
+		arr = (DataType **)::operator  new(M * sizeof(DataType *));
+		for(size_t i = 0; i < M; i++) {
+			::new(arr + i) DataType *;
+			arr[i] = (DataType *)::operator new(N * sizeof(DataType));
+			for(size_t j = 0; j < N; j++)
+				::new(arr[i] + j) DataType;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 
 	return true;
@@ -89,7 +132,9 @@ bool init_array_2(DataType **& arr, size_t M, size_t N) {
  * @return true if everything's OK, otherwise return false
  */
 template<typename DataType>
-bool init_vector(vector<DataType>& vec, size_t N) {
+bool init_vector(
+		vector<DataType>& vec,
+		size_t N) {
 	DataType tmp;
 	vec.clear();
 	for(size_t i = 0; i < N; i++) {
@@ -106,11 +151,19 @@ bool init_vector(vector<DataType>& vec, size_t N) {
  * @return true if copy was succeeded, otherwise return false.
  */
 template<typename DataType>
-bool copy_array(DataType * from, DataType *& to, size_t N) {
-	if(from == NULL || to == NULL)
+bool copy_array(
+		DataType * from,
+		DataType *& to,
+		size_t N) {
+	if(from == nullptr || to == nullptr)
 		return false;
-	for(size_t i = 0; i < N; i++) {
-		to[i] = from[i];
+	try {
+		for(size_t i = 0; i < N; i++) {
+			to[i] = from[i];
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 	return true;
 }
@@ -124,13 +177,22 @@ bool copy_array(DataType * from, DataType *& to, size_t N) {
  * @return true if copy was succeeded, otherwise return false.
  */
 template<typename DataType>
-bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
-	if(from == NULL || to == NULL)
+bool copy_array_2(
+		DataType ** from,
+		DataType **& to,
+		size_t M,
+		size_t N) {
+	if(from == nullptr || to == nullptr)
 		return false;
-	for(size_t i = 0; i < M; i++) {
-		if(!copy_array<DataType>(from[i],to[i],N)) {
-			return false;
+	try {
+		for(size_t i = 0; i < M; i++) {
+			if(!copy_array<DataType>(from[i],to[i],N)) {
+				return false;
+			}
 		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
 	}
 	return true;
 }
@@ -142,10 +204,17 @@ bool copy_array_2(DataType ** from, DataType **& to, size_t M, size_t N) {
  * @return true if everything's OK, otherwise return false.
  */
 template<typename DataType>
-bool dealloc_array_2(DataType **& arr, size_t M) {
-	for(size_t i = 0; i < M; i++)
-		::delete arr[i];
-	::delete arr;
+bool dealloc_array_2(
+		DataType **& arr,
+		size_t M) {
+	try {
+		for(size_t i = 0; i < M; i++)
+			::delete arr[i];
+		::delete arr;
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		return false;
+	}
 	return true;
 }
 
@@ -156,14 +225,23 @@ bool dealloc_array_2(DataType **& arr, size_t M) {
  * @param N the size of data
  */
 template<typename DataType>
-void swap(DataType * data, int m, int n, size_t N) {
+void swap(
+		DataType * data,
+		int m,
+		int n,
+		size_t N) {
 	if(m < 0 || n < 0 || m >= N || n >= N) {
 		perror("Out of bounds!\n");
 		exit(1);
 	}
-	DataType c = data[m];
-	data[m] = data[n];
-	data[n] = c;
+	try {
+		DataType c = data[m];
+		data[m] = data[n];
+		data[n] = c;
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
 }
 
 /**
@@ -177,13 +255,27 @@ void swap(DataType * data, int m, int n, size_t N) {
  * @return the index of the separator
  */
 template<typename DataType>
-int partition(DataType * data, DataType pivot, size_t N, int (*compare)(const DataType *, const DataType *)) {
+int partition(
+		DataType * data,
+		DataType pivot,
+		size_t N,
+		int (*compare)(const DataType *, const DataType *)) {
 	int i=0, j=N-1;
 	while(i <= j) {
-		while((*compare)(&data[i],&pivot) < 0)
-			i++;
-		while((*compare)(&data[j],&pivot) >= 0)
-			j--;
+		try {
+			while((*compare)(&data[i],&pivot) < 0)
+				i++;
+		} catch(exception& e) {
+			cerr << "Got an exception: " << e.what() << " at i = " << i << endl;
+			exit(1);
+		}
+		try {
+			while((*compare)(&data[j],&pivot) >= 0)
+				j--;
+		} catch(exception& e) {
+			cerr << "Got an exception: " << e.what() << " at j = " << j << endl;
+			exit(1);
+		}
 		if(i <= j) {
 			swap(data,i,j,N);
 			i++;
@@ -201,7 +293,10 @@ int partition(DataType * data, DataType pivot, size_t N, int (*compare)(const Da
  * @param compare the comparator
  */
 template<typename DataType>
-void bbsort(DataType * data, size_t N, int (*compare)(const DataType *, const DataType *)) {
+void bbsort(
+		DataType * data,
+		size_t N,
+		int (*compare)(const DataType *, const DataType *)) {
 	if(N < 2) return;
 	bool swapped = true;
 	int i, j = 0;
@@ -231,7 +326,11 @@ void bbsort(DataType * data, size_t N, int (*compare)(const DataType *, const Da
  * @return the index of the k-th smallest element
  */
 template<typename DataType>
-size_t quick_select_k(DataType * data, size_t N, size_t k, int (*compare)(const DataType*, const DataType*)) {
+size_t quick_select_k(
+		DataType * data,
+		size_t N,
+		size_t k,
+		int (*compare)(const DataType*, const DataType*)) {
 	if(k >= N) {
 		fprintf(stderr, "Out of bounds!\n");
 		exit(1);

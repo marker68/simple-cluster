@@ -34,15 +34,15 @@ using namespace std;
  */
 namespace SimpleCluster {
 
-typedef vector<double> d_vector;
-typedef vector<int> i_vector;
+typedef vector<float> d_vector;
+typedef vector<size_t> i_vector;
 
 /**
  * Criteria
  */
 typedef struct {
-	double alpha;
-	double accuracy;
+	float alpha;
+	float accuracy;
 	int iterations;
 } KmeansCriteria;
 
@@ -64,19 +64,92 @@ enum class KmeansType {
 	USER_SEEDS // take the seeds from input
 };
 
-void random_seeds(size_t, size_t, size_t, double **, double **&, bool);
-void kmeans_pp_seeds(size_t, size_t, size_t, double **, double **&, bool);
-void assign_to_closest_centroid(size_t, size_t, size_t, double **,
-		double **, vector<i_vector>&, bool);
-void assign_to_closest_centroid_2(size_t, size_t, size_t, double **,
-		double **, vector<i_vector>&, bool);
-void assign_to_closest_centroid_3(size_t, size_t, size_t, double **,
-		double **, vector<i_vector>&, double, bool);
-void simple_k_means(KmeansType, KmeansAssignType, size_t, size_t, KmeansCriteria,size_t,
-		double **, double **&,
-		vector<i_vector>&, double **&, bool);
-double distortion(size_t d, size_t N, size_t k,
-		double **, double **, vector<i_vector>, bool);
+void random_seeds(
+		float **,
+		float **&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void kmeans_pp_seeds(
+		float **,
+		float **&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void linear_assign(
+		float **,
+		float **,
+		vector<i_vector>&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void kd_nn_assign(
+		float **,
+		float **,
+		vector<i_vector>&,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+void kd_ann_assign(
+		float **,
+		float **,
+		vector<i_vector>&,
+		size_t,
+		size_t,
+		size_t,
+		float,
+		bool);
+void greg_initialize(
+		float **,
+		float **,
+		float **&,
+		float *&,
+		float *&,
+		size_t *&,
+		size_t *&,
+		size_t,
+		size_t,
+		size_t,
+		bool
+		);
+void update_center(
+		float **,
+		size_t *,
+		float **&,
+		float *&,
+		size_t,
+		size_t);
+void update_bounds(
+		float *,
+		size_t *,
+		float *&,
+		float *&,
+		size_t,
+		size_t);
+void simple_k_means(
+		float **,
+		float **&,
+		size_t *&,
+		float **&,
+		KmeansType,
+		KmeansAssignType,
+		KmeansCriteria,
+		size_t,
+		size_t,
+		size_t,
+		bool);
+float distortion(
+		float **,
+		float **,
+		size_t *,
+		size_t,
+		size_t,
+		size_t,
+		bool);
 }
 
 #endif /* K_MEANS_H_ */

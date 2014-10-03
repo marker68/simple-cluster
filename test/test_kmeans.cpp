@@ -42,7 +42,7 @@ using namespace SimpleCluster;
 /**
  * A converter
  */
-void convert_array_to_mat(double ** data, Mat& result, size_t M, size_t N) {
+void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
 	for(size_t i = 0; i < M; i++) {
 		for(size_t j = 0; j < N; j++) {
 			result.push_back(data[i][j]);
@@ -63,15 +63,15 @@ protected:
 	static void SetUpTestCase() {
 		N = 10000;
 		d = 128;
-		k = 4096;
+		k = 256;
 		int i, j;
 
 		// For generating random numbers
 		random_device rd;
 		mt19937 gen(rd());
-		uniform_real_distribution<double> real_dis(0.0, static_cast<double>(N));
+		uniform_real_distribution<float> real_dis(0.0, static_cast<float>(N));
 
-		if(!init_array_2<double>(data,N,d)) {
+		if(!init_array_2<float>(data,N,d)) {
 			cerr << "Cannot allocate memory for test data!" << endl;
 			exit(1);
 		}
@@ -81,12 +81,17 @@ protected:
 			}
 		}
 
-		if(!init_array_2<double>(seeds,k,d)) {
+		if(!init_array_2<float>(seeds,k,d)) {
 			cerr << "Cannot allocate memory for seeds data!" << endl;
 			exit(1);
 		}
-		if(!init_array_2<double>(centroids,k,d)) {
-			cerr << "Cannot allocate memory for centroids data!" << endl;
+		if(!init_array_2<float>(centers,k,d)) {
+			cerr << "Cannot allocate memory for centers data!" << endl;
+			exit(1);
+		}
+		label = (size_t *)calloc(N,sizeof(size_t));
+		if(label == NULL) {
+			cerr << "Cannot allocate memory for label data!" << endl;
 			exit(1);
 		}
 		//		print_vector(data,d,N);
@@ -96,26 +101,19 @@ protected:
 	// Called after the last test in this test case.
 	// Can be omitted if not needed.
 	static void TearDownTestCase() {
-		if(!dealloc_array_2<double>(data,N)) {
+		if(!dealloc_array_2<float>(data,N)) {
 			cerr << "data: Deallocating failed!" << endl;
 			exit(1);
 		}
-		if(!dealloc_array_2<double>(seeds,k)) {
+		if(!dealloc_array_2<float>(seeds,k)) {
 			cerr << "seeds: Deallocating failed!" << endl;
 			exit(1);
 		}
-		if(!dealloc_array_2<double>(centroids,k)) {
-			cerr << "centroids: Deallocating failed!" << endl;
+		if(!dealloc_array_2<float>(centers,k)) {
+			cerr << "centers: Deallocating failed!" << endl;
 			exit(1);
 		}
-
-		vector<i_vector>::iterator it = clusters.begin();
-		vector<i_vector>::iterator ie = clusters.end();
-		while(it != ie) {
-			(*it).clear();
-			++it;
-		}
-		clusters.clear();
+		::delete label;
 	}
 
 	// You can define per-test set-up and tear-down logic as usual.
@@ -124,56 +122,66 @@ protected:
 
 public:
 	// Some expensive resource shared by all tests.
-	static double ** data;
-	static double ** seeds;
-	static double ** centroids;
-	static vector<i_vector> clusters;
-	static int N, d, k;
+	static float ** data;
+	static float ** seeds;
+	static float ** centers;
+	static size_t * label;
+	static size_t N, d, k;
 };
 
-double ** KmeansTest::data;
-double ** KmeansTest::seeds;
-double ** KmeansTest::centroids;
-vector<i_vector> KmeansTest::clusters;
-int KmeansTest::N;
-int KmeansTest::d;
-int KmeansTest::k;
+float ** KmeansTest::data;
+float ** KmeansTest::seeds;
+float ** KmeansTest::centers;
+size_t * KmeansTest::label;
+size_t KmeansTest::N;
+size_t KmeansTest::d;
+size_t KmeansTest::k;
 
 TEST_F(KmeansTest, DISABLED_test1) {
-	random_seeds(d,N,k,data,seeds,true);
+	random_seeds(data,seeds,d,N,k,true);
 }
 
 TEST_F(KmeansTest, DISABLED_test2) {
-	kmeans_pp_seeds(d,N,k,data,seeds,true);
+	kmeans_pp_seeds(data,seeds,d,N,k,true);
 }
 
 TEST_F(KmeansTest, DISABLED_test3) {
-	random_seeds(d,N,k,data,seeds,true);
-	init_vector<i_vector>(clusters,k);
-	assign_to_closest_centroid(d,N,k,data,seeds,clusters,false);
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(
+			data,centers,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::ANN_KD_TREE,
+			criteria,
+			N,k,d,
+			false);
+	cout << "ANN: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, DISABLED_test4) {
-	random_seeds(d,N,k,data,seeds,true);
-	init_vector<i_vector>(clusters,k);
-	assign_to_closest_centroid_2(d,N,k,data,seeds,clusters,false);
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(
+			data,centers,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::NN_KD_TREE,
+			criteria,
+			N,k,d,
+			false);
+	cout << "NN: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
 }
 
-TEST_F(KmeansTest, DISABLED_test5) {
-	random_seeds(d,N,k,data,seeds,true);
-	init_vector<i_vector>(clusters,k);
-	assign_to_closest_centroid_3(d,N,k,data,seeds,clusters,100.0,false);
+TEST_F(KmeansTest, test5) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_k_means(
+			data,centers,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::LINEAR,
+			criteria,
+			N,k,d,
+			false);
+	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, test6) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::ANN_KD_TREE,N,k,criteria,d,
-			data,centroids,clusters,seeds,false);
-	cout << "Distortion is " << distortion(d,N,k,data,centroids,clusters,false) << endl;
-}
-
-TEST_F(KmeansTest, test7) {
 	Mat _data;
 	convert_array_to_mat(data,_data,N,d);
 	_data.convertTo(_data,CV_32F);
@@ -181,12 +189,12 @@ TEST_F(KmeansTest, test7) {
 	TermCriteria opencv_criteria {CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 100, 1.0};
 	kmeans(_data, k, _labels, opencv_criteria, 3, KMEANS_PP_CENTERS, _centers);
 	// Find the distortion
-	double distortion = 0.0;
+	float distortion = 0.0;
 	for(size_t i = 0; i < _labels.rows; i++) {
 		size_t id = _labels.at<size_t>(i,0);
 		Mat tmp = _data.row(i);
 		Mat c = _centers.row(id);
-		double d_t = norm(tmp,c,NORM_L2);
+		float d_t = norm(tmp,c,NORM_L2);
 		distortion += d_t * d_t;
 	}
 	cout << "Distortion is " << sqrt(distortion) << endl;
