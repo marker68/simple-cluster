@@ -209,7 +209,7 @@ void kd_nn_assign(
 
 	for(i = 0; i < N; i++) {
 		KDNode<float> * nn = nullptr;
-		float min = DBL_MAX;
+		float min = FLT_MAX;
 		size_t visited = 0;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
@@ -250,7 +250,7 @@ void kd_ann_assign(
 
 	for(i = 0; i < N; i++) {
 		KDNode<float> * nn = nullptr;
-		float min = DBL_MAX;
+		float min = FLT_MAX;
 		size_t visited = 0;
 		query.add_data(data[i]);
 		// Find the minimum distances between d_tmp and a centroid
@@ -289,8 +289,8 @@ void greg_initialize(
 		size_t d,
 		bool verbose) {
 	size_t tmp = -1;
-	float min = DBL_MAX;
-	float min2 = DBL_MAX;
+	float min = FLT_MAX;
+	float min2 = FLT_MAX;
 	float d_tmp;
 
 	// Initializing size and vector sum
@@ -446,7 +446,7 @@ void simple_k_means(
 
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0, count = 0;
-	float error = criteria.accuracy, e = error, e_prev;
+	float error = criteria.accuracy, e = error, e_prev, distor, distor_prev;
 	float alpha = criteria.alpha;
 
 	// Variables for Greg's method
@@ -456,8 +456,8 @@ void simple_k_means(
 	float * upper;
 	float * lower;
 	size_t * size;
-	size_t max_size = 0;
-	size_t max_id = -1;
+//	size_t max_size = 0;
+//	size_t max_id = -1;
 
 	init_array_2<float>(c_sum,k,d);
 	init_array<float>(moved,k);
@@ -470,34 +470,19 @@ void simple_k_means(
 	copy_array_2<float>(seeds,centers,k,d);
 	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,verbose);
 
-	// Update maximum value of size
-	for(size_t j = 0; j < k; j++) {
-		if(max_size <= size[j]) {
-			max_size = size[j];
-			max_id = j;
-		}
-	}
-
 	while (1) {
 		// Assign the data posize_ts to clusters
 		size_t tmp, visited;
 		float min, min2, min_tmp, d_tmp, m;
 		// Update the closest distances
 		for(size_t j = 0; j < k; j++) {
-			min2 = min = DBL_MAX;
+			min2 = min = FLT_MAX;
 			for(size_t t = 0; t < k, t != j; t++) {
 				min_tmp = SimpleCluster::distance(centers[j],centers[t],d);
 				if(min > min_tmp) min = min_tmp;
 			}
 			closest[j] = min;
 		}
-
-		//		KDNode<float> * root = nullptr;
-		//		KDNode<float> query(d);
-		//		if(assign != KmeansAssignType::LINEAR) {
-		//			make_random_tree(root,centers,k,d,0,verbose);
-		//			if(root == nullptr) return;
-		//		}
 
 		for(size_t j = 0; j < N; j++) {
 			// Update m for bound test
@@ -510,9 +495,8 @@ void simple_k_means(
 				// Second bound test
 				if(upper[j] > m) {
 					size_t l = label[j];
-					min2 = min = DBL_MAX;
+					min2 = min = FLT_MAX;
 					// Assign the data to clusters
-					//					if(assign == KmeansAssignType::LINEAR) {
 					for(size_t t = 0; t < k; t++) {
 						d_tmp = SimpleCluster::distance(centers[t],data[j],d);
 						if(min >= d_tmp) {
@@ -523,18 +507,6 @@ void simple_k_means(
 							if(min2 > d_tmp) min2 = d_tmp;
 						}
 					}
-					//					} else {
-					//						KDNode<float> * nn = nullptr;
-					//						min = DBL_MAX;
-					//						visited = 0;
-					//						query.add_data(data[j]);
-					//						if(assign == KmeansAssignType::NN_KD_TREE) {
-					//							nn_search(root,&query,nn,min,d,0,visited,verbose);
-					//						} else {
-					//							ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
-					//						}
-					//						tmp = nn->id;
-					//					}
 
 					// Assign the data[i] size_to cluster tmp
 					label[j] = tmp; // Update the label
@@ -544,43 +516,10 @@ void simple_k_means(
 					if(l != tmp) {
 						size[tmp]++;
 						size[l]--;
-						if(max_id == l) {
-							// Update maximum value of size
-							for(size_t t = 0; t < k; t++) {
-								if(max_size <= size[t]) {
-									max_size = size[t];
-									max_id = t;
-								}
-							}
-						}
-						if(max_id == tmp)
-							max_size++;
 						if(size[l] == 0) {
 							if(verbose)
 								cout << "An empty cluster was found!"
 								" label = " << l << endl;
-							// Form a new 1-point cluster
-							double max_dist = 0.0, tmp_dist = 0.0;
-							size_t farthest_i;
-							for(size_t t = 0; t < N; t++) {
-								if(label[t] == max_id) {
-									tmp_dist = SimpleCluster::distance(data[t],centers[l],d);
-									if(max_dist < tmp_dist) {
-										max_dist = tmp_dist;
-										farthest_i = t;
-									}
-								}
-							}
-							label[farthest_i] = l;
-							size[l] = 1;
-							size[max_id]--;
-							// Update maximum value of size
-							for(size_t t = 0; t < k; t++) {
-								if(max_size <= size[t]) {
-									max_size = size[t];
-									max_id = t;
-								}
-							}
 						}
 						for(size_t t = 0; t < d; t++) {
 							c_sum[tmp][t] += data[j][t];
@@ -605,13 +544,15 @@ void simple_k_means(
 		}
 		e = sqrt(e);
 		count += (fabs(e-e_prev) < error? 1 : 0);
+		distor_prev = distor;
+		distor = distortion(data,centers,label,d,N,k,false);
 		if(verbose)
 			cout << "Iterator " << i
 			<< "-th with error = " << e
-			<< " and distortion = " << distortion(data,centers,label,d,N,k,false)
+			<< " and distortion = " << distor
 			<< endl;
 		i++;
-		if(i >= iters || e < error || count >= iters / 100) break;
+		if(i >= iters || e < error || count >= iters / 100 || distor_prev + error * error < distor) break;
 	}
 
 	if(verbose)
