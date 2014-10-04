@@ -27,9 +27,10 @@
 #include <vector>
 #include <random>
 #include <cstring>
+#include <climits>
 #include <stdlib.h>
 #include <float.h>
-#include <math.h>
+#include <cmath>
 #include "k-means.h"
 #include "utilities.h"
 #include "kd-tree.h"
@@ -444,8 +445,8 @@ void simple_k_means(
 		cout << "Finished seeding" << endl;
 
 	// Criteria's setup
-	size_t iters = criteria.iterations, i = 0;
-	float error = criteria.accuracy, e;
+	size_t iters = criteria.iterations, i = 0, count = 0;
+	float error = criteria.accuracy, e = error, e_prev;
 	float alpha = criteria.alpha;
 
 	// Variables for Greg's method
@@ -455,6 +456,8 @@ void simple_k_means(
 	float * upper;
 	float * lower;
 	size_t * size;
+	size_t max_size = 0;
+	size_t max_id = -1;
 
 	init_array_2<float>(c_sum,k,d);
 	init_array<float>(moved,k);
@@ -466,6 +469,14 @@ void simple_k_means(
 	// Initialize the centers
 	copy_array_2<float>(seeds,centers,k,d);
 	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,verbose);
+
+	// Update maximum value of size
+	for(size_t j = 0; j < k; j++) {
+		if(max_size <= size[j]) {
+			max_size = size[j];
+			max_id = j;
+		}
+	}
 
 	while (1) {
 		// Assign the data posize_ts to clusters
@@ -533,9 +544,44 @@ void simple_k_means(
 					if(l != tmp) {
 						size[tmp]++;
 						size[l]--;
-						if(size[l] == 0 && verbose)
-							cout << "An empty cluster was found!"
-									" label = " << l << endl;
+						if(max_id == l) {
+							// Update maximum value of size
+							for(size_t t = 0; t < k; t++) {
+								if(max_size <= size[t]) {
+									max_size = size[t];
+									max_id = t;
+								}
+							}
+						}
+						if(max_id == tmp)
+							max_size++;
+						if(size[l] == 0) {
+							if(verbose)
+								cout << "An empty cluster was found!"
+								" label = " << l << endl;
+							// Form a new 1-point cluster
+							double max_dist = 0.0, tmp_dist = 0.0;
+							size_t farthest_i;
+							for(size_t t = 0; t < N; t++) {
+								if(label[t] == max_id) {
+									tmp_dist = SimpleCluster::distance(data[t],centers[l],d);
+									if(max_dist < tmp_dist) {
+										max_dist = tmp_dist;
+										farthest_i = t;
+									}
+								}
+							}
+							label[farthest_i] = l;
+							size[l] = 1;
+							size[max_id]--;
+							// Update maximum value of size
+							for(size_t t = 0; t < k; t++) {
+								if(max_size <= size[t]) {
+									max_size = size[t];
+									max_id = t;
+								}
+							}
+						}
 						for(size_t t = 0; t < d; t++) {
 							c_sum[tmp][t] += data[j][t];
 							c_sum[l][t] -= data[j][t];
@@ -552,18 +598,20 @@ void simple_k_means(
 		update_bounds(moved,label,upper,lower,N,k);
 
 		// Calculate the distortion
+		e_prev = e;
 		e = 0.0;
 		for(size_t j = 0; j < k; j++) {
 			e += moved[j];
 		}
 		e = sqrt(e);
+		count += (fabs(e-e_prev) < error? 1 : 0);
 		if(verbose)
 			cout << "Iterator " << i
 			<< "-th with error = " << e
 			<< " and distortion = " << distortion(data,centers,label,d,N,k,false)
 			<< endl;
 		i++;
-		if(i >= iters || e < error) break;
+		if(i >= iters || e < error || count >= iters / 100) break;
 	}
 
 	if(verbose)
