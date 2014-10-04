@@ -446,7 +446,7 @@ void simple_k_means(
 
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0, count = 0;
-	float error = criteria.accuracy, e = error, e_prev, distor, distor_prev;
+	float error = criteria.accuracy, e = error, e_prev;
 	float alpha = criteria.alpha;
 
 	// Variables for Greg's method
@@ -456,8 +456,6 @@ void simple_k_means(
 	float * upper;
 	float * lower;
 	size_t * size;
-//	size_t max_size = 0;
-//	size_t max_id = -1;
 
 	init_array_2<float>(c_sum,k,d);
 	init_array<float>(moved,k);
@@ -544,15 +542,13 @@ void simple_k_means(
 		}
 		e = sqrt(e);
 		count += (fabs(e-e_prev) < error? 1 : 0);
-		distor_prev = distor;
-		distor = distortion(data,centers,label,d,N,k,false);
 		if(verbose)
 			cout << "Iterator " << i
 			<< "-th with error = " << e
-			<< " and distortion = " << distor
+			<< " and distortion = " << distortion(data,centers,label,d,N,k,false)
 			<< endl;
 		i++;
-		if(i >= iters || e < error || count >= iters / 100 || distor_prev + error * error < distor) break;
+		if(i >= iters || e < error || count >= iters/10) break;
 	}
 
 	if(verbose)
