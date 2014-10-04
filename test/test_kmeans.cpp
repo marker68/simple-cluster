@@ -199,3 +199,17 @@ TEST_F(KmeansTest, test6) {
 	}
 	cout << "Distortion is " << sqrt(distortion) << endl;
 }
+
+TEST_F(KmeansTest, test7) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	for(size_t i = 0; i < 10; i++) {
+		simple_k_means(
+				data,centers,label,seeds,
+				KmeansType::KMEANS_PLUS_SEEDS,
+				KmeansAssignType::LINEAR,
+				criteria,
+				N,k,d,
+				false);
+		cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+	}
+}
