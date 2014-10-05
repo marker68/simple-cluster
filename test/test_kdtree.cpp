@@ -45,7 +45,7 @@ protected:
 	static void SetUpTestCase() {
 		N = 10000;
 		d = 128;
-		int i, j;
+		size_t i, j;
 
 		// For generating random numbers
 		random_device rd;
@@ -61,7 +61,7 @@ protected:
 				data[i][j] = real_dis(gen);
 			}
 		}
-		//		print_vector(data,d,N);
+		//		prsize_t_vector(data,d,N);
 	}
 
 	// Per-test-case tear-down.
@@ -81,12 +81,12 @@ protected:
 public:
 	// Some expensive resource shared by all tests.
 	static float ** data;
-	static int N, d;
+	static size_t N, d;
 };
 
 float ** KDTreeTest::data;
-int KDTreeTest::N;
-int KDTreeTest::d;
+size_t KDTreeTest::N;
+size_t KDTreeTest::d;
 
 TEST_F(KDTreeTest, DISABLED_test1) {
 	KDNode<float> * a, * b;
@@ -100,7 +100,7 @@ TEST_F(KDTreeTest, DISABLED_test1) {
 TEST_F(KDTreeTest, DISABLED_test2) {
 	KDNode<float> * root = nullptr;
 	float d[][2] = {{2.0,3.0},{4.0,3.0},{7.0,9.0}};
-	for(int i = 0; i < 3; i++) {
+	for(size_t i = 0; i < 3; i++) {
 		kd_insert(root,d[i],2,0,i,false);
 	}
 	kd_travel(root,2,0);
@@ -109,7 +109,7 @@ TEST_F(KDTreeTest, DISABLED_test2) {
 TEST_F(KDTreeTest, DISABLED_test3) {
 	float ** _d;
 	_d = new float*[10000];
-	for(int i = 0; i < 10000; i++) {
+	for(size_t i = 0; i < 10000; i++) {
 		_d[i] = new float[2];
 		_d[i][0] = _d[i][1] = static_cast<float>(i);
 	}

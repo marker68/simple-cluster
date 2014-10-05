@@ -64,7 +64,7 @@ protected:
 		N = 10000;
 		d = 128;
 		k = 256;
-		int i, j;
+		size_t i, j;
 
 		// For generating random numbers
 		random_device rd;
@@ -190,8 +190,8 @@ TEST_F(KmeansTest, test6) {
 	kmeans(_data, k, _labels, opencv_criteria, 3, KMEANS_PP_CENTERS, _centers);
 	// Find the distortion
 	float distortion = 0.0;
-	for(size_t i = 0; i < _labels.rows; i++) {
-		size_t id = _labels.at<size_t>(i,0);
+	for(int i = 0; i < _labels.rows; i++) {
+		int id = _labels.at<size_t>(i,0);
 		Mat tmp = _data.row(i);
 		Mat c = _centers.row(id);
 		float d_t = norm(tmp,c,NORM_L2);

@@ -142,7 +142,7 @@ void all_mean_vector(
  */
 float * mean_vector(
 		float ** data,
-		const int * index,
+		const size_t * index,
 		float * centroid,
 		size_t d,
 		size_t size) {

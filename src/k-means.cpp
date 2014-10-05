@@ -328,7 +328,7 @@ void greg_initialize(
 
 /**
  * Update the centers
- * @param sum vector sum of all posize_ts in the cluster
+ * @param sum vector sum of all points in the cluster
  * @param size the size of each cluster
  * @param centers the centers of clusters
  * @param moved the distances that centers moved
@@ -447,7 +447,6 @@ void simple_k_means(
 	// Criteria's setup
 	size_t iters = criteria.iterations, i = 0, count = 0;
 	float error = criteria.accuracy, e = error, e_prev;
-	float alpha = criteria.alpha;
 
 	// Variables for Greg's method
 	float ** c_sum;
@@ -470,14 +469,16 @@ void simple_k_means(
 
 	while (1) {
 		// Assign the data posize_ts to clusters
-		size_t tmp, visited;
+		size_t tmp = 0;
 		float min, min2, min_tmp, d_tmp, m;
 		// Update the closest distances
 		for(size_t j = 0; j < k; j++) {
 			min2 = min = FLT_MAX;
-			for(size_t t = 0; t < k, t != j; t++) {
-				min_tmp = SimpleCluster::distance(centers[j],centers[t],d);
-				if(min > min_tmp) min = min_tmp;
+			for(size_t t = 0; t < k; t++) {
+				if(t != j) {
+					min_tmp = SimpleCluster::distance(centers[j],centers[t],d);
+					if(min > min_tmp) min = min_tmp;
+				}
 			}
 			closest[j] = min;
 		}

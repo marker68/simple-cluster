@@ -56,7 +56,7 @@ void all_mean_vector(
 		size_t);
 float * mean_vector(
 		float **,
-		const int *,
+		const size_t *,
 		float *,
 		size_t,
 		size_t);
