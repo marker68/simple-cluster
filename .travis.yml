@@ -8,4 +8,4 @@ os:
   - linux
   - osx
 
-install: cmake -H. -Bbuild && cmake --build build -- -j3
+script: cmake -H. -Bbuild && cmake --build build -- -j3
