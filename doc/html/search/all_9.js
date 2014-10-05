@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['make_5fbalanced_5ftree',['make_balanced_tree',['../namespaceSimpleCluster.html#a9b7733dc2edec70ad323beb9f3a9143e',1,'SimpleCluster']]],
-  ['make_5frandom_5ftree',['make_random_tree',['../namespaceSimpleCluster.html#a3c8460d2b4a2bfc0598da219d9665c6b',1,'SimpleCluster']]],
-  ['mean_5fvector',['mean_vector',['../namespaceSimpleCluster.html#af5f08f98d4d441cb169fd228b58c4c79',1,'SimpleCluster::mean_vector(double **, const int *, double *, size_t, size_t)'],['../namespaceSimpleCluster.html#a6a6a4eba291860493d325b5b94a3a74b',1,'SimpleCluster::mean_vector(double **, const i_vector, double *, size_t)']]]
+  ['make_5fbalanced_5ftree',['make_balanced_tree',['../namespaceSimpleCluster.html#a7708d4292cee2e693875643b5ed13722',1,'SimpleCluster']]],
+  ['make_5frandom_5ftree',['make_random_tree',['../namespaceSimpleCluster.html#a494b6c1b3a4a5e443b91ea43bf759270',1,'SimpleCluster']]],
+  ['mean_5fvector',['mean_vector',['../namespaceSimpleCluster.html#a7bacb031fff9fcae0608086fbeccecb1',1,'SimpleCluster::mean_vector(float **, const size_t *, float *, size_t, size_t)'],['../namespaceSimpleCluster.html#aed0d5a893e782c920f5b1209d9ccc0a5',1,'SimpleCluster::mean_vector(float **, const i_vector, float *, size_t)']]]
 ];
