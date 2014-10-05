@@ -1,4 +1,4 @@
-install: cmake make pkg-config
+install: cmake
 
 language: cpp
 
