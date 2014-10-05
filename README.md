@@ -1,6 +1,8 @@
 Simple Clusters
 ===============================
 
+[![Build Status](https://travis-ci.org/marker68/simple-k-means.svg?branch=master)](https://travis-ci.org/marker68/simple-k-means)
+
 ## What is this?
 
 This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
