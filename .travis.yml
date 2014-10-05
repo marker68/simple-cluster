@@ -1,5 +1,3 @@
-install: cmake
-
 language: cpp
 
 compiler:
@@ -10,4 +8,4 @@ os:
   - linux
   - osx
 
-script: cmake -H. -Bbuild && cmake --build build -- -j3
+install: cmake -H. -Bbuild && cmake --build build -- -j3
