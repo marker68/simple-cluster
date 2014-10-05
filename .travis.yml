@@ -1,0 +1,13 @@
+install: cmake make pkg-config
+
+language: cpp
+
+compiler:
+  - clang
+  - g++
+
+os:
+  - linux
+  - osx
+
+script: cmake -H. -Bbuild && cmake --build build -- -j3
