@@ -9,11 +9,12 @@ If you need any other licenses, feel free to contact me at [t_nguyen@hal.t.u-tok
 The purpose of this project is to provide a more flexible interface for clustering methods.
 
 ## Features
-    * Supported k-means algorithm.
-    * Supported [CMake](http://www.cmake.org/).
-    * Supported only L2 metric distance.
-    * Supported KD-tree with ANN search.
-    * Supported GNU C++ Compiler and clang compiler.
+
+* Supported k-means algorithm.
+* Supported [CMake](http://www.cmake.org/).
+* Supported only L2 metric distance.
+* Supported KD-tree with ANN search.
+* Supported GNU C++ Compiler and clang compiler.
 
 ## Installation
 
@@ -41,6 +42,10 @@ libgtest.a  libsimplecluster.so  test_kmeans
 * `libgtest_main.a,libgtest.a`: [Google Testing Framework](https://code.google.com/p/googletest/)'s static library files. We are using Google Test for testing.
 * `libsimplecluster.{so,dylib,dll}`: dynamic library(shared library) files for SimpleCluster.
 * `test_utilities, test_kdtree, test_kmeans`: test programs. See their source code in `test/` directory to know the basics of this library.
+
+## Samples
+
+Samples for the usage of this library could be found at: https://github.com/marker68/example-simplecluster
 
 ## Documentation
 
