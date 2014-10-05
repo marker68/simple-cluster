@@ -35,12 +35,21 @@
 <a name="what-is-this" class="anchor" href="#what-is-this"><span class="octicon octicon-link"></span></a>What is this?</h2>
 
 <p>This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
-The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.</p>
-
-<p>The purpose of this project is to provide a more flexible interface for clustering methods. In OpenCV, the implementations of k-means algorithm is limited. Thus, I hope to this one will prodive an implementation with more choices for k-means. Sometimes, reducing the distortion is more important than improving the runtime performance. Other clustering methods will also be considered and be implemented. The input of many methods now are vectors, I hope to improve this issue soon, i.e let you input files.</p>
+The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
+If you need any other licenses, feel free to contact me at <a href="mailto:t_nguyen@hal.t.u-tokyo.ac.jp">t_nguyen@hal.t.u-tokyo.ac.jp</a>
+The purpose of this project is to provide a more flexible interface for clustering methods.</p>
 
 <h2>
-<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Supported k-means algorithm.</li>
+<li>Supported <a href="http://www.cmake.org/">CMake</a>.</li>
+<li>Supported only L2 metric distance.</li>
+<li>Supported KD-tree with ANN search.</li>
+<li>Supported GNU C++ Compiler and clang compiler.</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <h3>
 <a name="prerequisites" class="anchor" href="#prerequisites"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
@@ -49,35 +58,37 @@ The implementations based on many papers that are mentioned below. This project 
 <li>An Unix or Windows(<a href="https://www.cygwin.com/">Cygwin</a> not native Windows with an MSVC compiler) Operating System. Tested on Mac OS X 10.9 and Ubuntu 14.04.</li>
 <li>
 <a href="http://www.cmake.org/">CMake</a> 2.8 or newer. For UNIX users, check your CMake version in terminal by <code>cmake -version</code>.</li>
-<li>An C++ compiler that supports C++ 11.</li>
+<li>An GNU C++ Compiler or clang compiler that support C++ 11.</li>
 <li>
 <a href="http://opencv.org/downloads.html">OpenCV</a> 2.4.8 or newer. This library is used for testing only. Just for comparing the performance with our implementations.</li>
 </ul><h3>
 <a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h3>
 
-<ul>
-<li>To build this project, just type:</li>
-</ul><div class="highlight highlight-bash"><pre><span class="nv">$ </span>cmake -H. -B&lt;where_you_want_to_save_CMake_build_files&gt;
-<span class="c">### Example</span>
-<span class="nv">$ </span>cmake -H. -Bbuild
+<p>We use CMake as the build system. On terminal,</p>
+
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span>git clone git@github.com:marker68/simple-k-means.git simple-cluster
+<span class="nv">$ </span><span class="nb">cd</span> ./simple-cluster
+<span class="nv">$ </span>cmake -H. -Bbuild <span class="o">&amp;&amp;</span> cmake --build build -- -j3
 </pre></div>
 
-<p>on your terminal. This will generate CMake files under <code>build/</code> and binaries under <code>bin/</code>. Then type:</p>
+<p>This script will create the following files in your <code>bin/</code> directory.</p>
 
-<div class="highlight highlight-bash"><pre><span class="nv">$ </span>cmake --build &lt;the_location_of_CMake_build_files&gt; -- -j3
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span>ls  bin
+CMakeFiles  libgtest_main.a      test_kdtree  test_utilities
+libgtest.a  libsimplecluster.so  test_kmeans
 </pre></div>
 
-<p>to generate the binaries.</p>
-
 <ul>
-<li>The above step would generate in <code>bin/</code> folder the following files: <code>libsimplecluster.*</code>,<code>test_*</code>. </li>
-<li>The <code>test_*</code> are unit test programs. You can review the source of unit tests in <code>test/</code>. They are also self-explained documentation for the common usage.</li>
-<li>An example to show you how to use this library: <a href="https://github.com/marker68/example-simplecluster">https://github.com/marker68/example-simplecluster</a>
-</li>
+<li>
+<code>libgtest_main.a,libgtest.a</code>: <a href="https://code.google.com/p/googletest/">Google Testing Framework</a>'s static library files. We are using Google Test for testing.</li>
+<li>
+<code>libsimplecluster.{so,dylib,dll}</code>: dynamic library(shared library) files for SimpleCluster.</li>
+<li>
+<code>test_utilities, test_kdtree, test_kmeans</code>: test programs. See their source code in <code>test/</code> directory to know the basics of this library.</li>
 </ul><h2>
-<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+<a name="samples" class="anchor" href="#samples"><span class="octicon octicon-link"></span></a>Samples</h2>
 
-<p>I welcome any contributions. First, read some materials like <a href="https://guides.github.com/activities/contributing-to-open-source/">How to contribute to an open source project?</a> or <a href="https://github.com/fuelphp/fuelphp/blob/master/CONTRIBUTING.md">an excellent example from FuelPHP</a>. I will work on this term later.</p>
+<p>Samples for the usage of this library could be found at: <a href="https://github.com/marker68/example-simplecluster">https://github.com/marker68/example-simplecluster</a></p>
 
 <h2>
 <a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
@@ -85,13 +96,30 @@ The implementations based on many papers that are mentioned below. This project 
 <p>This project uses Doxygen to generate its documentation. You cand find it in <code>doc/</code> or an online version at <a href="http://simplecluster.tech-codes.com/">http://simplecluster.tech-codes.com/</a></p>
 
 <h2>
+<a name="change-log" class="anchor" href="#change-log"><span class="octicon octicon-link"></span></a>Change log</h2>
+
+<ul>
+<li>
+<strong>At version 1.0(2014/10/05)</strong>:
+
+<ul>
+<li>Supported k-means algorithm.</li>
+<li>Supported <a href="http://www.cmake.org/">CMake</a>.</li>
+<li>Supported only L2 metric distance.</li>
+<li>Supported KD-tree with ANN search.</li>
+<li>Supported GNU C++ Compiler and clang compiler.</li>
+</ul>
+</li>
+</ul><h2>
 <a name="references" class="anchor" href="#references"><span class="octicon octicon-link"></span></a>References</h2>
 
-<p>[1] S. P. Lloyd, "Least squares quantization in PCM",  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982</p>
+<p>[1] S. P. Lloyd, "Least squares quantization in PCM,"  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982.</p>
 
-<p>[2] D. Arthur et al., "k-means++: the advantages of careful seeding",  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007</p>
+<p>[2] D. Arthur et al., "k-means++: the advantages of careful seeding,"  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007.</p>
 
-<p>[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees", Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977</p>
+<p>[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees," Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977.</p>
+
+<p>[4] G. Hamerly., "Making k-means even faster," Proc. SDM, pp. 130-140, 2010.</p>
 
 <h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
