@@ -52,6 +52,12 @@ Samples for the usage of this library could be found at: https://github.com/mark
 ## Documentation
 
 This project uses Doxygen to generate its documentation. You cand find it in `doc/` or an online version at http://simplecluster.tech-codes.com/
+To generate the documentation:
+```bash
+$ cd ./doc
+$ doxygen config.doxygen
+```
+The documentation files will be generated in HTML and LaTeX format.
 
 ## Change log
 
