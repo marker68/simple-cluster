@@ -326,7 +326,7 @@ void bbsort(
  * @return the index of the k-th smallest element
  */
 template<typename DataType>
-size_t quick_select_k(
+DataType quick_select_k(
 		DataType * data,
 		size_t N,
 		size_t k,
@@ -338,7 +338,7 @@ size_t quick_select_k(
 
 	if(N <= 8) {
 		bbsort(data,N,*compare);
-		return k;
+		return data[k];
 	}
 
 	// First, choose an appropriate pivot
@@ -357,11 +357,11 @@ size_t quick_select_k(
 	int p = partition(data,pivot,N,*compare);
 	if(p == 0) {
 		bbsort(data,N,*compare);
-		return k;
+		return data[k];
 	}
 
 	if(k < p) return quick_select_k(data,p,k,*compare);
-	else if(k == p) return p;
+	else if(k == p) return data[p];
 	else return quick_select_k(&data[p],N-p,k-p,*compare);
 }
 }
