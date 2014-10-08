@@ -1,34 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <title>Simple-k-means by marker68</title>
 
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-    <title>Simple-k-means by marker68</title>
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>Simple-k-means</h1>
-        <h2>A simple implementation for clustering methods such as k-means, EM algorithm, ...</h2>
-        <a href="https://github.com/marker68/simple-k-means" class="button"><small>View project on</small> GitHub</a>
-      </div>
-    </header>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Simple-k-means</h1>
+        <p class="header">A simple implementation for clustering methods such as k-means, EM algorithm, ...</p>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/marker68/simple-k-means/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/marker68/simple-k-means/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/marker68/simple-k-means">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/marker68">marker68</a></p>
+
+
+      </header>
+      <section>
+        <h1>
 <a name="simple-clusters" class="anchor" href="#simple-clusters"><span class="octicon octicon-link"></span></a>Simple Clusters</h1>
 
 <p><a href="https://travis-ci.org/marker68/simple-k-means"><img src="https://travis-ci.org/marker68/simple-k-means.svg?branch=master" alt="Build Status"></a></p>
@@ -95,7 +97,14 @@ libgtest.a  libsimplecluster.so  test_kmeans
 <h2>
 <a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
-<p>This project uses Doxygen to generate its documentation. You cand find it in <code>doc/</code> or an online version at <a href="http://simplecluster.tech-codes.com/">http://simplecluster.tech-codes.com/</a></p>
+<p>This project uses Doxygen to generate its documentation. You cand find it in <code>doc/</code> or an online version at <a href="http://simplecluster.tech-codes.com/">http://simplecluster.tech-codes.com/</a>
+To generate the documentation:</p>
+
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span><span class="nb">cd</span> ./doc
+<span class="nv">$ </span>doxygen config.doxygen
+</pre></div>
+
+<p>The documentation files will be generated in HTML and LaTeX format.</p>
 
 <h2>
 <a name="change-log" class="anchor" href="#change-log"><span class="octicon octicon-link"></span></a>Change log</h2>
@@ -112,55 +121,13 @@ libgtest.a  libsimplecluster.so  test_kmeans
 <li>Supported GNU C++ Compiler and clang compiler.</li>
 </ul>
 </li>
-</ul><h2>
-<a name="references" class="anchor" href="#references"><span class="octicon octicon-link"></span></a>References</h2>
-
-<p>[1] S. P. Lloyd, "Least squares quantization in PCM,"  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982.</p>
-
-<p>[2] D. Arthur et al., "k-means++: the advantages of careful seeding,"  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007.</p>
-
-<p>[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees," Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977.</p>
-
-<p>[4] G. Hamerly., "Making k-means even faster," Proc. SDM, pp. 130-140, 2010.</p>
-
-<h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
-
-<pre><code>    SIMPLE CLUSTERS: A simple library for clustering works.
-    Copyright (C) 2014 Nguyen Anh Tuan &lt;t_nguyen@hal.t.u-tokyo.ac.jp&gt;
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
-</code></pre>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/marker68/simple-k-means/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/marker68/simple-k-means/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/marker68/simple-k-means"></a> is maintained by <a href="https://github.com/marker68">marker68</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
     </div>
-
-  
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
   </body>
 </html>
