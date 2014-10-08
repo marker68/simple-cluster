@@ -108,12 +108,6 @@ TEST_F(UtilTest, test3) {
 	EXPECT_LT(0.0, distance(data[0],data[1],d));
 }
 
-TEST_F(UtilTest, test4) {
-	float d1 = distance(data[0],data[4],d);
-	float d2 = distance_square(data[0],data[4],d);
-	EXPECT_LT(abs(d2 - d1 * d1), 1e-04);
-}
-
 TEST_F(UtilTest, test5) {
 	size_t index[] = {0,1,2,3,4};
 	size_t * index2 = (size_t *)malloc(5 * sizeof(size_t));
@@ -133,16 +127,16 @@ TEST_F(UtilTest, test5) {
 
 TEST_F(UtilTest, test6) {
 	float arr[] = {1.0, 3.0, 5.0, 7.0, 9.0};
-	int m = quick_select_k(arr,5,3,compare_float);
-	EXPECT_EQ(3,m);
+	float m = quick_select_k(arr,5,3,compare_float);
+	EXPECT_EQ(7.0,m);
 }
 
 TEST_F(UtilTest, test7) {
 	float arr[10000];
 	for(int i = 0; i < 10000; i++)
 		arr[i] = i;
-	int m = quick_select_k(arr,10000,5000,compare_float);
-	EXPECT_EQ(5000,m);
+	float m = quick_select_k(arr,10000,5000,compare_float);
+	EXPECT_EQ(5000.0,m);
 }
 
 TEST_F(UtilTest, test8) {

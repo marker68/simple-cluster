@@ -348,7 +348,7 @@ void update_center(
 	for(size_t i = 0; i < k; i++) {
 		copy_array<float>(centers[i],c_tmp,d);
 		for(size_t j = 0; j < d; j++) {
-			if(size[i] > 0) centers[i][j] = sum[i][j] / static_cast<float>(size[i]);
+			centers[i][j] = (sum[i][j] + centers[i][j]) / static_cast<float>(size[i] + 1);
 		}
 		moved[i] = SimpleCluster::distance(c_tmp,centers[i],d);
 	}

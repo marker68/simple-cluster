@@ -61,31 +61,3 @@ This project uses Doxygen to generate its documentation. You cand find it in `do
     * Supported only L2 metric distance.
     * Supported KD-tree with ANN search.
     * Supported GNU C++ Compiler and clang compiler.
-    
-## References
-
-[1] S. P. Lloyd, "Least squares quantization in PCM,"  IEEE Trans. Inform. Theory,  vol. IT-28,  no. 2, pp. 129 -137, Mar. 1982.
-   
-[2] D. Arthur et al., "k-means++: the advantages of careful seeding,"  SODA '07 Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms, pp. 1027-1035, 2007.
-
-[3] D.T. Lee et al., "Worst-case analysis for region and partial region searches in multidimensional binary search trees and balanced quad trees," Acta Informatica, vol. 9, issue 1, pp. 23-29, 1977.
-
-[4] G. Hamerly., "Making k-means even faster," Proc. SDM, pp. 130-140, 2010.
-## License
-```
-    SIMPLE CLUSTERS: A simple library for clustering works.
-    Copyright (C) 2014 Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-```
