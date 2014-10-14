@@ -208,9 +208,12 @@ bool dealloc_array_2(
 		DataType **& arr,
 		size_t M) {
 	try {
-		for(size_t i = 0; i < M; i++)
+		for(size_t i = 0; i < M; i++) {
 			::delete arr[i];
+			arr[i] = nullptr;
+		}
 		::delete arr;
+		arr = nullptr;
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
 		return false;
