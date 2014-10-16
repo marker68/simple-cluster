@@ -606,10 +606,10 @@ void simple_k_means(
 			<< " and distortion = " << distortion(data,centers,label,d,N,k,false)
 			<< endl;
 		i++;
-		if(i >= iters || e < error || count >= iters/10) break;
+		if(i >= iters || e < error || count >= 10) break;
 	}
 
-	if(!verbose)
+	if(verbose)
 		cout << "Finished clustering with error is " <<
 		e << " after " << i << " iterations." << endl;
 }
