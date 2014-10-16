@@ -41,10 +41,20 @@ float distance(
 		float *,
 		float *,
 		size_t);
+float distance_thread(
+		float *,
+		float *,
+		size_t,
+		int);
 float distance_square(
 		float *,
 		float *,
 		size_t);
+float distance_square_thread(
+		float *,
+		float *,
+		size_t,
+		int);
 void all_mean_vector(
 		float **,
 		int *,
@@ -234,7 +244,7 @@ void swap(
 		int n,
 		size_t N) {
 	if(m < 0 || n < 0 || m >= N || n >= N) {
-		perror("Out of bounds!\n");
+		cerr << "Out of bounds!" << endl;
 		exit(1);
 	}
 	try {
@@ -335,7 +345,7 @@ DataType quick_select_k(
 		size_t k,
 		int (*compare)(const DataType*, const DataType*)) {
 	if(k >= N) {
-		fprintf(stderr, "Out of bounds!\n");
+		cerr << "Out of bounds!\n" << endl;
 		exit(1);
 	}
 

@@ -25,9 +25,16 @@
 #include <vector>
 #include <random>
 #include <gtest/gtest.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include "utilities.h"
+
+#ifdef _OPENMP
+#include <omp.h>
+#define SET_THREAD_NUM omp_set_num_threads(n_thread)
+#else
+#define SET_THREAD_NUM 0 // disable multi-thread
+#endif
 
 using namespace std;
 using namespace SimpleCluster;
@@ -98,14 +105,31 @@ size_t UtilTest::d;
 // Let's start with some testcases
 TEST_F(UtilTest, test1) {
 	EXPECT_EQ(0.0, distance(data[0],data[0],d));
+	EXPECT_EQ(0.0, distance_thread(data[0],data[0],d,16));
 }
 
 TEST_F(UtilTest, test2) {
 	EXPECT_EQ(0.0, distance_square(data[0],data[0],d));
+	EXPECT_EQ(0.0, distance_square_thread(data[0],data[0],d,16));
 }
 
 TEST_F(UtilTest, test3) {
-	EXPECT_LT(0.0, distance(data[0],data[1],d));
+	for(size_t i = 0; i < 1000000; i++) {
+		EXPECT_LT(0.0f,distance(data[0],data[1],d));
+	}
+}
+
+TEST_F(UtilTest, test4) {
+	int n_thread = 8;
+	size_t i;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(i = 0; i < 1000000; i++) {
+			EXPECT_LT(0.0f,distance(data[0],data[1],d));
+		}
+	}
 }
 
 TEST_F(UtilTest, test5) {

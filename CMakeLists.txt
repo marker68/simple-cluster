@@ -34,7 +34,6 @@ include_directories("${PROJECT_SOURCE_DIR}")
 # Check for OpenCV, just for comparing with our methods
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(OpenCV)
-find_package(Threads REQUIRED)
 
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
@@ -50,9 +49,14 @@ ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp
 )
 
 # Some of the features need C++ 11 and math library
-list(APPEND CMAKE_CXX_FLAGS 
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    list (APPEND CMAKE_CXX_FLAGS 
+    "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
+else()
+    list(APPEND CMAKE_CXX_FLAGS 
     "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
-
+endif()
 # Create a shared library file
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 add_dependencies(${PROJECT_NAME} gtest_main)

@@ -35,6 +35,13 @@
 #include "utilities.h"
 #include "kd-tree.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#define SET_THREAD_NUM omp_set_num_threads(8)
+#else
+#define SET_THREAD_NUM 0 // disable multi-thread
+#endif
+
 using namespace std;
 
 namespace SimpleCluster {
@@ -114,35 +121,45 @@ void kmeans_pp_seeds(
 	float * sum_distances;
 	init_array<float>(sum_distances,N);
 	size_t i;
-	for(i = 0; i < N; i++) {
-		distances[i] = SimpleCluster::distance_square(data[i], d_tmp, d);
-		sum_distances[i] = 0.0;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(i = 0; i < N; i++) {
+			distances[i] = SimpleCluster::distance_square(data[i], d_tmp, d);
+			sum_distances[i] = 0.0;
+		}
 	}
 
 	float sum, tmp2, sum1, sum2, pivot;
 	size_t count = 1;
-	while(count < k) {
-		sum = 0.0;
-		for(i = 0; i < N; i++) {
-			sum += distances[i];
-			sum_distances[i] = sum;
-		}
-		uniform_real_distribution<float> real_dis(0, sum);
-		pivot = real_dis(gen);
-
-		for(i = 0; i < N - 1; i++) {
-			sum1 = sum_distances[i];
-			sum2 = sum_distances[i + 1];
-			if(sum1 < pivot && pivot <= sum2)
-				break;
-		}
-		copy_array<float>(data[(i+1)%N],d_tmp,d);
-		copy_array<float>(d_tmp,seeds[count++],d);
-		// Update the distances
-		if(count < k) {
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(count = 1; count < k; count++) {
+			sum = 0.0;
 			for(i = 0; i < N; i++) {
-				tmp2 = SimpleCluster::distance_square(d_tmp,data[i],d);
-				if(distances[i] > tmp2) distances[i] = tmp2;
+				sum += distances[i];
+				sum_distances[i] = sum;
+			}
+			uniform_real_distribution<float> real_dis(0, sum);
+			pivot = real_dis(gen);
+
+			for(i = 0; i < N - 1; i++) {
+				sum1 = sum_distances[i];
+				sum2 = sum_distances[i + 1];
+				if(sum1 < pivot && pivot <= sum2)
+					break;
+			}
+			copy_array<float>(data[(i+1)%N],d_tmp,d);
+			copy_array<float>(d_tmp,seeds[count++],d);
+			// Update the distances
+			if(count < k) {
+				for(i = 0; i < N; i++) {
+					tmp2 = SimpleCluster::distance_square(d_tmp,data[i],d);
+					if(distances[i] > tmp2) distances[i] = tmp2;
+				}
 			}
 		}
 	}
@@ -288,10 +305,6 @@ void greg_initialize(
 		size_t k,
 		size_t d,
 		bool verbose) {
-	size_t tmp = -1;
-	float min = FLT_MAX;
-	float min2 = FLT_MAX;
-	float d_tmp;
 
 	// Initializing size and vector sum
 	for(size_t i = 0; i < k; i++) {
@@ -301,27 +314,37 @@ void greg_initialize(
 		}
 	}
 
-	for(size_t i = 0; i < N; i++) {
-		for(size_t j = 0; j < k; j++) {
-			d_tmp = SimpleCluster::distance(centers[j],data[i],d);
-			if(min >= d_tmp) {
-				min2 = min;
-				min = d_tmp;
-				tmp = j;
-			} else {
-				if(min2 >= d_tmp) min2 = d_tmp;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(size_t i = 0; i < N; i++) {
+			float min = FLT_MAX;
+			float min2 = FLT_MAX;
+			float d_tmp;
+			size_t tmp = -1;
+			for(size_t j = 0; j < k; j++) {
+				d_tmp = SimpleCluster::distance(centers[j],data[i],d);
+				if(min >= d_tmp) {
+					min2 = min;
+					min = d_tmp;
+					tmp = j;
+				} else {
+					if(min2 >= d_tmp) min2 = d_tmp;
+				}
 			}
-		}
-		label[i] = tmp; // Update the label
-		upper[i] = min; // Update the upper bound on this distance
-		lower[i] = min2; // Update the lower bound on this distance
 
-		// Update the size
-		size[tmp]++;
+			label[i] = tmp; // Update the label
+			upper[i] = min; // Update the upper bound on this distance
+			lower[i] = min2; // Update the lower bound on this distance
 
-		// Update the vector sum
-		for(size_t j = 0; j < d; j++) {
-			sum[tmp][j] += data[i][j];
+			// Update the size
+			size[tmp]++;
+
+			// Update the vector sum
+			for(size_t j = 0; j < d; j++) {
+				sum[tmp][j] += data[i][j];
+			}
 		}
 	}
 }
@@ -345,7 +368,8 @@ void update_center(
 		size_t d) {
 	float * c_tmp;
 	init_array<float>(c_tmp,d);
-	for(size_t i = 0; i < k; i++) {
+	size_t i;
+	for(i = 0; i < k; i++) {
 		copy_array<float>(centers[i],c_tmp,d);
 		for(size_t j = 0; j < d; j++) {
 			centers[i][j] = (sum[i][j] + centers[i][j]) / static_cast<float>(size[i] + 1);
@@ -371,9 +395,9 @@ void update_bounds(
 		float *& lower,
 		size_t N,
 		size_t k) {
-	size_t r = 0;
-	float max = 0.0, max2 = 0.0;
-	for(size_t i = 0; i < k; i++) {
+	size_t r = 0, i;
+	float max = 0.0, max2 = 0.0, sub;
+	for(i = 0; i < k; i++) {
 		if(max <= moved[i]) {
 			max2 = max;
 			max = moved[i];
@@ -384,15 +408,20 @@ void update_bounds(
 			}
 		}
 	}
-	for(size_t i = 0; i < N; i++) {
-		upper[i] += moved[label[i]];
-		float sub = 0.0;
-		if(r == label[i]) {
-			sub = max2;
-		} else {
-			sub = max;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+		for(i = 0; i < N; i++) {
+			upper[i] += moved[label[i]];
+			sub = 0.0;
+			if(r == label[i]) {
+				sub = max2;
+			} else {
+				sub = max;
+			}
+			lower[i] = fabs(lower[i] - sub);
 		}
-		lower[i] = fabs(lower[i] - sub);
 	}
 }
 
@@ -445,7 +474,7 @@ void simple_k_means(
 		cout << "Finished seeding" << endl;
 
 	// Criteria's setup
-	size_t iters = criteria.iterations, i = 0, count = 0;
+	size_t iters = criteria.iterations, i = 0, j, count = 0;
 	float error = criteria.accuracy, e = error, e_prev;
 
 	// Variables for Greg's method
@@ -472,7 +501,7 @@ void simple_k_means(
 		size_t tmp = 0;
 		float min, min2, min_tmp, d_tmp, m;
 		// Update the closest distances
-		for(size_t j = 0; j < k; j++) {
+		for(j = 0; j < k; j++) {
 			min2 = min = FLT_MAX;
 			for(size_t t = 0; t < k; t++) {
 				if(t != j) {
@@ -483,46 +512,52 @@ void simple_k_means(
 			closest[j] = min;
 		}
 
-		for(size_t j = 0; j < N; j++) {
-			// Update m for bound test
-			d_tmp = closest[label[j]]/2.0;
-			m = std::max(d_tmp,lower[j]);
-			// First bound test
-			if(upper[j] > m) {
-				// We need to tighten the upper bound
-				upper[j] = SimpleCluster::distance(data[j],centers[label[j]],d);
-				// Second bound test
+		SET_THREAD_NUM;
+#pragma omp parallel
+		{
+#pragma omp for private(j,d_tmp,m,min,min2,tmp)
+			for(j = 0; j < N; j++) {
+				// Update m for bound test
+				d_tmp = closest[label[j]]/2.0;
+				m = std::max(d_tmp,lower[j]);
+				// First bound test
 				if(upper[j] > m) {
-					size_t l = label[j];
-					min2 = min = FLT_MAX;
-					// Assign the data to clusters
-					for(size_t t = 0; t < k; t++) {
-						d_tmp = SimpleCluster::distance(centers[t],data[j],d);
-						if(min >= d_tmp) {
-							min2 = min;
-							min = d_tmp;
-							tmp = t;
-						} else {
-							if(min2 > d_tmp) min2 = d_tmp;
+					// We need to tighten the upper bound
+					upper[j] = SimpleCluster::distance(data[j],centers[label[j]],d);
+					// Second bound test
+					if(upper[j] > m) {
+						size_t l = label[j];
+						min2 = min = FLT_MAX;
+						tmp = -1;
+						// Assign the data to clusters
+						for(size_t t = 0; t < k; t++) {
+							d_tmp = SimpleCluster::distance(centers[t],data[j],d);
+							if(min >= d_tmp) {
+								min2 = min;
+								min = d_tmp;
+								tmp = t;
+							} else {
+								if(min2 > d_tmp) min2 = d_tmp;
+							}
 						}
-					}
 
-					// Assign the data[i] size_to cluster tmp
-					label[j] = tmp; // Update the label
-					upper[j] = min; // Update the upper bound on this distance
-					lower[j] = min2; // Update the lower bound on this distance
+						// Assign the data[i] size_to cluster tmp
+						label[j] = tmp; // Update the label
+						upper[j] = min; // Update the upper bound on this distance
+						lower[j] = min2; // Update the lower bound on this distance
 
-					if(l != tmp) {
-						size[tmp]++;
-						size[l]--;
-						if(size[l] == 0) {
-							if(verbose)
-								cout << "An empty cluster was found!"
-								" label = " << l << endl;
-						}
-						for(size_t t = 0; t < d; t++) {
-							c_sum[tmp][t] += data[j][t];
-							c_sum[l][t] -= data[j][t];
+						if(l != tmp) {
+							size[tmp]++;
+							size[l]--;
+							if(size[l] == 0) {
+								if(verbose)
+									cout << "An empty cluster was found!"
+									" label = " << l << endl;
+							}
+							for(size_t t = 0; t < d; t++) {
+								c_sum[tmp][t] += data[j][t];
+								c_sum[l][t] -= data[j][t];
+							}
 						}
 					}
 				}
@@ -552,7 +587,7 @@ void simple_k_means(
 		if(i >= iters || e < error || count >= iters/10) break;
 	}
 
-	if(verbose)
+	if(!verbose)
 		cout << "Finished clustering with error is " <<
 		e << " after " << i << " iterations." << endl;
 }
@@ -576,8 +611,14 @@ float distortion(
 		size_t k,
 		bool verbose) {
 	float e = 0.0;
-	for(size_t i = 0; i < N; i++) {
-		e += distance_square(data[i],centers[label[i]],d);
+	size_t i;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+		for(i = 0; i < N; i++) {
+			e += distance_square(data[i],centers[label[i]],d);
+		}
 	}
 	return sqrt(e);
 }
