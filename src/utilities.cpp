@@ -22,6 +22,7 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 #include <vector>
 #include <exception>
 #include <cmath>

@@ -42,6 +42,10 @@
 #define SET_THREAD_NUM 0 // disable multi-thread
 #endif
 
+#ifndef FLT_MAX
+#define FLT_MAX 3.40282347E+38F
+#endif
+
 using namespace std;
 
 namespace SimpleCluster {
@@ -71,11 +75,16 @@ void random_seeds(
 
 	for(i = 0; i < k; i++)
 		tmp[i] = static_cast<size_t>(i);
-	for(i = k; i < N; i++) {
-		uniform_int_distribution<> size_t_dis(i,N-1);
-		j = size_t_dis(gen);
-		if(j < k)
-			tmp[j] = static_cast<size_t>(i);
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+		for(i = k; i < N; i++) {
+			uniform_int_distribution<> size_t_dis(i,N-1);
+			j = size_t_dis(gen);
+			if(j < k)
+				tmp[j] = static_cast<size_t>(i);
+		}
 	}
 
 	for(i = 0; i < k; i++) {
@@ -124,7 +133,7 @@ void kmeans_pp_seeds(
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
-#pragma omp for
+#pragma omp for private(i)
 		for(i = 0; i < N; i++) {
 			distances[i] = SimpleCluster::distance_square(data[i], d_tmp, d);
 			sum_distances[i] = 0.0;
@@ -136,7 +145,7 @@ void kmeans_pp_seeds(
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
-#pragma omp for
+#pragma omp for private(count)
 		for(count = 1; count < k; count++) {
 			sum = 0.0;
 			for(i = 0; i < N; i++) {
@@ -188,12 +197,16 @@ void linear_assign(
 	size_t i, tmp;
 
 	float min = 0.0;
-
-	for(i = 0; i < N; i++) {
-		// Find the minimum distances between d_tmp and a centroid
-		linear_search(centers,data[i],tmp,min,k,d,verbose);
-		// Assign the data[i] size_to cluster tmp
-		clusters[tmp].push_back(static_cast<size_t>(i));
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+		for(i = 0; i < N; i++) {
+			// Find the minimum distances between d_tmp and a centroid
+			linear_search(centers,data[i],tmp,min,k,d,verbose);
+			// Assign the data[i] size_to cluster tmp
+			clusters[tmp].push_back(static_cast<size_t>(i));
+		}
 	}
 }
 
@@ -223,17 +236,21 @@ void kd_nn_assign(
 	if(root == nullptr) return;
 
 	KDNode<float> query(d);
-
-	for(i = 0; i < N; i++) {
-		KDNode<float> * nn = nullptr;
-		float min = FLT_MAX;
-		size_t visited = 0;
-		query.add_data(data[i]);
-		// Find the minimum distances between d_tmp and a centroid
-		nn_search(root,&query,nn,min,d,0,visited,verbose);
-		tmp = nn->id;
-		// Assign the data[i] size_to cluster tmp
-		clusters[tmp].push_back(static_cast<size_t>(i));
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+		for(i = 0; i < N; i++) {
+			KDNode<float> * nn = nullptr;
+			float min = FLT_MAX;
+			size_t visited = 0;
+			query.add_data(data[i]);
+			// Find the minimum distances between d_tmp and a centroid
+			nn_search(root,&query,nn,min,d,0,visited,verbose);
+			tmp = nn->id;
+			// Assign the data[i] size_to cluster tmp
+			clusters[tmp].push_back(static_cast<size_t>(i));
+		}
 	}
 }
 
@@ -265,16 +282,21 @@ void kd_ann_assign(
 
 	KDNode<float> query(d);
 
-	for(i = 0; i < N; i++) {
-		KDNode<float> * nn = nullptr;
-		float min = FLT_MAX;
-		size_t visited = 0;
-		query.add_data(data[i]);
-		// Find the minimum distances between d_tmp and a centroid
-		ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
-		tmp = nn->id;
-		// Assign the data[i] size_to cluster tmp
-		clusters[tmp].push_back(static_cast<size_t>(i));
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+		for(i = 0; i < N; i++) {
+			KDNode<float> * nn = nullptr;
+			float min = FLT_MAX;
+			size_t visited = 0;
+			query.add_data(data[i]);
+			// Find the minimum distances between d_tmp and a centroid
+			ann_search(root,&query,nn,min,alpha,d,0,visited,verbose);
+			tmp = nn->id;
+			// Assign the data[i] size_to cluster tmp
+			clusters[tmp].push_back(static_cast<size_t>(i));
+		}
 	}
 }
 
