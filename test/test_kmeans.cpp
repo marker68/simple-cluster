@@ -35,6 +35,13 @@
 #include "k-means.h"
 #include "utilities.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#define SET_THREAD_NUM omp_set_num_threads(n_thread)
+#else
+#define SET_THREAD_NUM 0 // disable multi-thread
+#endif
+
 using namespace std;
 using namespace cv;
 using namespace SimpleCluster;
@@ -137,11 +144,11 @@ size_t KmeansTest::N;
 size_t KmeansTest::d;
 size_t KmeansTest::k;
 
-TEST_F(KmeansTest, DISABLED_test1) {
+TEST_F(KmeansTest, test1) {
 	random_seeds(data,seeds,d,N,k,true);
 }
 
-TEST_F(KmeansTest, DISABLED_test2) {
+TEST_F(KmeansTest, test2) {
 	kmeans_pp_seeds(data,seeds,d,N,k,true);
 }
 
@@ -190,12 +197,19 @@ TEST_F(KmeansTest, test6) {
 	kmeans(_data, k, _labels, opencv_criteria, 3, KMEANS_PP_CENTERS, _centers);
 	// Find the distortion
 	float distortion = 0.0;
-	for(int i = 0; i < _labels.rows; i++) {
-		int id = _labels.at<size_t>(i,0);
-		Mat tmp = _data.row(i);
-		Mat c = _centers.row(id);
-		float d_t = norm(tmp,c,NORM_L2);
-		distortion += d_t * d_t;
+	int i;
+	int n_thread = 8;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+		for(i = 0; i < _labels.rows; i++) {
+			int id = _labels.at<size_t>(i,0);
+			Mat tmp = _data.row(i);
+			Mat c = _centers.row(id);
+			float d_t = norm(tmp,c,NORM_L2);
+			distortion += d_t * d_t;
+		}
 	}
 	cout << "Distortion is " << sqrt(distortion) << endl;
 }

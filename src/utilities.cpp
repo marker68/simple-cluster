@@ -22,10 +22,25 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 #include <vector>
 #include <exception>
-#include <math.h>
+#include <cmath>
+#include <ctime>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <sys/time.h>
+#endif
+
+#ifdef _OPENMP
+#include <omp.h>
+#define SET_THREAD_NUM omp_set_num_threads(n_thread)
+#else
+#define SET_THREAD_NUM 0 // disable multi-thread
+#endif
+
 #include "utilities.h"
 
 using namespace std;
@@ -78,6 +93,64 @@ float distance_square(
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
 		exit(1);
+	}
+
+	return dis;
+}
+
+/**
+ * Calculate the distance between two vectors with multi-threading
+ * @param x
+ * @param y
+ * @param d
+ * @param n_thread number of threads
+ * @return the distance between x and y in d dimensional space
+ */
+float distance_thread(
+		float * x,
+		float * y,
+		size_t d,
+		int n_thread) {
+	size_t i, bs = d / n_thread, st;
+	float dis;
+	dis = 0.0;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(i = 0; i < n_thread; i++) {
+			st = bs * i;
+			dis += distance_square(x + st,y + st,bs);
+		}
+	}
+
+	return sqrt(dis);
+}
+
+/**
+ * Calculate the square of distance between two vectors with multi-threading
+ * @param x
+ * @param y
+ * @param d
+ * @param n_thread number of threads
+ * @return the distance between x and y in d dimensional space
+ */
+float distance_square_thread(
+		float * x,
+		float * y,
+		size_t d,
+		int n_thread) {
+	size_t i, bs = d / n_thread, st;
+	float dis;
+	dis = 0.0;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(i = 0; i < n_thread; i++) {
+			st = bs * i;
+			dis += distance_square(x + st,y + st,bs);
+		}
 	}
 
 	return dis;
@@ -233,9 +306,15 @@ float * mean_vector(
  * Get system time in milliseconds
  */
 unsigned long get_millisecond_time() {
+#ifdef _WIN32
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+	return static_cast<unsigned long>((time.wSecond * 1000) + time.wMilliseconds);
+#else
 	struct timeval tv;
 	if(gettimeofday(&tv, nullptr) != 0) return 0;
-	return (unsigned long)((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
+	return static_cast<unsigned long>((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
+#endif
 }
 
 /**
