@@ -459,6 +459,7 @@ void update_bounds(
 	int i;
 #else
 	size_t i;
+#endif
 	float max = 0.0, max2 = 0.0, sub;
 	for(i = 0; i < k; i++) {
 		if(max <= moved[i]) {
@@ -683,6 +684,7 @@ float distortion(
 	int i;
 #else
 	size_t i;
+#endif
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
@@ -694,4 +696,3 @@ float distortion(
 	return sqrt(e);
 }
 }
-
