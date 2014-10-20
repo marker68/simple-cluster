@@ -339,6 +339,59 @@ void bbsort(
  * @return the index of the k-th smallest element
  */
 template<typename DataType>
+size_t quick_select_k_id(
+		DataType * data,
+		size_t N,
+		size_t k,
+		int (*compare)(const DataType*, const DataType*)) {
+	if(k >= N) {
+		cerr << "Out of bounds!\n" << endl;
+		exit(1);
+	}
+
+	if(N <= 8) {
+		bbsort(data,N,*compare);
+		return k;
+	}
+
+	// First, choose an appropriate pivot
+	DataType pivot = data[N >> 1];
+	// Choose the pivot as the median of left, right and (left+right)/2 elements
+	if(((*compare)(&pivot,&data[0]) <= 0 && (*compare)(&data[0],&data[N-1]) <= 0)
+			|| ((*compare)(&pivot,&data[0]) >= 0 && (*compare)(&data[0],&data[N-1]) >= 0))
+		pivot = data[0];
+	if(((*compare)(&pivot,&data[N-1]) <= 0 && (*compare)(&data[N-1],&data[0]) <= 0)
+			|| ((*compare)(&pivot,&data[N-1]) >= 0 && (*compare)(&data[N-1],&data[0]) >= 0))
+		pivot = data[N-1];
+
+	// Then partition the array into two parts based on the pivot value.
+	// The left part will contains members that are less than pivot,
+	// the right part contains member that are greater than or equal pivot.
+	int p = partition(data,pivot,N,*compare);
+	if(p == 0) {
+		bbsort(data,N,*compare);
+		return k;
+	}
+
+	if(k < p) return quick_select_k_id(data,p,k,*compare);
+	else if(k == p) return p;
+	else return quick_select_k_id(&data[p],N-p,k-p,*compare);
+}
+
+/**
+ * Select k+1-th smallest member of an array : QuickSelect by Hoare.
+ * This one take O(n) time in average but O(n^2) in the worst case.
+ * QuickSelect might be slower than StableSelect in worst cases,
+ * but in most cases, QuickSelect outperformed StableSelect.
+ * BE CAREFUL! This function will change the order of the input data.
+ * Make sure you stored your input data somewhere else.
+ * @param data the input data
+ * @param N the size of the input
+ * @param k the index
+ * @param compare the comparator
+ * @return the value of the k-th smallest element
+ */
+template<typename DataType>
 DataType quick_select_k(
 		DataType * data,
 		size_t N,

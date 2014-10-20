@@ -94,8 +94,9 @@ size_t find_median(
 		arr[i] = data[i][id];
 	}
 
-	size_t res = quick_select_k(arr,M,M >> 1,compare_float);
+	size_t res = quick_select_k_id(arr,M,M >> 1,compare_float);
 	::delete arr;
+	arr = nullptr;
 	return res;
 }
 
