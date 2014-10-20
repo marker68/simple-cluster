@@ -21,20 +21,34 @@ cmake_minimum_required(VERSION 2.8)
 # PROJECT'S NAME
 project(simplecluster)
 
-# THE LOCATION OF OUTPUT BINARIES
-if(MSVC)
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/Debug)
+# DETECT THE SYSTEM
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	message(WARNING "64-bit system is detected")
+	set(EX_PLATFORM 64)
+	set(EX_PLATFORM_NAME "x64")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+	message(WARNING "32-bit system is detected")
+	set(EX_PLATFORM 32)
+	set(EX_PLATFORM_NAME "x86")
 else()
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+	message(WARNING "An ${CMAKE_SYSTEM_NAME} system is detected")
+	set(EX_PLATFORM CMAKE_SYSTEM_NAME)
 endif()
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
+
+# BUILD TYPE
+set(CMAKE_BUILD_TYPE Release)
+message(WARNING "A ${CMAKE_BUILD_TYPE} build configuration is detected")
+
+# THE LOCATION OF OUTPUT BINARIES
+set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/${EX_PLATFORM_NAME}/lib)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/${EX_PLATFORM_NAME}/bin)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(LIBRARY_OUTPUT_PATH ${CMAKE_LIBRARY_DIR})
  
 # INCLUDE DIRECTORIES
 set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 include_directories("${PROJECT_INCLUDE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}")
-link_directories("${CMAKE_BINARY_DIR}")
 # For googletest
 include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 
@@ -69,22 +83,22 @@ endif()
 # OUTPUT LIBRARIES
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 if(MSVC)
-	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MTd ${OpenMP_CXX_FLAGS}")
+    set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(${PROJECT_NAME} gtest_main)
 
 # OUTPUT EXECUTABLES
 if(NOT MSVC)
-set(TEST_LIBS_FLAGS ${CMAKE_BINARY_DIR}/libgtest_main.a m gtest pthread)
+	set(TEST_LIBS_FLAGS ${CMAKE_LIBRARY_DIR}/libgtest_main.a m gtest pthread)
 else()
-set(TEST_LIBS_FLAGS gtest)
+	set(TEST_LIBS_FLAGS gtest)
 endif()
 add_executable(test_utilities 
     ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp)
 target_link_libraries(test_utilities ${TEST_LIBS_FLAGS})
 if(MSVC)
-    set_target_properties(test_utilities PROPERTIES COMPILE_FLAGS "/MTd")
+    set_target_properties(test_utilities PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(test_utilities gtest_main)
 add_executable(test_kdtree 
@@ -93,7 +107,7 @@ add_executable(test_kdtree
     ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp)
 target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
 if(MSVC)
-    set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MTd")
+    set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(test_kdtree test_utilities gtest_main)
 
@@ -108,9 +122,9 @@ if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
         ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
         ${PROJECT_SRCS} )
     target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
-    if(MSVC)
-        set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MTd ${OpenMP_CXX_FLAGS}")
-    endif()
+	if(MSVC)
+    	set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
+	endif()
     add_dependencies(test_kmeans test_kdtree gtest_main)
 else()
     message(WARNING "You do not have OpenCV >= 2.4.0! Your OpenCV version is ${OpenCV_VERSION}")

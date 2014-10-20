@@ -37,7 +37,7 @@
 
 #ifdef _OPENMP
 #include <omp.h>
-#define SET_THREAD_NUM omp_set_num_threads(8)
+#define SET_THREAD_NUM omp_set_num_threads(1)
 #else
 #define SET_THREAD_NUM 0 // disable multi-thread
 #endif
@@ -134,6 +134,7 @@ void kmeans_pp_seeds(
 		cerr << "d_tmp: Cannot allocate the memory" << endl;
 		exit(1);
 	}
+
 	copy_array<float>(data[tmp],seeds[0],d);
 	float * distances;
 	init_array<float>(distances,N);
@@ -155,38 +156,29 @@ void kmeans_pp_seeds(
 	}
 
 	float sum, tmp2, sum1, sum2, pivot;
-#ifdef _WIN32
-	int count = 1;
-#else
 	size_t count = 1;
-#endif
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for private(count)
-		for(count = 1; count < k; count++) {
-			sum = 0.0;
-			for(i = 0; i < N; i++) {
-				sum += distances[i];
-				sum_distances[i] = sum;
-			}
-			uniform_real_distribution<float> real_dis(0, sum);
-			pivot = real_dis(gen);
+	for(count = 1; count < k; count++) {
+		sum = 0.0;
+		for(i = 0; i < N; i++) {
+			sum += distances[i];
+			sum_distances[i] = sum;
+		}
+		uniform_real_distribution<float> real_dis(0, sum);
+		pivot = real_dis(gen);
 
-			for(i = 0; i < N - 1; i++) {
-				sum1 = sum_distances[i];
-				sum2 = sum_distances[i + 1];
-				if(sum1 < pivot && pivot <= sum2)
-					break;
-			}
-			copy_array<float>(data[(i+1)%N],d_tmp,d);
-			copy_array<float>(d_tmp,seeds[count+1],d);
-			// Update the distances
-			if(count < k) {
-				for(i = 0; i < N; i++) {
-					tmp2 = SimpleCluster::distance_square(d_tmp,data[i],d);
-					if(distances[i] > tmp2) distances[i] = tmp2;
-				}
+		for(i = 0; i < N - 1; i++) {
+			sum1 = sum_distances[i];
+			sum2 = sum_distances[i + 1];
+			if(sum1 < pivot && pivot <= sum2)
+				break;
+		}
+		copy_array<float>(data[(i+1)%N],d_tmp,d);
+		copy_array<float>(d_tmp,seeds[count],d);
+		// Update the distances
+		if(count < k) {
+			for(i = 0; i < N; i++) {
+				tmp2 = SimpleCluster::distance_square(d_tmp,data[i],d);
+				if(distances[i] > tmp2) distances[i] = tmp2;
 			}
 		}
 	}
