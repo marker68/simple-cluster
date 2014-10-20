@@ -37,7 +37,7 @@
 
 #ifdef _OPENMP
 #include <omp.h>
-#define SET_THREAD_NUM omp_set_num_threads(1)
+#define SET_THREAD_NUM omp_set_num_threads(n_thread)
 #else
 #define SET_THREAD_NUM 0 // disable multi-thread
 #endif
@@ -57,6 +57,7 @@ namespace SimpleCluster {
  * @param d the dimensions of the data
  * @param N the number of the data
  * @param k the number of clusters
+ * @param n_thread the number of threads
  * @param verbose for debugging
  */
 void random_seeds(
@@ -65,6 +66,7 @@ void random_seeds(
 		size_t d,
 		size_t N,
 		size_t k,
+		int n_thread,
 		bool verbose) {
 #ifdef _WIN32
 	int i;
@@ -113,6 +115,7 @@ void random_seeds(
  * @param k the numbe rof clusters
  * @param data input data
  * @param seeds the seeds
+ * @param n_thread the number of threads
  * @param verbose for debugging
  */
 void kmeans_pp_seeds(
@@ -121,6 +124,7 @@ void kmeans_pp_seeds(
 		size_t d,
 		size_t N,
 		size_t k,
+		int n_thread,
 		bool verbose) {
 	// For generating random numbers
 	random_device rd;
@@ -194,6 +198,7 @@ void kmeans_pp_seeds(
  * @param data input data
  * @param centers the centers
  * @param clusters the clusters
+ * @param n_thread the number of threads
  * @param verbose for debugging
  */
 void linear_assign(
@@ -203,6 +208,7 @@ void linear_assign(
 		size_t d,
 		size_t N,
 		size_t k,
+		int n_thread,
 		bool verbose) {
 #ifdef _WIN32
 	int i;
@@ -235,6 +241,7 @@ void linear_assign(
  * @param data input data
  * @param centers the centers
  * @param clusters the clusters
+ * @param n_thread the number of threads
  * @param verbose for debugging
  */
 void kd_nn_assign(
@@ -244,6 +251,7 @@ void kd_nn_assign(
 		size_t d,
 		size_t N,
 		size_t k,
+		int n_thread,
 		bool verbose) {
 #ifdef _WIN32
 	int i;
@@ -284,6 +292,7 @@ void kd_nn_assign(
  * @param data input data
  * @param centers the centers
  * @param clusters the clusters
+ * @param n_thread the number of threads
  * @param verbose for debugging
  */
 void kd_ann_assign(
@@ -293,6 +302,7 @@ void kd_ann_assign(
 		size_t d,
 		size_t N,
 		size_t k,
+		int n_thread,
 		float alpha,
 		bool verbose) {
 #ifdef _WIN32
@@ -337,6 +347,7 @@ void kd_ann_assign(
  * @param N the size of data set
  * @param k the number of clusters
  * @param d the number of dimensions
+ * @param n_thread the number of threads
  * @param verbose enable it to see the log
  * @return nothing
  */
@@ -351,6 +362,7 @@ void greg_initialize(
 		size_t N,
 		size_t k,
 		size_t d,
+		int n_thread,
 		bool verbose) {
 #ifdef _WIN32
 	int i, j;
@@ -408,6 +420,7 @@ void greg_initialize(
  * @param moved the distances that centers moved
  * @param k the number of clusters
  * @param d the number of dimensions
+ * @param n_thread the number of threads
  * @return nothing
  */
 void update_center(
@@ -416,7 +429,8 @@ void update_center(
 		float **& centers,
 		float *& moved,
 		size_t k,
-		size_t d) {
+		size_t d,
+		int n_thread) {
 	float * c_tmp;
 	init_array<float>(c_tmp,d);
 	size_t i;
@@ -438,6 +452,7 @@ void update_center(
  * @param N
  * @param k
  * @param d
+ * @param n_thread the number of threads
  */
 void update_bounds(
 		float * moved,
@@ -445,7 +460,8 @@ void update_bounds(
 		float *& upper,
 		float *& lower,
 		size_t N,
-		size_t k) {
+		size_t k,
+		int n_thread) {
 	size_t r = 0;
 #ifdef _WIN32
 	int i;
@@ -494,6 +510,7 @@ void update_bounds(
  * @param centers the centers
  * @param label the labels of data points
  * @param seeds the initial centers = the seeds
+ * @param n_thread the number of threads
  * @param verbose for debugging
  */
 void simple_k_means(
@@ -507,6 +524,7 @@ void simple_k_means(
 		size_t N,
 		size_t k,
 		size_t d,
+		int n_thread,
 		bool verbose) {
 	// Pre-check conditions
 	if (N < k) {
@@ -521,9 +539,9 @@ void simple_k_means(
 
 	// Seeding
 	if (type == KmeansType::RANDOM_SEEDS) {
-		random_seeds(data,seeds,d,N,k,verbose);
+		random_seeds(data,seeds,d,N,k,n_thread,verbose);
 	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
-		kmeans_pp_seeds(data,seeds,d,N,k,verbose);
+		kmeans_pp_seeds(data,seeds,d,N,k,n_thread,verbose);
 	}
 
 	if(verbose)
@@ -550,7 +568,7 @@ void simple_k_means(
 
 	// Initialize the centers
 	copy_array_2<float>(seeds,centers,k,d);
-	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,verbose);
+	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,n_thread,verbose);
 #ifdef _WIN32
 	int j;
 #else
@@ -626,10 +644,10 @@ void simple_k_means(
 		}
 
 		// Move the centers
-		update_center(c_sum,size,centers,moved,k,d);
+		update_center(c_sum,size,centers,moved,k,d,n_thread);
 
 		// Update the bounds
-		update_bounds(moved,label,upper,lower,N,k);
+		update_bounds(moved,label,upper,lower,N,k,n_thread);
 
 		// Calculate the distortion
 		e_prev = e;
@@ -642,7 +660,7 @@ void simple_k_means(
 		if(verbose)
 			cout << "Iterator " << i
 			<< "-th with error = " << e
-			<< " and distortion = " << distortion(data,centers,label,d,N,k,false)
+			<< " and distortion = " << distortion(data,centers,label,d,N,k,n_thread,false)
 			<< endl;
 		i++;
 		if(i >= iters || e < error || count >= 10) break;
@@ -661,6 +679,7 @@ void simple_k_means(
  * @param data input data
  * @param centers the centers
  * @param clusters the clusters
+ * @param n_thread the number of threads
  * @param verbose for debugging
  */
 float distortion(
@@ -670,6 +689,7 @@ float distortion(
 		size_t d,
 		size_t N,
 		size_t k,
+		int n_thread,
 		bool verbose) {
 	float e = 0.0;
 #ifdef _WIN32
