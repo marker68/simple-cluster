@@ -21,16 +21,6 @@ cmake_minimum_required(VERSION 2.8)
 # PROJECT'S NAME
 project(simplecluster)
 
-# CHECK FOR SUBMODULES AND LIBS
-# Check for OpenCV, just for comparing with our methods
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-find_package(OpenCV)
-find_package(OpenMP REQUIRED)
-# This project uses Google Testing Framework and
-# we added GoogleTest as a sub-project. The version
-# of this distribution is 1.7.0.
-add_subdirectory(test/googletest)
-
 # THE LOCATION OF OUTPUT BINARIES
 if(MSVC)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/Debug)
@@ -47,6 +37,16 @@ include_directories("${PROJECT_SOURCE_DIR}")
 link_directories("${CMAKE_BINARY_DIR}")
 # For googletest
 include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
+
+# CHECK FOR SUBMODULES AND LIBS
+# Check for OpenCV, just for comparing with our methods
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(OpenCV)
+find_package(OpenMP)
+# This project uses Google Testing Framework and
+# we added GoogleTest as a sub-project. The version
+# of this distribution is 1.7.0.
+add_subdirectory(test/googletest)
 
 # SOURCE FILES
 set(PROJECT_SRCS 
@@ -82,7 +82,7 @@ endif()
 add_executable(test_utilities 
     ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp)
-target_link_libraries(test_utilities debug ${TEST_LIBS_FLAGS})
+target_link_libraries(test_utilities optimized ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_utilities PROPERTIES COMPILE_FLAGS "/MTd")
 endif()
@@ -91,7 +91,7 @@ add_executable(test_kdtree
     ${PROJECT_SOURCE_DIR}/test/test_kdtree.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp)
-target_link_libraries(test_kdtree debug ${TEST_LIBS_FLAGS})
+target_link_libraries(test_kdtree optimized ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MTd")
 endif()
@@ -107,7 +107,7 @@ if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
     add_executable(test_kmeans 
         ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
         ${PROJECT_SRCS} )
-    target_link_libraries(test_kmeans debug ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
+    target_link_libraries(test_kmeans optimized ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
     if(MSVC)
         set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MTd ${OpenMP_CXX_FLAGS}")
     endif()
