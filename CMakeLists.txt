@@ -82,7 +82,7 @@ endif()
 add_executable(test_utilities 
     ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp)
-target_link_libraries(test_utilities optimized ${TEST_LIBS_FLAGS})
+target_link_libraries(test_utilities ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_utilities PROPERTIES COMPILE_FLAGS "/MTd")
 endif()
@@ -91,7 +91,7 @@ add_executable(test_kdtree
     ${PROJECT_SOURCE_DIR}/test/test_kdtree.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp)
-target_link_libraries(test_kdtree optimized ${TEST_LIBS_FLAGS})
+target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MTd")
 endif()
@@ -107,7 +107,7 @@ if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
     add_executable(test_kmeans 
         ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
         ${PROJECT_SRCS} )
-    target_link_libraries(test_kmeans optimized ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
+    target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
     if(MSVC)
         set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MTd ${OpenMP_CXX_FLAGS}")
     endif()
