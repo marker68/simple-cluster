@@ -111,7 +111,12 @@ float distance_thread(
 		float * y,
 		size_t d,
 		int n_thread) {
-	size_t i, bs = d / n_thread, st;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t bs = d / n_thread, st;
 	float dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
@@ -140,7 +145,12 @@ float distance_square_thread(
 		float * y,
 		size_t d,
 		int n_thread) {
-	size_t i, bs = d / n_thread, st;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t bs = d / n_thread, st;
 	float dis;
 	dis = 0.0;
 	SET_THREAD_NUM;

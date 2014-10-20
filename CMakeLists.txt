@@ -18,65 +18,80 @@
 # For Ubuntu, just run 'sudo apt-get install cmake'
 cmake_minimum_required(VERSION 2.8)
 
-# Project's name
+# PROJECT'S NAME
 project(simplecluster)
- 
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
- 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
- 
-set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
- 
-include_directories("${PROJECT_INCLUDE_DIR}")
-include_directories("${PROJECT_SOURCE_DIR}")
 
+# CHECK FOR SUBMODULES AND LIBS
 # Check for OpenCV, just for comparing with our methods
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(OpenCV)
-
+find_package(OpenMP REQUIRED)
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
-# of this distribution is 1.5.0.
+# of this distribution is 1.7.0.
 add_subdirectory(test/googletest)
+
+# THE LOCATION OF OUTPUT BINARIES
+if(MSVC)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/Debug)
+else()
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+endif()
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
+ 
+# INCLUDE DIRECTORIES
+set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+include_directories("${PROJECT_INCLUDE_DIR}")
+include_directories("${PROJECT_SOURCE_DIR}")
+link_directories("${CMAKE_BINARY_DIR}")
 # For googletest
 include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 
+# SOURCE FILES
 set(PROJECT_SRCS 
 ${PROJECT_SOURCE_DIR}/src/k-means.cpp 
 ${PROJECT_SOURCE_DIR}/src/utilities.cpp
 ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp 
 )
 
-# Some of the features need C++ 11 and math library
-find_package(OpenMP)
-if (OPENMP_FOUND)
-    list (APPEND CMAKE_CXX_FLAGS 
-    "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
-else()
-    list(APPEND CMAKE_CXX_FLAGS 
-    "-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
+# COMPLATION FLAGS
+if(NOT MSVC)
+	if (OPENMP_FOUND)
+    	list (APPEND CMAKE_CXX_FLAGS 
+    	"-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
+	else()
+    	list(APPEND CMAKE_CXX_FLAGS 
+    	"-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
+	endif()
 endif()
-# Create a shared library file
+
+# OUTPUT LIBRARIES
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 add_dependencies(${PROJECT_NAME} gtest_main)
 
-# Make some tests
+# OUTPUT EXECUTABLES
+if(NOT MSVC)
 set(TEST_LIBS_FLAGS ${CMAKE_BINARY_DIR}/libgtest_main.a m gtest pthread)
+else()
+set(TEST_LIBS_FLAGS gtest)
+endif()
 add_executable(test_utilities 
     ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp)
-target_link_libraries(test_utilities ${TEST_LIBS_FLAGS})
-set_target_properties(test_utilities PROPERTIES APPEND_STRING 
-    PROPERTY COMPILE_FLAGS " -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS}")
+target_link_libraries(test_utilities debug ${TEST_LIBS_FLAGS})
+if(MSVC)
+    set_target_properties(test_utilities PROPERTIES COMPILE_FLAGS "/MTd")
+endif()
 add_dependencies(test_utilities gtest_main)
 add_executable(test_kdtree 
     ${PROJECT_SOURCE_DIR}/test/test_kdtree.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp)
-target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
-set_target_properties(test_kdtree PROPERTIES APPEND_STRING 
-    PROPERTY COMPILE_FLAGS " -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS}")
+target_link_libraries(test_kdtree debug ${TEST_LIBS_FLAGS})
+if(MSVC)
+    set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MTd")
+endif()
 add_dependencies(test_kdtree test_utilities gtest_main)
 
 # Only build this example when found OpenCV
@@ -84,15 +99,16 @@ if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
     # OpenCV paths
     set(OPENCV_INCLUDES "")
     foreach(dir ${OpenCV_INCLUDE_DIRS})
-        set(OPENCV_INCLUDES "-I${dir} ${OPENCV_INCLUDES}")
-    endforeach(dir)
+        include_directories(dir)
+    endforeach()
     add_executable(test_kmeans 
         ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
         ${PROJECT_SRCS} )
-    target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
-    set_target_properties(test_kmeans PROPERTIES APPEND_STRING 
-        PROPERTY COMPILE_FLAGS "${OPENCV_INCLUDES} -L${CMAKE_BINARY_DIR} ${CMAKE_CXX_FLAGS}")
+    target_link_libraries(test_kmeans debug ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
+    if(MSVC)
+        set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MTd")
+    endif()
     add_dependencies(test_kmeans test_kdtree gtest_main)
-else(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
+else()
     message(WARNING "You do not have OpenCV >= 2.4.0! Your OpenCV version is ${OpenCV_VERSION}")
-endif(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
+endif()

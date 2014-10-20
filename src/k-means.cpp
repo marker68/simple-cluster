@@ -66,8 +66,18 @@ void random_seeds(
 		size_t N,
 		size_t k,
 		bool verbose) {
-	size_t i, j;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t j;
+#ifdef _WIN32
+	size_t * tmp;
+	SimpleCluster::init_array(tmp,k);
+#else
 	size_t tmp[k];
+#endif
 
 	// For generating random numbers
 	random_device rd;
@@ -129,7 +139,11 @@ void kmeans_pp_seeds(
 	init_array<float>(distances,N);
 	float * sum_distances;
 	init_array<float>(sum_distances,N);
+#ifdef _WIN32
+	int i;
+#else
 	size_t i;
+#endif
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
@@ -141,7 +155,11 @@ void kmeans_pp_seeds(
 	}
 
 	float sum, tmp2, sum1, sum2, pivot;
+#ifdef _WIN32
+	int count = 1;
+#else
 	size_t count = 1;
+#endif
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
@@ -162,7 +180,7 @@ void kmeans_pp_seeds(
 					break;
 			}
 			copy_array<float>(data[(i+1)%N],d_tmp,d);
-			copy_array<float>(d_tmp,seeds[count++],d);
+			copy_array<float>(d_tmp,seeds[count+1],d);
 			// Update the distances
 			if(count < k) {
 				for(i = 0; i < N; i++) {
@@ -194,7 +212,12 @@ void linear_assign(
 		size_t N,
 		size_t k,
 		bool verbose) {
-	size_t i, tmp;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t tmp;
 
 	float min = 0.0;
 	SET_THREAD_NUM;
@@ -230,7 +253,12 @@ void kd_nn_assign(
 		size_t N,
 		size_t k,
 		bool verbose) {
-	size_t i, tmp;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t tmp;
 	KDNode<float> * root = nullptr;
 	make_random_tree(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
@@ -275,7 +303,12 @@ void kd_ann_assign(
 		size_t k,
 		float alpha,
 		bool verbose) {
-	size_t i, tmp;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t tmp;
 	KDNode<float> * root = nullptr;
 	make_random_tree(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
@@ -327,11 +360,15 @@ void greg_initialize(
 		size_t k,
 		size_t d,
 		bool verbose) {
-
+#ifdef _WIN32
+	int i, j;
+#else
+	size_t i, j;
+#endif
 	// Initializing size and vector sum
-	for(size_t i = 0; i < k; i++) {
+	for(i = 0; i < k; i++) {
 		size[i] = 0;
-		for(size_t j = 0; j < d; j++) {
+		for(j = 0; j < d; j++) {
 			sum[i][j] = 0.0;
 		}
 	}
@@ -339,13 +376,13 @@ void greg_initialize(
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
-#pragma omp for
-		for(size_t i = 0; i < N; i++) {
+#pragma omp for private(i,j)
+		for(i = 0; i < N; i++) {
 			float min = FLT_MAX;
 			float min2 = FLT_MAX;
 			float d_tmp;
 			size_t tmp = -1;
-			for(size_t j = 0; j < k; j++) {
+			for(j = 0; j < k; j++) {
 				d_tmp = SimpleCluster::distance(centers[j],data[i],d);
 				if(min >= d_tmp) {
 					min2 = min;
@@ -364,7 +401,7 @@ void greg_initialize(
 			size[tmp]++;
 
 			// Update the vector sum
-			for(size_t j = 0; j < d; j++) {
+			for(j = 0; j < d; j++) {
 				sum[tmp][j] += data[i][j];
 			}
 		}
@@ -417,7 +454,11 @@ void update_bounds(
 		float *& lower,
 		size_t N,
 		size_t k) {
-	size_t r = 0, i;
+	size_t r = 0;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
 	float max = 0.0, max2 = 0.0, sub;
 	for(i = 0; i < k; i++) {
 		if(max <= moved[i]) {
@@ -496,7 +537,7 @@ void simple_k_means(
 		cout << "Finished seeding" << endl;
 
 	// Criteria's setup
-	size_t iters = criteria.iterations, i = 0, j, count = 0;
+	size_t iters = criteria.iterations, i = 0, count = 0;
 	float error = criteria.accuracy, e = error, e_prev;
 
 	// Variables for Greg's method
@@ -517,6 +558,11 @@ void simple_k_means(
 	// Initialize the centers
 	copy_array_2<float>(seeds,centers,k,d);
 	greg_initialize(data,centers,c_sum,upper,lower,label,size,N,k,d,verbose);
+#ifdef _WIN32
+	int j;
+#else
+	size_t j;
+#endif
 
 	while (1) {
 		// Assign the data posize_ts to clusters
@@ -633,6 +679,9 @@ float distortion(
 		size_t k,
 		bool verbose) {
 	float e = 0.0;
+#ifdef _WIN32
+	int i;
+#else
 	size_t i;
 	SET_THREAD_NUM;
 #pragma omp parallel
