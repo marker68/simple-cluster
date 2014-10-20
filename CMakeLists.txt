@@ -68,6 +68,9 @@ endif()
 
 # OUTPUT LIBRARIES
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
+if(MSVC)
+	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MTd ${OpenMP_CXX_FLAGS}")
+endif()
 add_dependencies(${PROJECT_NAME} gtest_main)
 
 # OUTPUT EXECUTABLES
@@ -106,7 +109,7 @@ if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
         ${PROJECT_SRCS} )
     target_link_libraries(test_kmeans debug ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
     if(MSVC)
-        set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MTd")
+        set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MTd ${OpenMP_CXX_FLAGS}")
     endif()
     add_dependencies(test_kmeans test_kdtree gtest_main)
 else()
