@@ -145,11 +145,11 @@ size_t KmeansTest::d;
 size_t KmeansTest::k;
 
 TEST_F(KmeansTest, test1) {
-	random_seeds(data,seeds,d,N,k,true);
+	random_seeds(data,seeds,d,N,k,8,true);
 }
 
 TEST_F(KmeansTest, test2) {
-	kmeans_pp_seeds(data,seeds,d,N,k,true);
+	kmeans_pp_seeds(data,seeds,d,N,k,8,true);
 }
 
 TEST_F(KmeansTest, DISABLED_test3) {
@@ -159,9 +159,9 @@ TEST_F(KmeansTest, DISABLED_test3) {
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::ANN_KD_TREE,
 			criteria,
-			N,k,d,
+			N,k,d,8,
 			false);
-	cout << "ANN: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+	cout << "ANN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 }
 
 TEST_F(KmeansTest, DISABLED_test4) {
@@ -171,9 +171,9 @@ TEST_F(KmeansTest, DISABLED_test4) {
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::NN_KD_TREE,
 			criteria,
-			N,k,d,
+			N,k,d,8,
 			false);
-	cout << "NN: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+	cout << "NN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 }
 
 TEST_F(KmeansTest, test5) {
@@ -183,9 +183,9 @@ TEST_F(KmeansTest, test5) {
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::LINEAR,
 			criteria,
-			N,k,d,
+			N,k,d,8,
 			false);
-	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 }
 
 TEST_F(KmeansTest, test6) {
@@ -222,9 +222,9 @@ TEST_F(KmeansTest, DISABLED_test7) {
 				KmeansType::KMEANS_PLUS_SEEDS,
 				KmeansAssignType::LINEAR,
 				criteria,
-				N,k,d,
+				N,k,d,8,
 				false);
-		cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+		cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 	}
 }
 
