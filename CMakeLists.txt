@@ -86,6 +86,11 @@ if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(${PROJECT_NAME} gtest_main)
+add_library(${PROJECT_NAME}_static STATIC ${PROJECT_SRCS})
+if(MSVC)
+    set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
+endif()
+add_dependencies(${PROJECT_NAME}_static gtest_main)
 
 # OUTPUT EXECUTABLES
 if(NOT MSVC)
