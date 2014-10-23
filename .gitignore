@@ -2,6 +2,7 @@
 /x86
 /x64
 /spec.i
+.cproject
 /doc/html
 /doc/latex
 /build
