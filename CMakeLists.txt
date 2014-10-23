@@ -55,7 +55,7 @@ include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 # CHECK FOR SUBMODULES AND LIBS
 # Check for OpenCV, just for comparing with our methods
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-find_package(OpenCV)
+#find_package(OpenCV)
 find_package(OpenMP)
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
