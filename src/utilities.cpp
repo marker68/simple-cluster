@@ -77,11 +77,11 @@ void check_env() {
 #if defined(__clang__)
 	fprintf(stdout, "Your program was compiled by Clang %s\n", __clang_version__);
 #elif defined(__GNUG__)
-	fprintf(stdout, "Your program was compiled by GNU g++ %s\n", __GNUG__);
+	fprintf(stdout, "Your program was compiled by GNU g++ %d.%d.%d\n", __GNUG__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__);
 #elif defined(_MSC_VER)
 	fprintf(stdout, "Your program was compiled by Microsoft Visual Compiler: %s\n", _MSC_FULL_VER);
 #elif defined(__INTEL_COMPILER)
-	fprintf(stdout, "Your program was compiled by Intel Compiler: %s\n", __INTEL_COMPILER_BUILD_DATE);
+	fprintf(stdout, "Your program was compiled by Intel Compiler: %d\n", __INTEL_COMPILER_BUILD_DATE);
 #else
 	fprintf(stderr, "We tested the programs on Clang/LLVM, GNU g++, MSVC++ "
 			"so we recommend these compiler for your works.\n");
