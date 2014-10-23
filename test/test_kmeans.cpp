@@ -29,9 +29,9 @@
 #include <gtest/gtest.h>
 #include <math.h>
 #include <stdlib.h>
-#include "opencv2/opencv.hpp"
+/*#include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/highgui/highgui.hpp"*/
 #include "k-means.h"
 #include "utilities.h"
 
@@ -43,13 +43,13 @@
 #endif
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 using namespace SimpleCluster;
 
 /**
  * A converter
  */
-void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
+/*void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
 	for(size_t i = 0; i < M; i++) {
 		for(size_t j = 0; j < N; j++) {
 			result.push_back(data[i][j]);
@@ -57,7 +57,7 @@ void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
 	}
 
 	result = result.reshape(1,static_cast<int>(M));
-}
+}*/
 
 /**
  * Customized test case for testing
@@ -188,7 +188,7 @@ TEST_F(KmeansTest, test5) {
 	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 }
 
-TEST_F(KmeansTest, test6) {
+/*TEST_F(KmeansTest, test6) {
 	Mat _data;
 	convert_array_to_mat(data,_data,N,d);
 	_data.convertTo(_data,CV_32F);
@@ -212,7 +212,7 @@ TEST_F(KmeansTest, test6) {
 		}
 	}
 	cout << "Distortion is " << sqrt(distortion) << endl;
-}
+}*/
 
 TEST_F(KmeansTest, DISABLED_test7) {
 	KmeansCriteria criteria = {2.0,1.0,100};

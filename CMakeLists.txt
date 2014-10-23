@@ -110,22 +110,29 @@ if(MSVC)
     set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(test_kdtree test_utilities gtest_main)
-
-# Only build this example when found OpenCV
-if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
-    # OpenCV paths
-    set(OPENCV_INCLUDES "")
-    foreach(dir ${OpenCV_INCLUDE_DIRS})
-        include_directories(dir)
-    endforeach()
-    add_executable(test_kmeans 
-        ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
-        ${PROJECT_SRCS} )
-    target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
-	if(MSVC)
-    	set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
-	endif()
-    add_dependencies(test_kmeans test_kdtree gtest_main)
-else()
-    message(WARNING "You do not have OpenCV >= 2.4.0! Your OpenCV version is ${OpenCV_VERSION}")
+add_executable(test_kmeans 
+    ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
+    ${PROJECT_SRCS} )
+target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS})
+if(MSVC)
+    set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
+add_dependencies(test_kmeans test_utilities gtest_main)
+# Only build this example when found OpenCV
+# if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
+#    # OpenCV paths
+#    set(OPENCV_INCLUDES "")
+#    foreach(dir ${OpenCV_INCLUDE_DIRS})
+#        include_directories(dir)
+#    endforeach()
+#    add_executable(test_kmeans 
+#        ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
+#        ${PROJECT_SRCS} )
+#    target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS} ${OpenCV_LIBRARIES})
+#	if(MSVC)
+#    	set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
+#	endif()
+#    add_dependencies(test_kmeans test_kdtree gtest_main)
+#else()
+#    message(WARNING "You do not have OpenCV >= 2.4.0! Your OpenCV version is ${OpenCV_VERSION}")
+#endif()
