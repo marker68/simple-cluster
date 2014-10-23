@@ -37,6 +37,7 @@ namespace SimpleCluster {
 typedef vector<float> d_vector;
 typedef vector<size_t> i_vector;
 
+float check_env();
 float distance(
 		float *,
 		float *,
