@@ -121,7 +121,11 @@ TEST_F(UtilTest, test3) {
 
 TEST_F(UtilTest, test4) {
 	int n_thread = 8;
+#ifdef _WIN32
+	int i;
+#else
 	size_t i;
+#endif
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
@@ -198,3 +202,17 @@ TEST_F(UtilTest, test12) {
 	EXPECT_TRUE(init_array_2<float>(t,N,d) && t != nullptr);
 	EXPECT_TRUE(dealloc_array_2<float>(t,N));
 }
+
+#ifdef _WIN32
+int main(int argc, char * argv[])
+{
+	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
+	::testing::InitGoogleTest(&argc, argv);
+
+	/*RUN_ALL_TESTS automatically detects and runs all the tests defined using the TEST macro.
+	It's must be called only once in the code because multiple calls lead to conflicts and,
+	therefore, are not supported.
+	*/
+	return RUN_ALL_TESTS();
+}
+#endif

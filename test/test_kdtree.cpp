@@ -61,7 +61,6 @@ protected:
 				data[i][j] = real_dis(gen);
 			}
 		}
-		//		prsize_t_vector(data,d,N);
 	}
 
 	// Per-test-case tear-down.
@@ -156,7 +155,7 @@ TEST_F(KDTreeTest, test7) {
 	KDNode<float> * root = nullptr;
 	make_balanced_tree(root,data,N,d,0,0,false);
 	t2 = get_millisecond_time();
-	//	kd_travel<float>(root,d,0);
+	cout << "Tree build time is " << t2-t1 << "[ms]" << endl;
 	KDNode<float> * query = ::new KDNode<float>(d);
 	size_t pos = 10;
 	query->add_data(data[pos]);
@@ -166,7 +165,6 @@ TEST_F(KDTreeTest, test7) {
 	nn_search(root,query,result,best_dist,d,0,visited,false);
 	t3 = get_millisecond_time();
 	EXPECT_EQ(0.0,best_dist);
-	cout << "Tree build time is " << t2-t1 << "[ms]" << endl;
 	cout << "Search time is " << t3-t2 << "[ms]" << endl;
 	cout << "Visited " << visited << " nodes" << endl;
 }
@@ -212,3 +210,17 @@ TEST_F(KDTreeTest, test10) {
 	cout << "best distances " << best_dist << endl;
 	cout << "Visited " << visited << " nodes" << endl;
 }
+
+#ifdef _WIN32
+int main(int argc, char * argv[])
+{
+	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
+	::testing::InitGoogleTest(&argc, argv);
+
+	/*RUN_ALL_TESTS automatically detects and runs all the tests defined using the TEST macro.
+	It's must be called only once in the code because multiple calls lead to conflicts and,
+	therefore, are not supported.
+	*/
+	return RUN_ALL_TESTS();
+}
+#endif

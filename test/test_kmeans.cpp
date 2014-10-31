@@ -29,9 +29,9 @@
 #include <gtest/gtest.h>
 #include <math.h>
 #include <stdlib.h>
-#include "opencv2/opencv.hpp"
+/*#include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/highgui/highgui.hpp"*/
 #include "k-means.h"
 #include "utilities.h"
 
@@ -43,13 +43,13 @@
 #endif
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 using namespace SimpleCluster;
 
 /**
  * A converter
  */
-void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
+/*void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
 	for(size_t i = 0; i < M; i++) {
 		for(size_t j = 0; j < N; j++) {
 			result.push_back(data[i][j]);
@@ -57,7 +57,7 @@ void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
 	}
 
 	result = result.reshape(1,static_cast<int>(M));
-}
+}*/
 
 /**
  * Customized test case for testing
@@ -145,11 +145,11 @@ size_t KmeansTest::d;
 size_t KmeansTest::k;
 
 TEST_F(KmeansTest, test1) {
-	random_seeds(data,seeds,d,N,k,true);
+	random_seeds(data,seeds,d,N,k,8,true);
 }
 
 TEST_F(KmeansTest, test2) {
-	kmeans_pp_seeds(data,seeds,d,N,k,true);
+	kmeans_pp_seeds(data,seeds,d,N,k,8,true);
 }
 
 TEST_F(KmeansTest, DISABLED_test3) {
@@ -159,9 +159,9 @@ TEST_F(KmeansTest, DISABLED_test3) {
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::ANN_KD_TREE,
 			criteria,
-			N,k,d,
+			N,k,d,8,
 			false);
-	cout << "ANN: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+	cout << "ANN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 }
 
 TEST_F(KmeansTest, DISABLED_test4) {
@@ -171,9 +171,9 @@ TEST_F(KmeansTest, DISABLED_test4) {
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::NN_KD_TREE,
 			criteria,
-			N,k,d,
+			N,k,d,8,
 			false);
-	cout << "NN: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+	cout << "NN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 }
 
 TEST_F(KmeansTest, test5) {
@@ -183,12 +183,12 @@ TEST_F(KmeansTest, test5) {
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::LINEAR,
 			criteria,
-			N,k,d,
+			N,k,d,8,
 			false);
-	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 }
 
-TEST_F(KmeansTest, test6) {
+/*TEST_F(KmeansTest, test6) {
 	Mat _data;
 	convert_array_to_mat(data,_data,N,d);
 	_data.convertTo(_data,CV_32F);
@@ -212,7 +212,7 @@ TEST_F(KmeansTest, test6) {
 		}
 	}
 	cout << "Distortion is " << sqrt(distortion) << endl;
-}
+}*/
 
 TEST_F(KmeansTest, DISABLED_test7) {
 	KmeansCriteria criteria = {2.0,1.0,100};
@@ -222,8 +222,23 @@ TEST_F(KmeansTest, DISABLED_test7) {
 				KmeansType::KMEANS_PLUS_SEEDS,
 				KmeansAssignType::LINEAR,
 				criteria,
-				N,k,d,
+				N,k,d,8,
 				false);
-		cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,false) << endl;
+		cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
 	}
 }
+
+#ifdef _WIN32
+int main(int argc, char * argv[])
+{
+	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
+	::testing::InitGoogleTest(&argc, argv);
+
+	/*RUN_ALL_TESTS automatically detects and runs all the tests defined using the TEST macro.
+	It's must be called only once in the code because multiple calls lead to conflicts and,
+	therefore, are not supported.
+	*/
+	return RUN_ALL_TESTS();
+}
+#endif
+

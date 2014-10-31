@@ -70,6 +70,7 @@ void random_seeds(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		bool);
 void kmeans_pp_seeds(
 		float **,
@@ -77,6 +78,7 @@ void kmeans_pp_seeds(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		bool);
 void linear_assign(
 		float **,
@@ -85,6 +87,7 @@ void linear_assign(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		bool);
 void kd_nn_assign(
 		float **,
@@ -93,6 +96,7 @@ void kd_nn_assign(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		bool);
 void kd_ann_assign(
 		float **,
@@ -101,6 +105,7 @@ void kd_ann_assign(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		float,
 		bool);
 void greg_initialize(
@@ -114,6 +119,7 @@ void greg_initialize(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		bool
 		);
 void update_center(
@@ -122,14 +128,16 @@ void update_center(
 		float **&,
 		float *&,
 		size_t,
-		size_t);
+		size_t,
+		int);
 void update_bounds(
 		float *,
 		size_t *,
 		float *&,
 		float *&,
 		size_t,
-		size_t);
+		size_t,
+		int);
 void simple_k_means(
 		float **,
 		float **&,
@@ -141,6 +149,7 @@ void simple_k_means(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		bool);
 float distortion(
 		float **,
@@ -149,6 +158,7 @@ float distortion(
 		size_t,
 		size_t,
 		size_t,
+		int,
 		bool);
 }
 
