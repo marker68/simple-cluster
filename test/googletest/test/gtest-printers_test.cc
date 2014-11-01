@@ -52,10 +52,10 @@
 
 // hash_map and hash_set are available under Visual C++.
 #if _MSC_VER
-#define GTEST_HAS_HASH_MAP_ 1  // Indicates that hash_map is available.
-#include <hash_map>            // NOLINT
-#define GTEST_HAS_HASH_SET_ 1  // Indicates that hash_set is available.
-#include <hash_set>            // NOLINT
+# define GTEST_HAS_HASH_MAP_ 1  // Indicates that hash_map is available.
+# include <hash_map>            // NOLINT
+# define GTEST_HAS_HASH_SET_ 1  // Indicates that hash_set is available.
+# include <hash_set>            // NOLINT
 #endif  // GTEST_OS_WINDOWS
 
 // Some user-defined types for testing the universal value printer.
@@ -74,7 +74,7 @@ enum EnumWithoutPrinter {
 
 // An enum with a << operator.
 enum EnumWithStreaming {
-  kEWS1 = 10,
+  kEWS1 = 10
 };
 
 std::ostream& operator<<(std::ostream& os, EnumWithStreaming e) {
@@ -83,7 +83,7 @@ std::ostream& operator<<(std::ostream& os, EnumWithStreaming e) {
 
 // An enum with a PrintTo() function.
 enum EnumWithPrintTo {
-  kEWPT1 = 1,
+  kEWPT1 = 1
 };
 
 void PrintTo(EnumWithPrintTo e, std::ostream* os) {
@@ -197,13 +197,15 @@ using ::std::pair;
 using ::std::set;
 using ::std::vector;
 using ::testing::PrintToString;
+using ::testing::internal::FormatForComparisonFailureMessage;
+using ::testing::internal::ImplicitCast_;
 using ::testing::internal::NativeArray;
 using ::testing::internal::RE;
 using ::testing::internal::Strings;
-using ::testing::internal::UniversalTersePrint;
 using ::testing::internal::UniversalPrint;
-using ::testing::internal::UniversalTersePrintTupleFieldsToStrings;
 using ::testing::internal::UniversalPrinter;
+using ::testing::internal::UniversalTersePrint;
+using ::testing::internal::UniversalTersePrintTupleFieldsToStrings;
 using ::testing::internal::kReference;
 using ::testing::internal::string;
 
@@ -212,10 +214,15 @@ using ::std::tr1::make_tuple;
 using ::std::tr1::tuple;
 #endif
 
-#if _MSC_VER
-// MSVC defines the following classes in the ::stdext namespace while
-// gcc defines them in the :: namespace.  Note that they are not part
-// of the C++ standard.
+// The hash_* classes are not part of the C++ standard.  STLport
+// defines them in namespace std.  MSVC defines them in ::stdext.  GCC
+// defines them in ::.
+#ifdef _STLP_HASH_MAP  // We got <hash_map> from STLport.
+using ::std::hash_map;
+using ::std::hash_set;
+using ::std::hash_multimap;
+using ::std::hash_multiset;
+#elif _MSC_VER
 using ::stdext::hash_map;
 using ::stdext::hash_set;
 using ::stdext::hash_multimap;
@@ -276,7 +283,7 @@ TEST(PrintCharTest, PlainChar) {
   EXPECT_EQ("'\\0'", Print('\0'));
   EXPECT_EQ("'\\'' (39, 0x27)", Print('\''));
   EXPECT_EQ("'\"' (34, 0x22)", Print('"'));
-  EXPECT_EQ("'\\?' (63, 0x3F)", Print('\?'));
+  EXPECT_EQ("'?' (63, 0x3F)", Print('?'));
   EXPECT_EQ("'\\\\' (92, 0x5C)", Print('\\'));
   EXPECT_EQ("'\\a' (7)", Print('\a'));
   EXPECT_EQ("'\\b' (8)", Print('\b'));
@@ -318,7 +325,7 @@ TEST(PrintBuiltInTypeTest, Wchar_t) {
   EXPECT_EQ("L'\\0'", Print(L'\0'));
   EXPECT_EQ("L'\\'' (39, 0x27)", Print(L'\''));
   EXPECT_EQ("L'\"' (34, 0x22)", Print(L'"'));
-  EXPECT_EQ("L'\\?' (63, 0x3F)", Print(L'\?'));
+  EXPECT_EQ("L'?' (63, 0x3F)", Print(L'?'));
   EXPECT_EQ("L'\\\\' (92, 0x5C)", Print(L'\\'));
   EXPECT_EQ("L'\\a' (7)", Print(L'\a'));
   EXPECT_EQ("L'\\b' (8)", Print(L'\b'));
@@ -401,8 +408,8 @@ TEST(PrintCStringTest, Null) {
 
 // Tests that C strings are escaped properly.
 TEST(PrintCStringTest, EscapesProperly) {
-  const char* p = "'\"\?\\\a\b\f\n\r\t\v\x7F\xFF a";
-  EXPECT_EQ(PrintPointer(p) + " pointing to \"'\\\"\\?\\\\\\a\\b\\f"
+  const char* p = "'\"?\\\a\b\f\n\r\t\v\x7F\xFF a";
+  EXPECT_EQ(PrintPointer(p) + " pointing to \"'\\\"?\\\\\\a\\b\\f"
             "\\n\\r\\t\\v\\x7F\\xFF a\"",
             Print(p));
 }
@@ -438,9 +445,9 @@ TEST(PrintWideCStringTest, Null) {
 
 // Tests that wide C strings are escaped properly.
 TEST(PrintWideCStringTest, EscapesProperly) {
-  const wchar_t s[] = {'\'', '"', '\?', '\\', '\a', '\b', '\f', '\n', '\r',
+  const wchar_t s[] = {'\'', '"', '?', '\\', '\a', '\b', '\f', '\n', '\r',
                        '\t', '\v', 0xD3, 0x576, 0x8D3, 0xC74D, ' ', 'a', '\0'};
-  EXPECT_EQ(PrintPointer(s) + " pointing to L\"'\\\"\\?\\\\\\a\\b\\f"
+  EXPECT_EQ(PrintPointer(s) + " pointing to L\"'\\\"?\\\\\\a\\b\\f"
             "\\n\\r\\t\\v\\xD3\\x576\\x8D3\\xC74D a\"",
             Print(static_cast<const wchar_t*>(s)));
 }
@@ -612,17 +619,30 @@ TEST(PrintArrayTest, ConstArray) {
   EXPECT_EQ("{ false }", PrintArrayHelper(a));
 }
 
-// Char array.
-TEST(PrintArrayTest, CharArray) {
+// char array without terminating NUL.
+TEST(PrintArrayTest, CharArrayWithNoTerminatingNul) {
   // Array a contains '\0' in the middle and doesn't end with '\0'.
-  char a[3] = { 'H', '\0', 'i' };
-  EXPECT_EQ("\"H\\0i\"", PrintArrayHelper(a));
+  char a[] = { 'H', '\0', 'i' };
+  EXPECT_EQ("\"H\\0i\" (no terminating NUL)", PrintArrayHelper(a));
 }
 
-// Const char array.
-TEST(PrintArrayTest, ConstCharArray) {
-  const char a[4] = "\0Hi";
-  EXPECT_EQ("\"\\0Hi\\0\"", PrintArrayHelper(a));
+// const char array with terminating NUL.
+TEST(PrintArrayTest, ConstCharArrayWithTerminatingNul) {
+  const char a[] = "\0Hi";
+  EXPECT_EQ("\"\\0Hi\"", PrintArrayHelper(a));
+}
+
+// const wchar_t array without terminating NUL.
+TEST(PrintArrayTest, WCharArrayWithNoTerminatingNul) {
+  // Array a contains '\0' in the middle and doesn't end with '\0'.
+  const wchar_t a[] = { L'H', L'\0', L'i' };
+  EXPECT_EQ("L\"H\\0i\" (no terminating NUL)", PrintArrayHelper(a));
+}
+
+// wchar_t array with terminating NUL.
+TEST(PrintArrayTest, WConstCharArrayWithTerminatingNul) {
+  const wchar_t a[] = L"\0Hi";
+  EXPECT_EQ("L\"\\0Hi\"", PrintArrayHelper(a));
 }
 
 // Array of objects.
@@ -643,19 +663,33 @@ TEST(PrintArrayTest, BigArray) {
 #if GTEST_HAS_GLOBAL_STRING
 // ::string.
 TEST(PrintStringTest, StringInGlobalNamespace) {
-  const char s[] = "'\"\?\\\a\b\f\n\0\r\t\v\x7F\xFF a";
+  const char s[] = "'\"?\\\a\b\f\n\0\r\t\v\x7F\xFF a";
   const ::string str(s, sizeof(s));
-  EXPECT_EQ("\"'\\\"\\?\\\\\\a\\b\\f\\n\\0\\r\\t\\v\\x7F\\xFF a\\0\"",
+  EXPECT_EQ("\"'\\\"?\\\\\\a\\b\\f\\n\\0\\r\\t\\v\\x7F\\xFF a\\0\"",
             Print(str));
 }
 #endif  // GTEST_HAS_GLOBAL_STRING
 
 // ::std::string.
 TEST(PrintStringTest, StringInStdNamespace) {
-  const char s[] = "'\"\?\\\a\b\f\n\0\r\t\v\x7F\xFF a";
+  const char s[] = "'\"?\\\a\b\f\n\0\r\t\v\x7F\xFF a";
   const ::std::string str(s, sizeof(s));
-  EXPECT_EQ("\"'\\\"\\?\\\\\\a\\b\\f\\n\\0\\r\\t\\v\\x7F\\xFF a\\0\"",
+  EXPECT_EQ("\"'\\\"?\\\\\\a\\b\\f\\n\\0\\r\\t\\v\\x7F\\xFF a\\0\"",
             Print(str));
+}
+
+TEST(PrintStringTest, StringAmbiguousHex) {
+  // "\x6BANANA" is ambiguous, it can be interpreted as starting with either of:
+  // '\x6', '\x6B', or '\x6BA'.
+
+  // a hex escaping sequence following by a decimal digit
+  EXPECT_EQ("\"0\\x12\" \"3\"", Print(::std::string("0\x12" "3")));
+  // a hex escaping sequence following by a hex digit (lower-case)
+  EXPECT_EQ("\"mm\\x6\" \"bananas\"", Print(::std::string("mm\x6" "bananas")));
+  // a hex escaping sequence following by a hex digit (upper-case)
+  EXPECT_EQ("\"NOM\\x6\" \"BANANA\"", Print(::std::string("NOM\x6" "BANANA")));
+  // a hex escaping sequence following by a non-xdigit
+  EXPECT_EQ("\"!\\x5-!\"", Print(::std::string("!\x5-!")));
 }
 
 // Tests printing ::wstring and ::std::wstring.
@@ -663,9 +697,9 @@ TEST(PrintStringTest, StringInStdNamespace) {
 #if GTEST_HAS_GLOBAL_WSTRING
 // ::wstring.
 TEST(PrintWideStringTest, StringInGlobalNamespace) {
-  const wchar_t s[] = L"'\"\?\\\a\b\f\n\0\r\t\v\xD3\x576\x8D3\xC74D a";
+  const wchar_t s[] = L"'\"?\\\a\b\f\n\0\r\t\v\xD3\x576\x8D3\xC74D a";
   const ::wstring str(s, sizeof(s)/sizeof(wchar_t));
-  EXPECT_EQ("L\"'\\\"\\?\\\\\\a\\b\\f\\n\\0\\r\\t\\v"
+  EXPECT_EQ("L\"'\\\"?\\\\\\a\\b\\f\\n\\0\\r\\t\\v"
             "\\xD3\\x576\\x8D3\\xC74D a\\0\"",
             Print(str));
 }
@@ -674,11 +708,21 @@ TEST(PrintWideStringTest, StringInGlobalNamespace) {
 #if GTEST_HAS_STD_WSTRING
 // ::std::wstring.
 TEST(PrintWideStringTest, StringInStdNamespace) {
-  const wchar_t s[] = L"'\"\?\\\a\b\f\n\0\r\t\v\xD3\x576\x8D3\xC74D a";
+  const wchar_t s[] = L"'\"?\\\a\b\f\n\0\r\t\v\xD3\x576\x8D3\xC74D a";
   const ::std::wstring str(s, sizeof(s)/sizeof(wchar_t));
-  EXPECT_EQ("L\"'\\\"\\?\\\\\\a\\b\\f\\n\\0\\r\\t\\v"
+  EXPECT_EQ("L\"'\\\"?\\\\\\a\\b\\f\\n\\0\\r\\t\\v"
             "\\xD3\\x576\\x8D3\\xC74D a\\0\"",
             Print(str));
+}
+
+TEST(PrintWideStringTest, StringAmbiguousHex) {
+  // same for wide strings.
+  EXPECT_EQ("L\"0\\x12\" L\"3\"", Print(::std::wstring(L"0\x12" L"3")));
+  EXPECT_EQ("L\"mm\\x6\" L\"bananas\"",
+            Print(::std::wstring(L"mm\x6" L"bananas")));
+  EXPECT_EQ("L\"NOM\\x6\" L\"BANANA\"",
+            Print(::std::wstring(L"NOM\x6" L"BANANA")));
+  EXPECT_EQ("L\"!\\x5-!\"", Print(::std::wstring(L"!\x5-!")));
 }
 #endif  // GTEST_HAS_STD_WSTRING
 
@@ -816,7 +860,7 @@ TEST(PrintStlContainerTest, HashMultiSet) {
   std::vector<int> numbers;
   for (size_t i = 0; i != result.length(); i++) {
     if (expected_pattern[i] == 'd') {
-      ASSERT_TRUE(isdigit(static_cast<unsigned char>(result[i])) != 0);
+      ASSERT_NE(isdigit(static_cast<unsigned char>(result[i])), 0);
       numbers.push_back(result[i] - '0');
     } else {
       EXPECT_EQ(expected_pattern[i], result[i]) << " where result is "
@@ -833,7 +877,7 @@ TEST(PrintStlContainerTest, HashMultiSet) {
 #endif  // GTEST_HAS_HASH_SET_
 
 TEST(PrintStlContainerTest, List) {
-  const char* a[] = {
+  const string a[] = {
     "hello",
     "world"
   };
@@ -851,9 +895,15 @@ TEST(PrintStlContainerTest, Map) {
 
 TEST(PrintStlContainerTest, MultiMap) {
   multimap<bool, int> map1;
-  map1.insert(make_pair(true, 0));
-  map1.insert(make_pair(true, 1));
-  map1.insert(make_pair(false, 2));
+  // The make_pair template function would deduce the type as
+  // pair<bool, int> here, and since the key part in a multimap has to
+  // be constant, without a templated ctor in the pair class (as in
+  // libCstd on Solaris), make_pair call would fail to compile as no
+  // implicit conversion is found.  Thus explicit typename is used
+  // here instead.
+  map1.insert(pair<const bool, int>(true, 0));
+  map1.insert(pair<const bool, int>(true, 1));
+  map1.insert(pair<const bool, int>(false, 2));
   EXPECT_EQ("{ (false, 2), (true, 0), (true, 1) }", Print(map1));
 }
 
@@ -912,6 +962,28 @@ TEST(PrintStlContainerTest, TwoDimensionalNativeArray) {
   EXPECT_EQ("{ { 1, 2, 3 }, { 4, 5, 6 } }", Print(b));
 }
 
+// Tests that a class named iterator isn't treated as a container.
+
+struct iterator {
+  char x;
+};
+
+TEST(PrintStlContainerTest, Iterator) {
+  iterator it = {};
+  EXPECT_EQ("1-byte object <00>", Print(it));
+}
+
+// Tests that a class named const_iterator isn't treated as a container.
+
+struct const_iterator {
+  char x;
+};
+
+TEST(PrintStlContainerTest, ConstIterator) {
+  const_iterator it = {};
+  EXPECT_EQ("1-byte object <00>", Print(it));
+}
+
 #if GTEST_HAS_TR1_TUPLE
 // Tests printing tuples.
 
@@ -950,9 +1022,12 @@ TEST(PrintTupleTest, VariousSizes) {
   EXPECT_EQ("(false, 2, 3, 4, true, 6, 7, true, 9)", Print(t9));
 
   const char* const str = "8";
+  // VC++ 2010's implementation of tuple of C++0x is deficient, requiring
+  // an explicit type cast of NULL to be used.
   tuple<bool, char, short, testing::internal::Int32,  // NOLINT
       testing::internal::Int64, float, double, const char*, void*, string>
-      t10(false, 'a', 3, 4, 5, 1.5F, -2.5, str, NULL, "10");
+      t10(false, 'a', 3, 4, 5, 1.5F, -2.5, str,
+          ImplicitCast_<void*>(NULL), "10");
   EXPECT_EQ("(false, 'a' (97, 0x61), 3, 4, 5, 1.5, -2.5, " + PrintPointer(str) +
             " pointing to \"8\", NULL, \"10\")",
             Print(t10));
@@ -971,7 +1046,7 @@ TEST(PrintTupleTest, NestedTuple) {
 // Unprintable types in the global namespace.
 TEST(PrintUnprintableTypeTest, InGlobalNamespace) {
   EXPECT_EQ("1-byte object <00>",
-            Print(UnprintableTemplateInGlobal<bool>()));
+            Print(UnprintableTemplateInGlobal<char>()));
 }
 
 // Unprintable types in a user namespace.
@@ -1130,6 +1205,207 @@ TEST(PrintReferenceTest, HandlesMemberVariablePointer) {
       "@" + PrintPointer(&p) + " " + Print(sizeof(p)) + "-byte object "));
 }
 
+// Tests that FormatForComparisonFailureMessage(), which is used to print
+// an operand in a comparison assertion (e.g. ASSERT_EQ) when the assertion
+// fails, formats the operand in the desired way.
+
+// scalar
+TEST(FormatForComparisonFailureMessageTest, WorksForScalar) {
+  EXPECT_STREQ("123",
+               FormatForComparisonFailureMessage(123, 124).c_str());
+}
+
+// non-char pointer
+TEST(FormatForComparisonFailureMessageTest, WorksForNonCharPointer) {
+  int n = 0;
+  EXPECT_EQ(PrintPointer(&n),
+            FormatForComparisonFailureMessage(&n, &n).c_str());
+}
+
+// non-char array
+TEST(FormatForComparisonFailureMessageTest, FormatsNonCharArrayAsPointer) {
+  // In expression 'array == x', 'array' is compared by pointer.
+  // Therefore we want to print an array operand as a pointer.
+  int n[] = { 1, 2, 3 };
+  EXPECT_EQ(PrintPointer(n),
+            FormatForComparisonFailureMessage(n, n).c_str());
+}
+
+// Tests formatting a char pointer when it's compared with another pointer.
+// In this case we want to print it as a raw pointer, as the comparision is by
+// pointer.
+
+// char pointer vs pointer
+TEST(FormatForComparisonFailureMessageTest, WorksForCharPointerVsPointer) {
+  // In expression 'p == x', where 'p' and 'x' are (const or not) char
+  // pointers, the operands are compared by pointer.  Therefore we
+  // want to print 'p' as a pointer instead of a C string (we don't
+  // even know if it's supposed to point to a valid C string).
+
+  // const char*
+  const char* s = "hello";
+  EXPECT_EQ(PrintPointer(s),
+            FormatForComparisonFailureMessage(s, s).c_str());
+
+  // char*
+  char ch = 'a';
+  EXPECT_EQ(PrintPointer(&ch),
+            FormatForComparisonFailureMessage(&ch, &ch).c_str());
+}
+
+// wchar_t pointer vs pointer
+TEST(FormatForComparisonFailureMessageTest, WorksForWCharPointerVsPointer) {
+  // In expression 'p == x', where 'p' and 'x' are (const or not) char
+  // pointers, the operands are compared by pointer.  Therefore we
+  // want to print 'p' as a pointer instead of a wide C string (we don't
+  // even know if it's supposed to point to a valid wide C string).
+
+  // const wchar_t*
+  const wchar_t* s = L"hello";
+  EXPECT_EQ(PrintPointer(s),
+            FormatForComparisonFailureMessage(s, s).c_str());
+
+  // wchar_t*
+  wchar_t ch = L'a';
+  EXPECT_EQ(PrintPointer(&ch),
+            FormatForComparisonFailureMessage(&ch, &ch).c_str());
+}
+
+// Tests formatting a char pointer when it's compared to a string object.
+// In this case we want to print the char pointer as a C string.
+
+#if GTEST_HAS_GLOBAL_STRING
+// char pointer vs ::string
+TEST(FormatForComparisonFailureMessageTest, WorksForCharPointerVsString) {
+  const char* s = "hello \"world";
+  EXPECT_STREQ("\"hello \\\"world\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(s, ::string()).c_str());
+
+  // char*
+  char str[] = "hi\1";
+  char* p = str;
+  EXPECT_STREQ("\"hi\\x1\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(p, ::string()).c_str());
+}
+#endif
+
+// char pointer vs std::string
+TEST(FormatForComparisonFailureMessageTest, WorksForCharPointerVsStdString) {
+  const char* s = "hello \"world";
+  EXPECT_STREQ("\"hello \\\"world\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(s, ::std::string()).c_str());
+
+  // char*
+  char str[] = "hi\1";
+  char* p = str;
+  EXPECT_STREQ("\"hi\\x1\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(p, ::std::string()).c_str());
+}
+
+#if GTEST_HAS_GLOBAL_WSTRING
+// wchar_t pointer vs ::wstring
+TEST(FormatForComparisonFailureMessageTest, WorksForWCharPointerVsWString) {
+  const wchar_t* s = L"hi \"world";
+  EXPECT_STREQ("L\"hi \\\"world\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(s, ::wstring()).c_str());
+
+  // wchar_t*
+  wchar_t str[] = L"hi\1";
+  wchar_t* p = str;
+  EXPECT_STREQ("L\"hi\\x1\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(p, ::wstring()).c_str());
+}
+#endif
+
+#if GTEST_HAS_STD_WSTRING
+// wchar_t pointer vs std::wstring
+TEST(FormatForComparisonFailureMessageTest, WorksForWCharPointerVsStdWString) {
+  const wchar_t* s = L"hi \"world";
+  EXPECT_STREQ("L\"hi \\\"world\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(s, ::std::wstring()).c_str());
+
+  // wchar_t*
+  wchar_t str[] = L"hi\1";
+  wchar_t* p = str;
+  EXPECT_STREQ("L\"hi\\x1\"",  // The string content should be escaped.
+               FormatForComparisonFailureMessage(p, ::std::wstring()).c_str());
+}
+#endif
+
+// Tests formatting a char array when it's compared with a pointer or array.
+// In this case we want to print the array as a row pointer, as the comparison
+// is by pointer.
+
+// char array vs pointer
+TEST(FormatForComparisonFailureMessageTest, WorksForCharArrayVsPointer) {
+  char str[] = "hi \"world\"";
+  char* p = NULL;
+  EXPECT_EQ(PrintPointer(str),
+            FormatForComparisonFailureMessage(str, p).c_str());
+}
+
+// char array vs char array
+TEST(FormatForComparisonFailureMessageTest, WorksForCharArrayVsCharArray) {
+  const char str[] = "hi \"world\"";
+  EXPECT_EQ(PrintPointer(str),
+            FormatForComparisonFailureMessage(str, str).c_str());
+}
+
+// wchar_t array vs pointer
+TEST(FormatForComparisonFailureMessageTest, WorksForWCharArrayVsPointer) {
+  wchar_t str[] = L"hi \"world\"";
+  wchar_t* p = NULL;
+  EXPECT_EQ(PrintPointer(str),
+            FormatForComparisonFailureMessage(str, p).c_str());
+}
+
+// wchar_t array vs wchar_t array
+TEST(FormatForComparisonFailureMessageTest, WorksForWCharArrayVsWCharArray) {
+  const wchar_t str[] = L"hi \"world\"";
+  EXPECT_EQ(PrintPointer(str),
+            FormatForComparisonFailureMessage(str, str).c_str());
+}
+
+// Tests formatting a char array when it's compared with a string object.
+// In this case we want to print the array as a C string.
+
+#if GTEST_HAS_GLOBAL_STRING
+// char array vs string
+TEST(FormatForComparisonFailureMessageTest, WorksForCharArrayVsString) {
+  const char str[] = "hi \"w\0rld\"";
+  EXPECT_STREQ("\"hi \\\"w\"",  // The content should be escaped.
+                                // Embedded NUL terminates the string.
+               FormatForComparisonFailureMessage(str, ::string()).c_str());
+}
+#endif
+
+// char array vs std::string
+TEST(FormatForComparisonFailureMessageTest, WorksForCharArrayVsStdString) {
+  const char str[] = "hi \"world\"";
+  EXPECT_STREQ("\"hi \\\"world\\\"\"",  // The content should be escaped.
+               FormatForComparisonFailureMessage(str, ::std::string()).c_str());
+}
+
+#if GTEST_HAS_GLOBAL_WSTRING
+// wchar_t array vs wstring
+TEST(FormatForComparisonFailureMessageTest, WorksForWCharArrayVsWString) {
+  const wchar_t str[] = L"hi \"world\"";
+  EXPECT_STREQ("L\"hi \\\"world\\\"\"",  // The content should be escaped.
+               FormatForComparisonFailureMessage(str, ::wstring()).c_str());
+}
+#endif
+
+#if GTEST_HAS_STD_WSTRING
+// wchar_t array vs std::wstring
+TEST(FormatForComparisonFailureMessageTest, WorksForWCharArrayVsStdWString) {
+  const wchar_t str[] = L"hi \"w\0rld\"";
+  EXPECT_STREQ(
+      "L\"hi \\\"w\"",  // The content should be escaped.
+                        // Embedded NUL terminates the string.
+      FormatForComparisonFailureMessage(str, ::std::wstring()).c_str());
+}
+#endif
+
 // Useful for testing PrintToString().  We cannot use EXPECT_EQ()
 // there as its implementation uses PrintToString().  The caller must
 // ensure that 'value' has no side effect.
@@ -1152,9 +1428,33 @@ TEST(PrintToStringTest, WorksForPointerToNonConstChar) {
   EXPECT_PRINT_TO_STRING_(p, "\"hello\"");
 }
 
+TEST(PrintToStringTest, EscapesForPointerToConstChar) {
+  const char* p = "hello\n";
+  EXPECT_PRINT_TO_STRING_(p, "\"hello\\n\"");
+}
+
+TEST(PrintToStringTest, EscapesForPointerToNonConstChar) {
+  char s[] = "hello\1";
+  char* p = s;
+  EXPECT_PRINT_TO_STRING_(p, "\"hello\\x1\"");
+}
+
 TEST(PrintToStringTest, WorksForArray) {
   int n[3] = { 1, 2, 3 };
   EXPECT_PRINT_TO_STRING_(n, "{ 1, 2, 3 }");
+}
+
+TEST(PrintToStringTest, WorksForCharArray) {
+  char s[] = "hello";
+  EXPECT_PRINT_TO_STRING_(s, "\"hello\"");
+}
+
+TEST(PrintToStringTest, WorksForCharArrayWithEmbeddedNul) {
+  const char str_with_nul[] = "hello\0 world";
+  EXPECT_PRINT_TO_STRING_(str_with_nul, "\"hello\\0 world\"");
+
+  char mutable_str_with_nul[] = "hello\0 world";
+  EXPECT_PRINT_TO_STRING_(mutable_str_with_nul, "\"hello\\0 world\"");
 }
 
 #undef EXPECT_PRINT_TO_STRING_
@@ -1219,6 +1519,17 @@ TEST(UniversalPrintTest, WorksForCString) {
   EXPECT_EQ("NULL", ss3.str());
 }
 
+TEST(UniversalPrintTest, WorksForCharArray) {
+  const char str[] = "\"Line\0 1\"\nLine 2";
+  ::std::stringstream ss1;
+  UniversalPrint(str, &ss1);
+  EXPECT_EQ("\"\\\"Line\\0 1\\\"\\nLine 2\"", ss1.str());
+
+  const char mutable_str[] = "\"Line\0 1\"\nLine 2";
+  ::std::stringstream ss2;
+  UniversalPrint(mutable_str, &ss2);
+  EXPECT_EQ("\"\\\"Line\\0 1\\\"\\nLine 2\"", ss2.str());
+}
 
 #if GTEST_HAS_TR1_TUPLE
 

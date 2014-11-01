@@ -47,6 +47,47 @@ using namespace std;
 
 namespace SimpleCluster {
 /**
+ * Check users' system
+ */
+void check_env() {
+	// Check the System
+#if defined(__APPLE__) && defined(__MACH__)
+#include <TargetConditionals.h>
+#if TARGET_OS_MAC == 1
+	fprintf(stdout, "You are working on the right system: Apple Mac OS\n");
+#else
+	fprintf(stderr, "We do not support iOSes so some functions won't "
+			"work nomarlly in this platform, that causes many troubles.\n";)
+#endif
+#elif defined(__linux__)
+	fprintf(stdout, "You are working on the right system: Linux\n");
+#elif defined(_WIN32)
+	fprintf(stdout, "You are working on a Windows system."
+			"Some functions will not work normally.\n");
+#elif defined(__CYGWIN__) && !defined(_WIN32)
+	fprintf(stdout, "You are working on a Cygwin system."
+			"Some functions will not work normally.\n");
+#else
+	fprintf(stderr, "We only support the following systems: "
+			"Linux, Apple Mac OS, Windows and Cygwin(with no guarantee)\n"
+			"The program might not work on your system.\n");
+#endif
+
+	// Check the compiler
+#if defined(__clang__)
+	fprintf(stdout, "Your program was compiled by Clang %s\n", __clang_version__);
+#elif defined(__GNUG__)
+	fprintf(stdout, "Your program was compiled by GNU g++ %d.%d.%d\n", __GNUG__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__);
+#elif defined(_MSC_VER)
+	fprintf(stdout, "Your program was compiled by Microsoft Visual Compiler: %s\n", _MSC_FULL_VER);
+#elif defined(__INTEL_COMPILER)
+	fprintf(stdout, "Your program was compiled by Intel Compiler: %d\n", __INTEL_COMPILER_BUILD_DATE);
+#else
+	fprintf(stderr, "We tested the programs on Clang/LLVM, GNU g++, MSVC++ "
+			"so we recommend these compiler for your works.\n");
+#endif
+}
+/**
  * Calculate the distance between two vectors
  * @param x
  * @param y
@@ -111,7 +152,12 @@ float distance_thread(
 		float * y,
 		size_t d,
 		int n_thread) {
-	size_t i, bs = d / n_thread, st;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t bs = d / n_thread, st;
 	float dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
@@ -140,7 +186,12 @@ float distance_square_thread(
 		float * y,
 		size_t d,
 		int n_thread) {
-	size_t i, bs = d / n_thread, st;
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t bs = d / n_thread, st;
 	float dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
