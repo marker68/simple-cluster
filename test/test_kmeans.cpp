@@ -145,47 +145,50 @@ size_t KmeansTest::d;
 size_t KmeansTest::k;
 
 TEST_F(KmeansTest, test1) {
-	random_seeds(data,seeds,d,N,k,8,true);
+	random_seeds<float>(data,seeds,d,N,k,8,true);
 }
 
 TEST_F(KmeansTest, test2) {
-	kmeans_pp_seeds(data,seeds,d,N,k,8,true);
+	kmeans_pp_seeds<float>(data,seeds,DistanceType::NORM_L2,d,N,k,8,true);
 }
 
 TEST_F(KmeansTest, DISABLED_test3) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(
+	simple_k_means<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::ANN_KD_TREE,
 			criteria,
+			DistanceType::NORM_L2,
 			N,k,d,8,
 			false);
-	cout << "ANN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
+	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
 }
 
 TEST_F(KmeansTest, DISABLED_test4) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(
+	simple_k_means<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::NN_KD_TREE,
 			criteria,
+			DistanceType::NORM_L2,
 			N,k,d,8,
 			false);
-	cout << "NN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
+	cout << "NN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
 }
 
 TEST_F(KmeansTest, test5) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(
+	simple_k_means<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::LINEAR,
 			criteria,
+			DistanceType::NORM_L2,
 			N,k,d,8,
 			false);
-	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
+	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
 }
 
 /*TEST_F(KmeansTest, test6) {
@@ -217,14 +220,15 @@ TEST_F(KmeansTest, test5) {
 TEST_F(KmeansTest, DISABLED_test7) {
 	KmeansCriteria criteria = {2.0,1.0,100};
 	for(size_t i = 0; i < 10; i++) {
-		simple_k_means(
+		simple_k_means<float>(
 				data,centers,label,seeds,
 				KmeansType::KMEANS_PLUS_SEEDS,
 				KmeansAssignType::LINEAR,
 				criteria,
+				DistanceType::NORM_L2,
 				N,k,d,8,
 				false);
-		cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
+		cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
 	}
 }
 

@@ -87,6 +87,7 @@ void check_env() {
 			"so we recommend these compiler for your works.\n");
 #endif
 }
+
 /**
  * Calculate the distance between two vectors
  * @param x

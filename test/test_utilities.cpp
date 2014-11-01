@@ -203,6 +203,12 @@ TEST_F(UtilTest, test12) {
 	EXPECT_TRUE(dealloc_array_2<float>(t,N));
 }
 
+TEST_F(UtilTest, test13) {
+	unsigned char x[3] = {1,2,3};
+	unsigned char y[3] = {128,225,123};
+	EXPECT_LT(0.0,distance_l2<unsigned char>(x,y,3));
+}
+
 #ifdef _WIN32
 int main(int argc, char * argv[])
 {
