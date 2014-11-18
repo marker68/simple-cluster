@@ -45,7 +45,7 @@
 #endif
 
 #ifndef DBL_MAX
-#define DBL_MAX double(1.79769313486231570815e+308L)
+#define DBL_MAX float(1.79769313486231570815e+308L)
 #endif
 
 using namespace std;
@@ -77,8 +77,8 @@ enum class KmeansType {
  * Criteria
  */
 typedef struct {
-	double alpha;
-	double accuracy;
+	float alpha;
+	float accuracy;
 	int iterations;
 } KmeansCriteria;
 
@@ -95,10 +95,17 @@ typedef struct {
 template<typename DataType>
 void random_seeds(
 		DataType ** data,
+<<<<<<< HEAD
 		DataType **& seeds,
 		size_t d,
 		size_t N,
 		size_t k,
+=======
+		float **& seeds,
+		int d,
+		int N,
+		int k,
+>>>>>>> c09d755... bug fixs
 		int n_thread,
 		bool verbose) {
 #ifdef _WIN32
@@ -133,10 +140,8 @@ void random_seeds(
 	}
 
 	for(i = 0; i < k; i++) {
-		if(!copy_array<DataType>(data[tmp[i]],seeds[i],d)) {
-			if(verbose)
-				cerr << "Cannot copy array! The program exit now!" << endl;
-			exit(1);
+		for(j = 0; j < d; j++) {
+			seeds[i][j] = static_cast<float>(data[tmp[i]][j]);
 		}
 	}
 }
@@ -155,7 +160,7 @@ void random_seeds(
 template<typename DataType>
 void kmeans_pp_seeds(
 		DataType ** data,
-		DataType **& seeds,
+		float **& seeds,
 		DistanceType d_type,
 		size_t d,
 		size_t N,
@@ -175,12 +180,24 @@ void kmeans_pp_seeds(
 		exit(1);
 	}
 
+<<<<<<< HEAD
 	copy_array<DataType>(data[tmp],seeds[0],d);
 	double * distances;
 	init_array<double>(distances,N);
 	double * sum_distances;
 	init_array<double>(sum_distances,N);
 #ifdef _WIN32
+=======
+//	copy_array<DataType>(data[tmp],seeds[0],d);
+	for(int j = 0; j < d; j++) {
+		seeds[0][j] = static_cast<float>(data[tmp][j]);
+	}
+	float * distances;
+	init_array<float>(distances,N);
+	float * sum_distances;
+	init_array<float>(sum_distances,N);
+
+>>>>>>> c09d755... bug fixs
 	int i;
 #else
 	size_t i;
@@ -198,8 +215,13 @@ void kmeans_pp_seeds(
 		}
 	}
 
+<<<<<<< HEAD
 	double sum, tmp2, sum1, sum2, pivot;
 	size_t count = 1;
+=======
+	float sum, tmp2, sum1, sum2, pivot;
+	int count = 1, j, t;
+>>>>>>> c09d755... bug fixs
 	for(count = 1; count < k; count++) {
 		sum = 0.0;
 		for(i = 0; i < N; i++) {
@@ -215,8 +237,10 @@ void kmeans_pp_seeds(
 			if(sum1 < pivot && pivot <= sum2)
 				break;
 		}
-		copy_array<DataType>(data[(i+1)%N],d_tmp,d);
-		copy_array<DataType>(d_tmp,seeds[count],d);
+		j = (i + 1) % N;
+		for(t = 0; t < d; t++) {
+			seeds[count][t] = static_cast<float>(data[j][t]);
+		}
 		// Update the distances
 		if(count < k) {
 			for(i = 0; i < N; i++) {
@@ -406,12 +430,21 @@ void kd_ann_assign(
 template<typename DataType>
 void greg_initialize(
 		DataType ** data,
+<<<<<<< HEAD
 		DataType ** centers,
 		double **& sum,
 		double *& upper,
 		double *& lower,
 		size_t *& label,
 		size_t *& size,
+=======
+		float ** centers,
+		float **& sum,
+		float *& upper,
+		float *& lower,
+		int *& label,
+		int *& size,
+>>>>>>> c09d755... bug fixs
 		DistanceType d_type,
 		size_t N,
 		size_t k,
@@ -436,15 +469,23 @@ void greg_initialize(
 	{
 #pragma omp for private(i,j)
 		for(i = 0; i < N; i++) {
+<<<<<<< HEAD
 			double min = DBL_MAX;
 			double min2 = DBL_MAX;
 			double d_tmp;
 			size_t tmp = -1;
+=======
+			float min = DBL_MAX;
+			float min2 = DBL_MAX;
+			float d_tmp = 0.0;
+			int tmp = -1;
+>>>>>>> c09d755... bug fixs
 			for(j = 0; j < k; j++) {
-				if(d_type == DistanceType::NORM_L2)
-					d_tmp = distance_l2<DataType>(centers[j],data[i],d);
-				else if(d_type == DistanceType::NORM_L1)
-					d_tmp = distance_l1<DataType>(centers[j],data[i],d);
+				if(d_type == DistanceType::NORM_L2) {
+					d_tmp = distance_l2<float,DataType>(centers[j],data[i],d);
+				} else if(d_type == DistanceType::NORM_L1) {
+					d_tmp = distance_l1<float,DataType>(centers[j],data[i],d);
+				}
 				if(min >= d_tmp) {
 					min2 = min;
 					min = d_tmp;
@@ -463,7 +504,11 @@ void greg_initialize(
 
 			// Update the vector sum
 			for(j = 0; j < d; j++) {
+<<<<<<< HEAD
 				sum[tmp][j] += data[i][j];
+=======
+				sum[tmp][j] += static_cast<float>(data[i][j]);
+>>>>>>> c09d755... bug fixs
 			}
 		}
 	}
@@ -481,8 +526,8 @@ void greg_initialize(
  * @param n_thread the number of threads
  * @return nothing
  */
-template<typename DataType>
 void update_center(
+<<<<<<< HEAD
 		double ** sum,
 		size_t * size,
 		DataType **& centers,
@@ -505,6 +550,16 @@ void update_center(
 			moved[i] = distance_l1<DataType>(c_tmp,centers[i],d);
 	}
 }
+=======
+		float ** sum,
+		int * size,
+		float **& centers,
+		float *& moved,
+		DistanceType d_type,
+		int k,
+		int d,
+		int n_thread);
+>>>>>>> c09d755... bug fixs
 
 /**
  * Update the bounds
@@ -518,12 +573,21 @@ void update_center(
  * @param n_thread the number of threads
  */
 void update_bounds(
+<<<<<<< HEAD
 		double * moved,
 		size_t * label,
 		double *& upper,
 		double *& lower,
 		size_t N,
 		size_t k,
+=======
+		float * moved,
+		int * label,
+		float *& upper,
+		float *& lower,
+		int N,
+		int k,
+>>>>>>> c09d755... bug fixs
 		int n_thread);
 
 /**
@@ -539,10 +603,15 @@ void update_bounds(
  * @param verbose for debugging
  */
 template<typename DataType>
-double distortion(
+float distortion(
 		DataType ** data,
+<<<<<<< HEAD
 		DataType ** centers,
 		size_t * label,
+=======
+		float ** centers,
+		int * label,
+>>>>>>> c09d755... bug fixs
 		DistanceType d_type,
 		size_t d,
 		size_t N,
@@ -564,9 +633,9 @@ double distortion(
 			end = N > start + N / n_thread ? (start + N / n_thread) : N;
 			for(j = start; j < end; j++) {
 				if(d_type == DistanceType::NORM_L2)
-					e += distance_l2_square<DataType>(data[j],centers[label[j]],d);
+					e += distance_l2_square<DataType,float>(data[j],centers[label[j]],d);
 				else if(d_type == DistanceType::NORM_L1)
-					e += distance_l1<DataType>(data[j],centers[label[j]],d);
+					e += distance_l1<DataType,float>(data[j],centers[label[j]],d);
 			}
 		}
 	}
@@ -593,9 +662,15 @@ double distortion(
 template<typename DataType>
 void simple_k_means(
 		DataType ** data,
+<<<<<<< HEAD
 		DataType **& centers,
 		size_t *& label,
 		DataType **& seeds,
+=======
+		float **& centers,
+		int *& label,
+		float **& seeds,
+>>>>>>> c09d755... bug fixs
 		KmeansType type,
 		KmeansAssignType assign,
 		KmeansCriteria criteria,
@@ -613,7 +688,7 @@ void simple_k_means(
 	}
 
 	if(seeds == nullptr) {
-		init_array_2<DataType>(seeds,k,d);
+		init_array_2<float>(seeds,k,d);
 	}
 
 	// Seeding
@@ -631,6 +706,7 @@ void simple_k_means(
 	float error = criteria.accuracy, e = error, e_prev;
 
 	// Variables for Greg's method
+<<<<<<< HEAD
 	double ** c_sum;
 	double * moved;
 	double * closest;
@@ -649,24 +725,52 @@ void simple_k_means(
 	copy_array_2<DataType>(seeds,centers,k,d);
 	greg_initialize<DataType>(data,centers,c_sum,upper,lower,label,size,d_type,N,k,d,n_thread,verbose);
 #ifdef _WIN32
+=======
+	float ** c_sum;
+	float * moved;
+	float * closest;
+	float * upper;
+	float * lower;
+	int * size;
+
+	init_array_2<float>(c_sum,k,d);
+	init_array<float>(moved,k);
+	init_array<float>(closest,k);
+	init_array<float>(upper,N);
+	init_array<float>(lower,N);
+	init_array<int>(size,k);
+
+	// Initialize the centers
+	copy_array_2<float>(seeds,centers,k,d);
+	greg_initialize<DataType>(data,centers,c_sum,upper,lower,
+			label,size,d_type,N,k,d,n_thread,verbose);
+	if(verbose)
+		cout << "Finished initialization" << endl;
+>>>>>>> c09d755... bug fixs
 	int j;
 #else
 	size_t j;
 #endif
 
 	while (1) {
+<<<<<<< HEAD
 		// Assign the data posize_ts to clusters
 		size_t tmp = 0;
 		double min, min2, min_tmp, d_tmp, m;
+=======
+		// Assign the data points to clusters
+		int tmp = 0;
+		float min, min2, min_tmp = 0.0, d_tmp = 0.0, m;
+>>>>>>> c09d755... bug fixs
 		// Update the closest distances
 		for(j = 0; j < k; j++) {
 			min2 = min = DBL_MAX;
 			for(size_t t = 0; t < k; t++) {
 				if(t != j) {
 					if(d_type == DistanceType::NORM_L2)
-						min_tmp = distance_l2<DataType>(centers[j],centers[t],d);
+						min_tmp = distance_l2<float>(centers[j],centers[t],d);
 					else if(d_type == DistanceType::NORM_L1)
-						min_tmp = distance_l1<DataType>(centers[j],centers[t],d);
+						min_tmp = distance_l1<float>(centers[j],centers[t],d);
 					if(min > min_tmp) min = min_tmp;
 				}
 			}
@@ -685,9 +789,9 @@ void simple_k_means(
 				if(upper[j] > m) {
 					// We need to tighten the upper bound
 					if(d_type == DistanceType::NORM_L2)
-						upper[j] = distance_l2<DataType>(data[j],centers[label[j]],d);
+						upper[j] = distance_l2<DataType,float>(data[j],centers[label[j]],d);
 					else if(d_type == DistanceType::NORM_L1)
-						upper[j] = distance_l1<DataType>(data[j],centers[label[j]],d);
+						upper[j] = distance_l1<DataType,float>(data[j],centers[label[j]],d);
 					// Second bound test
 					if(upper[j] > m) {
 						size_t l = label[j];
@@ -696,9 +800,9 @@ void simple_k_means(
 						// Assign the data to clusters
 						for(size_t t = 0; t < k; t++) {
 							if(d_type == DistanceType::NORM_L2)
-								d_tmp = distance_l2<DataType>(centers[t],data[j],d);
+								d_tmp = distance_l2<float,DataType>(centers[t],data[j],d);
 							else if(d_type == DistanceType::NORM_L1)
-								d_tmp = distance_l1<DataType>(centers[t],data[j],d);
+								d_tmp = distance_l1<float,DataType>(centers[t],data[j],d);
 							if(min >= d_tmp) {
 								min2 = min;
 								min = d_tmp;
@@ -721,9 +825,15 @@ void simple_k_means(
 									cout << "An empty cluster was found!"
 									" label = " << l << endl;
 							}
+<<<<<<< HEAD
 							for(size_t t = 0; t < d; t++) {
 								c_sum[tmp][t] += data[j][t];
 								c_sum[l][t] -= data[j][t];
+=======
+							for(int t = 0; t < d; t++) {
+								c_sum[tmp][t] += static_cast<float>(data[j][t]);
+								c_sum[l][t] -= static_cast<float>(data[j][t]);
+>>>>>>> c09d755... bug fixs
 							}
 						}
 					}
@@ -732,7 +842,7 @@ void simple_k_means(
 		}
 
 		// Move the centers
-		update_center<DataType>(c_sum,size,centers,moved,d_type,k,d,n_thread);
+		update_center(c_sum,size,centers,moved,d_type,k,d,n_thread);
 
 		// Update the bounds
 		update_bounds(moved,label,upper,lower,N,k,n_thread);

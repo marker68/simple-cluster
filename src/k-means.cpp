@@ -32,6 +32,43 @@
 #endif
 
 namespace SimpleCluster {
+
+/**
+ * Update the centers
+ * @param sum the sum vector of all points in the cluster
+ * @param size the size of each cluster
+ * @param centers the centers of clusters
+ * @param moved the distances that centers moved
+ * @param d_type the type of distance. Available options are NORM_L1, NORM_L2, HAMMING
+ * @param k the number of clusters
+ * @param d the number of dimensions
+ * @param n_thread the number of threads
+ * @return nothing
+ */
+void update_center(
+		float ** sum,
+		int * size,
+		float **& centers,
+		float *& moved,
+		DistanceType d_type,
+		int k,
+		int d,
+		int n_thread) {
+	float * c_tmp;
+	init_array<float>(c_tmp,d);
+	int i;
+	for(i = 0; i < k; i++) {
+		copy_array<float>(centers[i],c_tmp,d);
+		for(int j = 0; j < d; j++) {
+			centers[i][j] = static_cast<float>((sum[i][j] + centers[i][j]) / (size[i] + 1));
+		}
+		if(d_type == DistanceType::NORM_L2)
+			moved[i] = distance_l2<float>(c_tmp,centers[i],d);
+		else if(d_type == DistanceType::NORM_L1)
+			moved[i] = distance_l1<float>(c_tmp,centers[i],d);
+	}
+}
+
 /**
  * Update the bounds
  * @param moved the distances that centers moved
@@ -44,12 +81,21 @@ namespace SimpleCluster {
  * @param n_thread the number of threads
  */
 void update_bounds(
+<<<<<<< HEAD
 		double * moved,
 		size_t * label,
 		double *& upper,
 		double *& lower,
 		size_t N,
 		size_t k,
+=======
+		float * moved,
+		int * label,
+		float *& upper,
+		float *& lower,
+		int N,
+		int k,
+>>>>>>> c09d755... bug fixs
 		int n_thread) {
 	size_t r = 0;
 #ifdef _WIN32
@@ -57,7 +103,7 @@ void update_bounds(
 #else
 	size_t i;
 #endif
-	double max = 0.0, max2 = 0.0, sub;
+	float max = 0.0, max2 = 0.0, sub;
 	for(i = 0; i < k; i++) {
 		if(max <= moved[i]) {
 			max2 = max;
