@@ -27,6 +27,15 @@
 #include <iostream>
 #include <vector>
 #include <exception>
+#include <cmath>
+#include <cstdio>
+
+#ifdef _OPENMP
+#include <omp.h>
+#define SET_THREAD_NUM omp_set_num_threads(n_thread)
+#else
+#define SET_THREAD_NUM 0 // disable multi-thread
+#endif
 
 using namespace std;
 
@@ -34,10 +43,20 @@ using namespace std;
  * The main namespace
  */
 namespace SimpleCluster {
-typedef vector<float> d_vector;
+typedef vector<double> d_vector;
 typedef vector<size_t> i_vector;
 
+/**
+ * Types of distances
+ */
+enum class DistanceType {
+	NORM_L1,
+	NORM_L2,
+	HAMMING
+};
+
 void check_env();
+
 float distance(
 		float *,
 		float *,
@@ -81,6 +100,275 @@ void print_vector(
 		float **,
 		size_t,
 		size_t);
+/**
+ * Calculate the L1-metric distance
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType>
+double distance_l1(
+		DataType * x,
+		DataType * y,
+		size_t d) {
+	size_t i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = x[i] - y[i];
+			dis += fabs(tmp);
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return dis;
+}
+
+/**
+ * Calculate the L1-metric distance with two different data type
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType1, typename DataType2>
+double distance_l1(
+		DataType1 * x,
+		DataType2 * y,
+		int d) {
+	int i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = static_cast<double>(x[i])
+					- static_cast<double>(y[i]);
+			dis += fabs(tmp);
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return dis;
+}
+
+/**
+ * Calculate the L1-metric distance between two vectors with multi-threading
+ * @param x
+ * @param y
+ * @param d
+ * @param n_thread number of threads
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType>
+double distance_l1_thread(
+		DataType * x,
+		DataType * y,
+		size_t d,
+		int n_thread) {
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t bs = d / n_thread, st;
+	double dis;
+	dis = 0.0;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(i = 0; i < n_thread; i++) {
+			st = bs * i;
+			dis += distance_l1<DataType>(x + st,y + st,bs);
+		}
+	}
+
+	return sqrt(dis);
+}
+
+/**
+ * Calculate the L2-metric distance
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType>
+double distance_l2(
+		DataType * x,
+		DataType * y,
+		size_t d) {
+	size_t i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = x[i] - y[i];
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return sqrt(dis);
+}
+
+/**
+ * Calculate the L2-metric distance with 2 different data types
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType1, typename DataType2>
+double distance_l2(
+		DataType1 * x,
+		DataType2 * y,
+		int d) {
+	int i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = static_cast<double>(x[i])
+					- static_cast<double>(y[i]);
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return sqrt(dis);
+}
+
+/**
+ * Calculate the L2-metric distance
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType>
+double distance_l2_square(
+		DataType * x,
+		DataType * y,
+		size_t d) {
+	size_t i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = x[i] - y[i];
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return dis;
+}
+
+/**
+ * Calculate the L2-metric distance with 2 different data types
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType1, typename DataType2>
+double distance_l2_square(
+		DataType1 * x,
+		DataType2 * y,
+		int d) {
+	int i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = static_cast<double>(x[i])
+					- static_cast<double>(y[i]);
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return dis;
+}
+
+/**
+ * Calculate the L2-metric distance between two vectors with multi-threading
+ * @param x
+ * @param y
+ * @param d
+ * @param n_thread number of threads
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType>
+double distance_l2_thread(
+		DataType * x,
+		DataType * y,
+		size_t d,
+		int n_thread) {
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t bs = d / n_thread, st;
+	double dis;
+	dis = 0.0;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(i = 0; i < n_thread; i++) {
+			st = bs * i;
+			dis += distance_l2_square<DataType>(x + st,y + st,bs);
+		}
+	}
+
+	return sqrt(dis);
+}
+
+/**
+ * Calculate the L2-metric distance between two vectors with multi-threading
+ * @param x
+ * @param y
+ * @param d
+ * @param n_thread number of threads
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType>
+double distance_l2_square_thread(
+		DataType * x,
+		DataType * y,
+		size_t d,
+		int n_thread) {
+#ifdef _WIN32
+	int i;
+#else
+	size_t i;
+#endif
+	size_t bs = d / n_thread, st;
+	double dis;
+	dis = 0.0;
+	SET_THREAD_NUM;
+#pragma omp parallel
+	{
+#pragma omp for
+		for(i = 0; i < n_thread; i++) {
+			st = bs * i;
+			dis += distance_l2_square<DataType>(x + st,y + st,bs);
+		}
+	}
+
+	return dis;
+}
 
 /**
  * Initialize an 1-D array.
