@@ -59,7 +59,7 @@ protected:
 	static void SetUpTestCase() {
 		N = 10000;
 		d = 128;
-		size_t i, j;
+		int i, j;
 
 		// For generating random numbers
 		random_device rd;
@@ -81,7 +81,7 @@ protected:
 	// Called after the last test in this test case.
 	// Can be omitted if not needed.
 	static void TearDownTestCase() {
-		size_t i;
+		int i;
 		for(i = 0; i < N; i++)
 			::delete data[i];
 		::delete data;
@@ -94,13 +94,13 @@ protected:
 public:
 	// Some expensive resource shared by all tests.
 	static float ** data;
-	static size_t N;
-	static size_t d;
+	static int N;
+	static int d;
 };
 
 float ** UtilTest::data;
-size_t UtilTest::N;
-size_t UtilTest::d;
+int UtilTest::N;
+int UtilTest::d;
 
 // Let's start with some testcases
 TEST_F(UtilTest, test1) {
@@ -114,7 +114,7 @@ TEST_F(UtilTest, test2) {
 }
 
 TEST_F(UtilTest, test3) {
-	for(size_t i = 0; i < 1000000; i++) {
+	for(int i = 0; i < 1000000; i++) {
 		EXPECT_LT(0.0f,distance(data[0],data[1],d));
 	}
 }
@@ -124,7 +124,7 @@ TEST_F(UtilTest, test4) {
 #ifdef _WIN32
 	int i;
 #else
-	size_t i;
+	int i;
 #endif
 	SET_THREAD_NUM;
 #pragma omp parallel
@@ -137,9 +137,9 @@ TEST_F(UtilTest, test4) {
 }
 
 TEST_F(UtilTest, test5) {
-	size_t index[] = {0,1,2,3,4};
-	size_t * index2 = (size_t *)malloc(5 * sizeof(size_t));
-	for(size_t i = 0; i < 5; i++)
+	int index[] = {0,1,2,3,4};
+	int * index2 = (int *)malloc(5 * sizeof(int));
+	for(int i = 0; i < 5; i++)
 		index2[i] = i;
 
 	float * tmp = (float *)calloc(d,sizeof(float));
@@ -176,7 +176,7 @@ TEST_F(UtilTest, test9) {
 	float * t;
 	EXPECT_TRUE(init_array<float>(t,d) && t != nullptr);
 	EXPECT_TRUE(copy_array<float>(data[0],t,d));
-	for(size_t i = 0; i < d; i++) {
+	for(int i = 0; i < d; i++) {
 		EXPECT_TRUE(data[0][i] == t[i]);
 	}
 }
@@ -190,8 +190,8 @@ TEST_F(UtilTest, test11) {
 	float ** t;
 	EXPECT_TRUE(init_array_2<float>(t,N,d) && t != nullptr);
 	EXPECT_TRUE(copy_array_2<float>(data,t,N,d));
-	for(size_t i = 0; i < N; i++) {
-		for(size_t j = 0; j < d; j++) {
+	for(int i = 0; i < N; i++) {
+		for(int j = 0; j < d; j++) {
 			EXPECT_TRUE(data[i][j] == t[i][j]);
 		}
 	}

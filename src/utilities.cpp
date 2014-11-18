@@ -98,8 +98,8 @@ void check_env() {
 float distance(
 		float * x,
 		float * y,
-		size_t d) {
-	size_t i;
+		int d) {
+	int i;
 	float dis = 0.0, tmp = 0.0;
 	try {
 		for(i = 0; i < d; i++) {
@@ -124,8 +124,8 @@ float distance(
 float distance_square(
 		float * x,
 		float * y,
-		size_t d) {
-	size_t i;
+		int d) {
+	int i;
 	float dis = 0.0, tmp = 0.0;
 	try {
 		for(i = 0; i < d; i++) {
@@ -151,14 +151,14 @@ float distance_square(
 float distance_thread(
 		float * x,
 		float * y,
-		size_t d,
+		int d,
 		int n_thread) {
 #ifdef _WIN32
 	int i;
 #else
-	size_t i;
+	int i;
 #endif
-	size_t bs = d / n_thread, st;
+	int bs = d / n_thread, st;
 	float dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
@@ -185,14 +185,14 @@ float distance_thread(
 float distance_square_thread(
 		float * x,
 		float * y,
-		size_t d,
+		int d,
 		int n_thread) {
 #ifdef _WIN32
 	int i;
 #else
-	size_t i;
+	int i;
 #endif
-	size_t bs = d / n_thread, st;
+	int bs = d / n_thread, st;
 	float dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
@@ -222,13 +222,13 @@ float distance_square_thread(
 void all_mean_vector(
 		float ** data,
 		int * label,
-		size_t * size,
+		int * size,
 		float **& centroids,
 		float *& moved,
-		size_t d,
-		size_t N,
-		size_t k) {
-	size_t i, j, t;
+		int d,
+		int N,
+		int k) {
+	int i, j, t;
 	float * tmp;
 	float ** c_tmp;
 	init_array_2<float>(c_tmp,k,d);
@@ -263,15 +263,15 @@ void all_mean_vector(
  * @param d
  * @param size
  * @param centroid
- * @return the mean posize_t of a cluster
+ * @return the mean point of a cluster
  */
 float * mean_vector(
 		float ** data,
-		const size_t * index,
+		const int * index,
 		float * centroid,
-		size_t d,
-		size_t size) {
-	size_t i, j = 0, k;
+		int d,
+		int size) {
+	int i, j = 0, k;
 	if(size <= 0) {
 		return centroid;
 	}
@@ -311,18 +311,18 @@ float * mean_vector(
  * @param data
  * @param index a vector of integers
  * @param d
- * @return the mean posize_t of a cluster
+ * @return the mean point of a cluster
  */
 float * mean_vector(
 		float ** data,
 		const i_vector index,
 		float * centroid,
-		size_t d) {
-	size_t i, j = 0, k;
+		int d) {
+	int i, j = 0, k;
 	if(index.size() <= 0) {
 		return centroid;
 	}
-	size_t size = index.size();
+	int size = index.size();
 
 	float * tmp = (float *)calloc(d,sizeof(float));
 	if(tmp == nullptr) {
@@ -377,9 +377,9 @@ unsigned long get_millisecond_time() {
  */
 void print_vector(
 		float ** data,
-		size_t d,
-		size_t N) {
-	size_t i, j;
+		int d,
+		int N) {
+	int i, j;
 	try {
 		for(i = 0; i < N; i++) {
 			cout << "Data point " << i << ":";

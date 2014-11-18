@@ -44,7 +44,7 @@ using namespace std;
  */
 namespace SimpleCluster {
 typedef vector<double> d_vector;
-typedef vector<size_t> i_vector;
+typedef vector<int> i_vector;
 
 /**
  * Types of distances
@@ -60,46 +60,46 @@ void check_env();
 float distance(
 		float *,
 		float *,
-		size_t);
+		int);
 float distance_thread(
 		float *,
 		float *,
-		size_t,
+		int,
 		int);
 float distance_square(
 		float *,
 		float *,
-		size_t);
+		int);
 float distance_square_thread(
 		float *,
 		float *,
-		size_t,
+		int,
 		int);
 void all_mean_vector(
 		float **,
 		int *,
-		size_t *,
+		int *,
 		float **&,
 		float *&,
-		size_t,
-		size_t,
-		size_t);
+		int,
+		int,
+		int);
 float * mean_vector(
 		float **,
-		const size_t *,
+		const int *,
 		float *,
-		size_t,
-		size_t);
+		int,
+		int);
 float * mean_vector(
 		float **,
 		const i_vector,
 		float *,
-		size_t);
+		int);
 unsigned long get_millisecond_time();
 void print_vector(
 		float **,
-		size_t,
-		size_t);
+		int,
+		int);
 /**
  * Calculate the L1-metric distance
  * @param x
@@ -111,8 +111,8 @@ template<typename DataType>
 double distance_l1(
 		DataType * x,
 		DataType * y,
-		size_t d) {
-	size_t i;
+		int d) {
+	int i;
 	double dis = 0.0, tmp = 0.0;
 	try {
 		for(i = 0; i < d; i++) {
@@ -167,14 +167,14 @@ template<typename DataType>
 double distance_l1_thread(
 		DataType * x,
 		DataType * y,
-		size_t d,
+		int d,
 		int n_thread) {
 #ifdef _WIN32
 	int i;
 #else
-	size_t i;
+	int i;
 #endif
-	size_t bs = d / n_thread, st;
+	int bs = d / n_thread, st;
 	double dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
@@ -201,8 +201,8 @@ template<typename DataType>
 double distance_l2(
 		DataType * x,
 		DataType * y,
-		size_t d) {
-	size_t i;
+		int d) {
+	int i;
 	double dis = 0.0, tmp = 0.0;
 	try {
 		for(i = 0; i < d; i++) {
@@ -256,8 +256,8 @@ template<typename DataType>
 double distance_l2_square(
 		DataType * x,
 		DataType * y,
-		size_t d) {
-	size_t i;
+		int d) {
+	int i;
 	double dis = 0.0, tmp = 0.0;
 	try {
 		for(i = 0; i < d; i++) {
@@ -312,14 +312,14 @@ template<typename DataType>
 double distance_l2_thread(
 		DataType * x,
 		DataType * y,
-		size_t d,
+		int d,
 		int n_thread) {
 #ifdef _WIN32
 	int i;
 #else
-	size_t i;
+	int i;
 #endif
-	size_t bs = d / n_thread, st;
+	int bs = d / n_thread, st;
 	double dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
@@ -347,14 +347,14 @@ template<typename DataType>
 double distance_l2_square_thread(
 		DataType * x,
 		DataType * y,
-		size_t d,
+		int d,
 		int n_thread) {
 #ifdef _WIN32
 	int i;
 #else
-	size_t i;
+	int i;
 #endif
-	size_t bs = d / n_thread, st;
+	int bs = d / n_thread, st;
 	double dis;
 	dis = 0.0;
 	SET_THREAD_NUM;
@@ -379,12 +379,12 @@ double distance_l2_square_thread(
 template<typename DataType>
 bool init_array(
 		DataType *& arr,
-		size_t N) {
+		int N) {
 	if(N <= 0)
 		return false;
 	try {
 		arr = (DataType *)::operator  new(N * sizeof(DataType));
-		for(size_t i = 0; i < N; i++) {
+		for(int i = 0; i < N; i++) {
 			::new(arr + i) DataType;
 		}
 	} catch(exception& e) {
@@ -404,16 +404,16 @@ bool init_array(
 template<typename DataType>
 bool init_array_2(
 		DataType **& arr,
-		size_t M,
-		size_t N) {
+		int M,
+		int N) {
 	if(M <= 0 || N <= 0)
 		return false;
 	try {
 		arr = (DataType **)::operator  new(M * sizeof(DataType *));
-		for(size_t i = 0; i < M; i++) {
+		for(int i = 0; i < M; i++) {
 			::new(arr + i) DataType *;
 			arr[i] = (DataType *)::operator new(N * sizeof(DataType));
-			for(size_t j = 0; j < N; j++)
+			for(int j = 0; j < N; j++)
 				::new(arr[i] + j) DataType;
 		}
 	} catch(exception& e) {
@@ -433,10 +433,10 @@ bool init_array_2(
 template<typename DataType>
 bool init_vector(
 		vector<DataType>& vec,
-		size_t N) {
+		int N) {
 	DataType tmp;
 	vec.clear();
-	for(size_t i = 0; i < N; i++) {
+	for(int i = 0; i < N; i++) {
 		vec.push_back(tmp);
 	}
 	return true;
@@ -453,11 +453,11 @@ template<typename DataType>
 bool copy_array(
 		DataType * from,
 		DataType *& to,
-		size_t N) {
+		int N) {
 	if(from == nullptr || to == nullptr)
 		return false;
 	try {
-		for(size_t i = 0; i < N; i++) {
+		for(int i = 0; i < N; i++) {
 			to[i] = from[i];
 		}
 	} catch(exception& e) {
@@ -479,12 +479,12 @@ template<typename DataType>
 bool copy_array_2(
 		DataType ** from,
 		DataType **& to,
-		size_t M,
-		size_t N) {
+		int M,
+		int N) {
 	if(from == nullptr || to == nullptr)
 		return false;
 	try {
-		for(size_t i = 0; i < M; i++) {
+		for(int i = 0; i < M; i++) {
 			if(!copy_array<DataType>(from[i],to[i],N)) {
 				return false;
 			}
@@ -505,9 +505,9 @@ bool copy_array_2(
 template<typename DataType>
 bool dealloc_array_2(
 		DataType **& arr,
-		size_t M) {
+		int M) {
 	try {
-		for(size_t i = 0; i < M; i++) {
+		for(int i = 0; i < M; i++) {
 			::delete arr[i];
 			arr[i] = nullptr;
 		}
@@ -531,7 +531,7 @@ void swap(
 		DataType * data,
 		int m,
 		int n,
-		size_t N) {
+		int N) {
 	if(m < 0 || n < 0 || m >= N || n >= N) {
 		cerr << "Out of bounds!" << endl;
 		exit(1);
@@ -560,7 +560,7 @@ template<typename DataType>
 int partition(
 		DataType * data,
 		DataType pivot,
-		size_t N,
+		int N,
 		int (*compare)(const DataType *, const DataType *)) {
 	int i=0, j=N-1;
 	while(i <= j) {
@@ -597,7 +597,7 @@ int partition(
 template<typename DataType>
 void bbsort(
 		DataType * data,
-		size_t N,
+		int N,
 		int (*compare)(const DataType *, const DataType *)) {
 	if(N < 2) return;
 	bool swapped = true;
@@ -628,10 +628,10 @@ void bbsort(
  * @return the index of the k-th smallest element
  */
 template<typename DataType>
-size_t quick_select_k_id(
+int quick_select_k_id(
 		DataType * data,
-		size_t N,
-		size_t k,
+		int N,
+		int k,
 		int (*compare)(const DataType*, const DataType*)) {
 	if(k >= N) {
 		cerr << "Out of bounds!\n" << endl;
@@ -683,8 +683,8 @@ size_t quick_select_k_id(
 template<typename DataType>
 DataType quick_select_k(
 		DataType * data,
-		size_t N,
-		size_t k,
+		int N,
+		int k,
 		int (*compare)(const DataType*, const DataType*)) {
 	if(k >= N) {
 		cerr << "Out of bounds!\n" << endl;

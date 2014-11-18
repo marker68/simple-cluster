@@ -40,8 +40,8 @@ set(CMAKE_BUILD_TYPE Release)
 message(WARNING "A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # THE LOCATION OF OUTPUT BINARIES
-set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/${EX_PLATFORM_NAME}/lib)
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/${EX_PLATFORM_NAME}/bin)
+set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_LIBRARY_DIR})
  
@@ -81,16 +81,16 @@ if(NOT MSVC)
 endif()
 
 # OUTPUT LIBRARIES
-#add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
-#if(MSVC)
-#    set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
-#endif()
-#add_dependencies(${PROJECT_NAME} gtest_main)
-#add_library(${PROJECT_NAME}_static STATIC ${PROJECT_SRCS})
-#if(MSVC)
-#    set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
-#endif()
-#add_dependencies(${PROJECT_NAME}_static gtest_main)
+add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
+if(MSVC)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
+endif()
+add_dependencies(${PROJECT_NAME} gtest_main)
+add_library(${PROJECT_NAME}_static STATIC ${PROJECT_SRCS})
+if(MSVC)
+    set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
+endif()
+add_dependencies(${PROJECT_NAME}_static gtest_main)
 
 # OUTPUT EXECUTABLES
 if(NOT MSVC)
