@@ -41,9 +41,9 @@ template<typename DataType>
 class KDNode {
 private:
 	DataType * data;
-	size_t dimension;
+	int dimension;
 public:
-	size_t id;
+	int id;
 	KDNode<DataType> * left, * right;
 
 	/**
@@ -61,7 +61,7 @@ public:
 	/**
 	 * The default constructor
 	 */
-	KDNode(size_t _d) {
+	KDNode(int _d) {
 		dimension = _d;
 		data = (DataType *)::operator new(_d * sizeof(DataType));
 		id = 0;
@@ -93,7 +93,7 @@ public:
 	 */
 	void add_data(
 			DataType _d,
-			size_t pos) {
+			int pos) {
 		if(pos >= 0 && pos < dimension)
 			data[pos] = _d;
 	}
@@ -111,7 +111,7 @@ public:
 	 * get a component of the vector
 	 * @param _id index of the component
 	 */
-	DataType at(size_t _id) const{
+	DataType at(int _id) const{
 		return data[_id];
 	}
 
@@ -125,7 +125,7 @@ public:
 	/**
 	 * Get the size or the dimensions of the vector
 	 */
-	size_t size() const{
+	int size() const{
 		return dimension;
 	}
 };
@@ -143,9 +143,9 @@ template<typename DataType>
 void kd_insert(
 		KDNode<DataType> *& root,
 		DataType * _data,
-		size_t N,
-		size_t level,
-		size_t _id,
+		int N,
+		int level,
+		int _id,
 		bool verbose) {
 	// Pre-check
 	if(N <= 0) return;
@@ -187,7 +187,7 @@ double kd_distance(
 		bool verbose) {
 	DataType * a = _a->get_data();
 	DataType * b = _b->get_data();
-	size_t N = _a->size();
+	int N = _a->size();
 	if(N != _b->size()) {
 		if(verbose) {
 			cerr << "Dimension are different" << endl;
@@ -223,11 +223,11 @@ int comparator(
  * @return the index of the median
  */
 template<typename DataType>
-size_t find_median(
+int find_median(
 		DataType ** data,
-		size_t M,
-		size_t N,
-		size_t id,
+		int M,
+		int N,
+		int id,
 		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
@@ -236,11 +236,11 @@ size_t find_median(
 	}
 	id = id % N;
 	DataType * arr = (DataType *)::operator new(M * sizeof(float));
-	for(size_t i = 0; i < M; i++) {
+	for(int i = 0; i < M; i++) {
 		arr[i] = data[i][id];
 	}
 
-	size_t res = quick_select_k_id<DataType>(arr,M,M >> 1,comparator);
+	int res = quick_select_k_id<DataType>(arr,M,M >> 1,comparator);
 	::delete arr;
 	arr = nullptr;
 	return res;
@@ -259,17 +259,17 @@ template<typename DataType>
 void make_balanced_tree(
 		KDNode<DataType> *& root,
 		DataType ** data,
-		size_t M,
-		size_t N,
-		size_t level,
-		size_t base,
+		int M,
+		int N,
+		int level,
+		int base,
 		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
 		return;
 	}
-	size_t id = find_median<DataType>(data,M,N,level,verbose);
+	int id = find_median<DataType>(data,M,N,level,verbose);
 
 	kd_insert<DataType>(root,data[id],N,0,id+base,verbose);
 	make_balanced_tree<DataType>(root,data,id,N,(level+1)%N,base,verbose);
@@ -290,16 +290,16 @@ template<typename DataType>
 void make_random_tree(
 		KDNode<DataType> *& root,
 		DataType ** data,
-		size_t M,
-		size_t N,
-		size_t base,
+		int M,
+		int N,
+		int base,
 		bool verbose) {
 	if(N <= 0 || M <= 0) {
 		if(verbose)
 			cerr << "No data" << endl;
 		return;
 	}
-	size_t id = M >> 1;
+	int id = M >> 1;
 
 	kd_insert<DataType>(root,data[id],N,0,id+base,verbose);
 	make_random_tree<DataType>(root,data,id,N,base,verbose);
@@ -326,9 +326,9 @@ void nn_search(
 		KDNode<DataType> *& result,
 		DistanceType d_type,
 		double& best_dist,
-		size_t N,
-		size_t level,
-		size_t& visited,
+		int N,
+		int level,
+		int& visited,
 		bool verbose) {
 	if(best_dist == 0.0) return;
 	if(root == nullptr || root->size() != N) {
@@ -350,7 +350,7 @@ void nn_search(
 		result = root;
 	}
 
-	size_t l = (level + 1) % N;
+	int l = (level + 1) % N;
 	if(d1 >= 0.0) {
 		nn_search<DataType>(root->left,query,result,d_type,best_dist,N,l,visited,verbose);
 	} else {
@@ -389,9 +389,9 @@ void ann_search(
 		DistanceType d_type,
 		double& best_dist,
 		double alpha,
-		size_t N,
-		size_t level,
-		size_t& visited,
+		int N,
+		int level,
+		int& visited,
 		bool verbose) {
 	if(best_dist == 0.0) return;
 	if(root == nullptr || root->size() != N) {
@@ -445,10 +445,10 @@ void linear_search(
 		DataType ** data,
 		DataType * query,
 		DistanceType d_type,
-		size_t& best,
+		int& best,
 		double& best_dist,
-		size_t N,
-		size_t d,
+		int N,
+		int d,
 		bool verbose) {
 	if(N <= 0 || d <= 0) {
 		if(verbose)
@@ -461,7 +461,7 @@ void linear_search(
 	else if(d_type == DistanceType::NORM_L1)
 		best_dist = distance_l1<DataType>(query,data[0],d);
 	float tmp = 0.0;
-	for(size_t i = 1; i < N; i++) {
+	for(int i = 1; i < N; i++) {
 		if(d_type == DistanceType::NORM_L2)
 			tmp = distance_l2<DataType>(query,data[i],d);
 		else if(d_type == DistanceType::NORM_L1)
@@ -482,8 +482,8 @@ void linear_search(
 template<typename DataType>
 void kd_travel(
 		KDNode<DataType> * root,
-		size_t N,
-		size_t level) {
+		int N,
+		int level) {
 	if(root == nullptr) {
 		cout << "Reached a leaf at level " << level << endl;
 		return;

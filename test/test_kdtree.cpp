@@ -45,7 +45,7 @@ protected:
 	static void SetUpTestCase() {
 		N = 10000;
 		d = 128;
-		size_t i, j;
+		int i, j;
 
 		// For generating random numbers
 		random_device rd;
@@ -67,7 +67,7 @@ protected:
 	// Called after the last test in this test case.
 	// Can be omitted if not needed.
 	static void TearDownTestCase() {
-		size_t i;
+		int i;
 		for(i = 0; i < N; i++)
 			::delete data[i];
 		::delete data;
@@ -80,12 +80,12 @@ protected:
 public:
 	// Some expensive resource shared by all tests.
 	static float ** data;
-	static size_t N, d;
+	static int N, d;
 };
 
 float ** KDTreeTest::data;
-size_t KDTreeTest::N;
-size_t KDTreeTest::d;
+int KDTreeTest::N;
+int KDTreeTest::d;
 
 TEST_F(KDTreeTest, DISABLED_test1) {
 	KDNode<float> * a, * b;
@@ -99,7 +99,7 @@ TEST_F(KDTreeTest, DISABLED_test1) {
 TEST_F(KDTreeTest, DISABLED_test2) {
 	KDNode<float> * root = nullptr;
 	float d[][2] = {{2.0,3.0},{4.0,3.0},{7.0,9.0}};
-	for(size_t i = 0; i < 3; i++) {
+	for(int i = 0; i < 3; i++) {
 		kd_insert<float>(root,d[i],2,0,i,false);
 	}
 	kd_travel<float>(root,2,0);
@@ -108,7 +108,7 @@ TEST_F(KDTreeTest, DISABLED_test2) {
 TEST_F(KDTreeTest, DISABLED_test3) {
 	float ** _d;
 	_d = new float*[10000];
-	for(size_t i = 0; i < 10000; i++) {
+	for(int i = 0; i < 10000; i++) {
 		_d[i] = new float[2];
 		_d[i][0] = _d[i][1] = static_cast<float>(i);
 	}
@@ -136,11 +136,11 @@ TEST_F(KDTreeTest, test6) {
 	t2 = get_millisecond_time();
 	//	kd_travel<float>(root,d,0);
 	KDNode<float> * query = ::new KDNode<float>(d);
-	size_t pos = 10;
+	int pos = 10;
 	query->add_data(data[pos]);
 	KDNode<float> * result = nullptr;
 	double best_dist = DBL_MAX;
-	size_t visited = 0;
+	int visited = 0;
 	nn_search<float>(root,query,result,DistanceType::NORM_L2,best_dist,d,0,visited,false);
 	t3 = get_millisecond_time();
 	EXPECT_EQ(0.0,best_dist);
@@ -157,11 +157,11 @@ TEST_F(KDTreeTest, test7) {
 	t2 = get_millisecond_time();
 	cout << "Tree build time is " << t2-t1 << "[ms]" << endl;
 	KDNode<float> * query = ::new KDNode<float>(d);
-	size_t pos = 10;
+	int pos = 10;
 	query->add_data(data[pos]);
 	KDNode<float> * result = nullptr;
 	double best_dist = DBL_MAX;
-	size_t visited = 0;
+	int visited = 0;
 	nn_search<float>(root,query,result,DistanceType::NORM_L2,best_dist,d,0,visited,false);
 	t3 = get_millisecond_time();
 	EXPECT_EQ(0.0,best_dist);
@@ -172,8 +172,8 @@ TEST_F(KDTreeTest, test7) {
 TEST_F(KDTreeTest, DISABLED_test8) {
 	KDNode<float> * root = nullptr;
 	make_balanced_tree<float>(root,data,N,d,0,0,false);
-	size_t pos = 10;
-	size_t best = 0;
+	int pos = 10;
+	int best = 0;
 	double best_dist = DBL_MAX;
 	linear_search<float>(data,data[pos],DistanceType::NORM_L2,best,best_dist,N,d,true);
 	EXPECT_EQ(0.0,best_dist);
@@ -201,11 +201,11 @@ TEST_F(KDTreeTest, test10) {
 	make_random_tree(root,data,N,d,0,false);
 	//	kd_travel<float>(root,d,0);
 	KDNode<float> * query = ::new KDNode<float>(d);
-	size_t pos = 10;
+	int pos = 10;
 	query->add_data(data[pos]);
 	KDNode<float> * result = nullptr;
 	double best_dist = DBL_MAX;
-	size_t visited = 0;
+	int visited = 0;
 	ann_search<float>(root,query,result,DistanceType::NORM_L2,best_dist,1.5,d,0,visited,false);
 	cout << "best distances " << best_dist << endl;
 	cout << "Visited " << visited << " nodes" << endl;

@@ -72,7 +72,7 @@ void update_center(
 /**
  * Update the bounds
  * @param moved the distances that centers moved
- * @param label the labels of posize_t data
+ * @param label the labels of point data
  * @param upper
  * @param lower
  * @param N
@@ -81,28 +81,16 @@ void update_center(
  * @param n_thread the number of threads
  */
 void update_bounds(
-<<<<<<< HEAD
-		double * moved,
-		size_t * label,
-		double *& upper,
-		double *& lower,
-		size_t N,
-		size_t k,
-=======
 		float * moved,
 		int * label,
 		float *& upper,
 		float *& lower,
 		int N,
 		int k,
->>>>>>> c09d755... bug fixs
 		int n_thread) {
-	size_t r = 0;
-#ifdef _WIN32
+	int r = 0;
 	int i;
-#else
-	size_t i;
-#endif
+
 	float max = 0.0, max2 = 0.0, sub;
 	for(i = 0; i < k; i++) {
 		if(max <= moved[i]) {

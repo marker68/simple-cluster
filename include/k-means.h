@@ -44,8 +44,8 @@
 #define SET_THREAD_NUM 0 // disable multi-thread
 #endif
 
-#ifndef DBL_MAX
-#define DBL_MAX float(1.79769313486231570815e+308L)
+#ifndef FLT_MAX
+#define FLT_MAX 3.40282346638528859812e+38F
 #endif
 
 using namespace std;
@@ -95,30 +95,19 @@ typedef struct {
 template<typename DataType>
 void random_seeds(
 		DataType ** data,
-<<<<<<< HEAD
-		DataType **& seeds,
-		size_t d,
-		size_t N,
-		size_t k,
-=======
 		float **& seeds,
 		int d,
 		int N,
 		int k,
->>>>>>> c09d755... bug fixs
 		int n_thread,
 		bool verbose) {
-#ifdef _WIN32
 	int i;
-#else
-	size_t i;
-#endif
-	size_t j;
+	int j;
 #ifdef _WIN32
-	size_t * tmp;
-	SimpleCluster::init_array<size_t>(tmp,k);
+	int * tmp;
+	SimpleCluster::init_array<int>(tmp,k);
 #else
-	size_t tmp[k];
+	int tmp[k];
 #endif
 
 	// For generating random numbers
@@ -126,16 +115,16 @@ void random_seeds(
 	mt19937 gen(rd());
 
 	for(i = 0; i < k; i++)
-		tmp[i] = static_cast<size_t>(i);
+		tmp[i] = static_cast<int>(i);
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
 #pragma omp for private(i)
 		for(i = k; i < N; i++) {
-			uniform_int_distribution<> size_t_dis(i,N-1);
-			j = size_t_dis(gen);
+			uniform_int_distribution<> int_dis(i,N-1);
+			j = int_dis(gen);
 			if(j < k)
-				tmp[j] = static_cast<size_t>(i);
+				tmp[j] = static_cast<int>(i);
 		}
 	}
 
@@ -162,17 +151,17 @@ void kmeans_pp_seeds(
 		DataType ** data,
 		float **& seeds,
 		DistanceType d_type,
-		size_t d,
-		size_t N,
-		size_t k,
+		int d,
+		int N,
+		int k,
 		int n_thread,
 		bool verbose) {
 	// For generating random numbers
 	random_device rd;
 	mt19937 gen(rd());
 
-	uniform_int_distribution<size_t> size_t_dis(0, N - 1);
-	size_t tmp = size_t_dis(gen);
+	uniform_int_distribution<int> int_dis(0, N - 1);
+	int tmp = int_dis(gen);
 
 	DataType * d_tmp;
 	if(!init_array<DataType>(d_tmp,d)) {
@@ -180,14 +169,6 @@ void kmeans_pp_seeds(
 		exit(1);
 	}
 
-<<<<<<< HEAD
-	copy_array<DataType>(data[tmp],seeds[0],d);
-	double * distances;
-	init_array<double>(distances,N);
-	double * sum_distances;
-	init_array<double>(sum_distances,N);
-#ifdef _WIN32
-=======
 //	copy_array<DataType>(data[tmp],seeds[0],d);
 	for(int j = 0; j < d; j++) {
 		seeds[0][j] = static_cast<float>(data[tmp][j]);
@@ -197,11 +178,7 @@ void kmeans_pp_seeds(
 	float * sum_distances;
 	init_array<float>(sum_distances,N);
 
->>>>>>> c09d755... bug fixs
 	int i;
-#else
-	size_t i;
-#endif
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
@@ -215,13 +192,8 @@ void kmeans_pp_seeds(
 		}
 	}
 
-<<<<<<< HEAD
-	double sum, tmp2, sum1, sum2, pivot;
-	size_t count = 1;
-=======
 	float sum, tmp2, sum1, sum2, pivot;
 	int count = 1, j, t;
->>>>>>> c09d755... bug fixs
 	for(count = 1; count < k; count++) {
 		sum = 0.0;
 		for(i = 0; i < N; i++) {
@@ -256,7 +228,7 @@ void kmeans_pp_seeds(
 
 /**
  * After having a set of centers,
- * we need to assign data size_to each cluster respectively.
+ * we need to assign data into each cluster respectively.
  * This solution uses linear search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
@@ -274,17 +246,13 @@ void linear_assign(
 		DataType ** centers,
 		vector<i_vector>& clusters,
 		DistanceType d_type,
-		size_t d,
-		size_t N,
-		size_t k,
+		int d,
+		int N,
+		int k,
 		int n_thread,
 		bool verbose) {
-#ifdef _WIN32
 	int i;
-#else
-	size_t i;
-#endif
-	size_t tmp;
+	int tmp;
 
 	double min = 0.0;
 	SET_THREAD_NUM;
@@ -294,15 +262,15 @@ void linear_assign(
 		for(i = 0; i < N; i++) {
 			// Find the minimum distances between d_tmp and a centroid
 			linear_search<DataType>(centers,data[i],d_type,tmp,min,k,d,verbose);
-			// Assign the data[i] size_to cluster tmp
-			clusters[tmp].push_back(static_cast<size_t>(i));
+			// Assign the data[i] into cluster tmp
+			clusters[tmp].push_back(static_cast<int>(i));
 		}
 	}
 }
 
 /**
  * After having a set of centers,
- * we need to assign data size_to each cluster respectively.
+ * we need to assign data into each cluster respectively.
  * This solution uses kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
@@ -320,17 +288,13 @@ void kd_nn_assign(
 		DataType ** centers,
 		vector<i_vector>& clusters,
 		DistanceType d_type,
-		size_t d,
-		size_t N,
-		size_t k,
+		int d,
+		int N,
+		int k,
 		int n_thread,
 		bool verbose) {
-#ifdef _WIN32
 	int i;
-#else
-	size_t i;
-#endif
-	size_t tmp;
+	int tmp;
 	KDNode<DataType> * root = nullptr;
 	make_random_tree<DataType>(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
@@ -342,21 +306,21 @@ void kd_nn_assign(
 #pragma omp for private(i)
 		for(i = 0; i < N; i++) {
 			KDNode<DataType> * nn = nullptr;
-			double min = DBL_MAX;
-			size_t visited = 0;
+			double min = FLT_MAX;
+			int visited = 0;
 			query.add_data(data[i]);
 			// Find the minimum distances between d_tmp and a centroid
 			nn_search<DataType>(root,&query,nn,d_type,min,d,0,visited,verbose);
 			tmp = nn->id;
-			// Assign the data[i] size_to cluster tmp
-			clusters[tmp].push_back(static_cast<size_t>(i));
+			// Assign the data[i] into cluster tmp
+			clusters[tmp].push_back(static_cast<int>(i));
 		}
 	}
 }
 
 /**
  * After having a set of centers,
- * we need to assign data size_to each cluster respectively.
+ * we need to assign data into each cluster respectively.
  * This solution uses ANN kd-tree search to assign data.
  * @param d the dimensions of the data
  * @param N the number of the data
@@ -374,18 +338,14 @@ void kd_ann_assign(
 		DataType ** centers,
 		vector<i_vector>& clusters,
 		DistanceType d_type,
-		size_t d,
-		size_t N,
-		size_t k,
+		int d,
+		int N,
+		int k,
 		int n_thread,
 		double alpha,
 		bool verbose) {
-#ifdef _WIN32
 	int i;
-#else
-	size_t i;
-#endif
-	size_t tmp;
+	int tmp;
 	KDNode<DataType> * root = nullptr;
 	make_random_tree<DataType>(root,centers,k,d,0,verbose);
 	if(root == nullptr) return;
@@ -398,14 +358,14 @@ void kd_ann_assign(
 #pragma omp for private(i)
 		for(i = 0; i < N; i++) {
 			KDNode<DataType> * nn = nullptr;
-			double min = DBL_MAX;
-			size_t visited = 0;
+			double min = FLT_MAX;
+			int visited = 0;
 			query.add_data(data[i]);
 			// Find the minimum distances between d_tmp and a centroid
 			ann_search<DataType>(root,&query,nn,d_type,min,alpha,d,0,visited,verbose);
 			tmp = nn->id;
-			// Assign the data[i] size_to cluster tmp
-			clusters[tmp].push_back(static_cast<size_t>(i));
+			// Assign the data[i] into cluster tmp
+			clusters[tmp].push_back(static_cast<int>(i));
 		}
 	}
 }
@@ -430,32 +390,19 @@ void kd_ann_assign(
 template<typename DataType>
 void greg_initialize(
 		DataType ** data,
-<<<<<<< HEAD
-		DataType ** centers,
-		double **& sum,
-		double *& upper,
-		double *& lower,
-		size_t *& label,
-		size_t *& size,
-=======
 		float ** centers,
 		float **& sum,
 		float *& upper,
 		float *& lower,
 		int *& label,
 		int *& size,
->>>>>>> c09d755... bug fixs
 		DistanceType d_type,
-		size_t N,
-		size_t k,
-		size_t d,
+		int N,
+		int k,
+		int d,
 		int n_thread,
 		bool verbose) {
-#ifdef _WIN32
 	int i, j;
-#else
-	size_t i, j;
-#endif
 	// Initializing size and vector sum
 	for(i = 0; i < k; i++) {
 		size[i] = 0;
@@ -469,17 +416,10 @@ void greg_initialize(
 	{
 #pragma omp for private(i,j)
 		for(i = 0; i < N; i++) {
-<<<<<<< HEAD
-			double min = DBL_MAX;
-			double min2 = DBL_MAX;
-			double d_tmp;
-			size_t tmp = -1;
-=======
-			float min = DBL_MAX;
-			float min2 = DBL_MAX;
+			float min = FLT_MAX;
+			float min2 = FLT_MAX;
 			float d_tmp = 0.0;
 			int tmp = -1;
->>>>>>> c09d755... bug fixs
 			for(j = 0; j < k; j++) {
 				if(d_type == DistanceType::NORM_L2) {
 					d_tmp = distance_l2<float,DataType>(centers[j],data[i],d);
@@ -504,11 +444,7 @@ void greg_initialize(
 
 			// Update the vector sum
 			for(j = 0; j < d; j++) {
-<<<<<<< HEAD
-				sum[tmp][j] += data[i][j];
-=======
 				sum[tmp][j] += static_cast<float>(data[i][j]);
->>>>>>> c09d755... bug fixs
 			}
 		}
 	}
@@ -527,30 +463,6 @@ void greg_initialize(
  * @return nothing
  */
 void update_center(
-<<<<<<< HEAD
-		double ** sum,
-		size_t * size,
-		DataType **& centers,
-		double *& moved,
-		DistanceType d_type,
-		size_t k,
-		size_t d,
-		int n_thread) {
-	DataType * c_tmp;
-	init_array<DataType>(c_tmp,d);
-	size_t i;
-	for(i = 0; i < k; i++) {
-		copy_array<DataType>(centers[i],c_tmp,d);
-		for(size_t j = 0; j < d; j++) {
-			centers[i][j] = static_cast<DataType>(sum[i][j] + centers[i][j]) / static_cast<DataType>(size[i] + 1);
-		}
-		if(d_type == DistanceType::NORM_L2)
-			moved[i] = distance_l2<DataType>(c_tmp,centers[i],d);
-		else if(d_type == DistanceType::NORM_L1)
-			moved[i] = distance_l1<DataType>(c_tmp,centers[i],d);
-	}
-}
-=======
 		float ** sum,
 		int * size,
 		float **& centers,
@@ -559,12 +471,11 @@ void update_center(
 		int k,
 		int d,
 		int n_thread);
->>>>>>> c09d755... bug fixs
 
 /**
  * Update the bounds
  * @param moved the distances that centers moved
- * @param label the labels of posize_t data
+ * @param label the labels of point data
  * @param upper
  * @param lower
  * @param N
@@ -573,21 +484,12 @@ void update_center(
  * @param n_thread the number of threads
  */
 void update_bounds(
-<<<<<<< HEAD
-		double * moved,
-		size_t * label,
-		double *& upper,
-		double *& lower,
-		size_t N,
-		size_t k,
-=======
 		float * moved,
 		int * label,
 		float *& upper,
 		float *& lower,
 		int N,
 		int k,
->>>>>>> c09d755... bug fixs
 		int n_thread);
 
 /**
@@ -605,25 +507,16 @@ void update_bounds(
 template<typename DataType>
 float distortion(
 		DataType ** data,
-<<<<<<< HEAD
-		DataType ** centers,
-		size_t * label,
-=======
 		float ** centers,
 		int * label,
->>>>>>> c09d755... bug fixs
 		DistanceType d_type,
-		size_t d,
-		size_t N,
-		size_t k,
+		int d,
+		int N,
+		int k,
 		int n_thread,
 		bool verbose) {
 	float e = 0.0;
-#ifdef _WIN32
 	int i, j, start, end;
-#else
-	size_t i, j, start, end;
-#endif
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
@@ -662,22 +555,16 @@ float distortion(
 template<typename DataType>
 void simple_k_means(
 		DataType ** data,
-<<<<<<< HEAD
-		DataType **& centers,
-		size_t *& label,
-		DataType **& seeds,
-=======
 		float **& centers,
 		int *& label,
 		float **& seeds,
->>>>>>> c09d755... bug fixs
 		KmeansType type,
 		KmeansAssignType assign,
 		KmeansCriteria criteria,
 		DistanceType d_type,
-		size_t N,
-		size_t k,
-		size_t d,
+		int N,
+		int k,
+		int d,
 		int n_thread,
 		bool verbose) {
 	// Pre-check conditions
@@ -702,30 +589,10 @@ void simple_k_means(
 		cout << "Finished seeding" << endl;
 
 	// Criteria's setup
-	size_t iters = criteria.iterations, i = 0, count = 0;
+	int iters = criteria.iterations, i = 0, count = 0;
 	float error = criteria.accuracy, e = error, e_prev;
 
 	// Variables for Greg's method
-<<<<<<< HEAD
-	double ** c_sum;
-	double * moved;
-	double * closest;
-	double * upper;
-	double * lower;
-	size_t * size;
-
-	init_array_2<double>(c_sum,k,d);
-	init_array<double>(moved,k);
-	init_array<double>(closest,k);
-	init_array<double>(upper,N);
-	init_array<double>(lower,N);
-	init_array<size_t>(size,k);
-
-	// Initialize the centers
-	copy_array_2<DataType>(seeds,centers,k,d);
-	greg_initialize<DataType>(data,centers,c_sum,upper,lower,label,size,d_type,N,k,d,n_thread,verbose);
-#ifdef _WIN32
-=======
 	float ** c_sum;
 	float * moved;
 	float * closest;
@@ -746,26 +613,16 @@ void simple_k_means(
 			label,size,d_type,N,k,d,n_thread,verbose);
 	if(verbose)
 		cout << "Finished initialization" << endl;
->>>>>>> c09d755... bug fixs
 	int j;
-#else
-	size_t j;
-#endif
 
 	while (1) {
-<<<<<<< HEAD
-		// Assign the data posize_ts to clusters
-		size_t tmp = 0;
-		double min, min2, min_tmp, d_tmp, m;
-=======
 		// Assign the data points to clusters
 		int tmp = 0;
 		float min, min2, min_tmp = 0.0, d_tmp = 0.0, m;
->>>>>>> c09d755... bug fixs
 		// Update the closest distances
 		for(j = 0; j < k; j++) {
-			min2 = min = DBL_MAX;
-			for(size_t t = 0; t < k; t++) {
+			min2 = min = FLT_MAX;
+			for(int t = 0; t < k; t++) {
 				if(t != j) {
 					if(d_type == DistanceType::NORM_L2)
 						min_tmp = distance_l2<float>(centers[j],centers[t],d);
@@ -794,11 +651,11 @@ void simple_k_means(
 						upper[j] = distance_l1<DataType,float>(data[j],centers[label[j]],d);
 					// Second bound test
 					if(upper[j] > m) {
-						size_t l = label[j];
-						min2 = min = DBL_MAX;
+						int l = label[j];
+						min2 = min = FLT_MAX;
 						tmp = -1;
 						// Assign the data to clusters
-						for(size_t t = 0; t < k; t++) {
+						for(int t = 0; t < k; t++) {
 							if(d_type == DistanceType::NORM_L2)
 								d_tmp = distance_l2<float,DataType>(centers[t],data[j],d);
 							else if(d_type == DistanceType::NORM_L1)
@@ -812,7 +669,7 @@ void simple_k_means(
 							}
 						}
 
-						// Assign the data[i] size_to cluster tmp
+						// Assign the data[i] into cluster tmp
 						label[j] = tmp; // Update the label
 						upper[j] = min; // Update the upper bound on this distance
 						lower[j] = min2; // Update the lower bound on this distance
@@ -825,15 +682,9 @@ void simple_k_means(
 									cout << "An empty cluster was found!"
 									" label = " << l << endl;
 							}
-<<<<<<< HEAD
-							for(size_t t = 0; t < d; t++) {
-								c_sum[tmp][t] += data[j][t];
-								c_sum[l][t] -= data[j][t];
-=======
 							for(int t = 0; t < d; t++) {
 								c_sum[tmp][t] += static_cast<float>(data[j][t]);
 								c_sum[l][t] -= static_cast<float>(data[j][t]);
->>>>>>> c09d755... bug fixs
 							}
 						}
 					}
@@ -850,7 +701,7 @@ void simple_k_means(
 		// Calculate the distortion
 		e_prev = e;
 		e = 0.0;
-		for(size_t j = 0; j < k; j++) {
+		for(int j = 0; j < k; j++) {
 			e += moved[j];
 		}
 		e = sqrt(e);

@@ -49,9 +49,9 @@ using namespace SimpleCluster;
 /**
  * A converter
  */
-/*void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
-	for(size_t i = 0; i < M; i++) {
-		for(size_t j = 0; j < N; j++) {
+/*void convert_array_to_mat(float ** data, Mat& result, int M, int N) {
+	for(int i = 0; i < M; i++) {
+		for(int j = 0; j < N; j++) {
 			result.push_back(data[i][j]);
 		}
 	}
@@ -71,7 +71,7 @@ protected:
 		N = 10000;
 		d = 128;
 		k = 256;
-		size_t i, j;
+		int i, j;
 
 		// For generating random numbers
 		random_device rd;
@@ -96,7 +96,7 @@ protected:
 			cerr << "Cannot allocate memory for centers data!" << endl;
 			exit(1);
 		}
-		label = (size_t *)calloc(N,sizeof(size_t));
+		label = (int *)calloc(N,sizeof(int));
 		if(label == NULL) {
 			cerr << "Cannot allocate memory for label data!" << endl;
 			exit(1);
@@ -132,17 +132,17 @@ public:
 	static float ** data;
 	static float ** seeds;
 	static float ** centers;
-	static size_t * label;
-	static size_t N, d, k;
+	static int * label;
+	static int N, d, k;
 };
 
 float ** KmeansTest::data;
 float ** KmeansTest::seeds;
 float ** KmeansTest::centers;
-size_t * KmeansTest::label;
-size_t KmeansTest::N;
-size_t KmeansTest::d;
-size_t KmeansTest::k;
+int * KmeansTest::label;
+int KmeansTest::N;
+int KmeansTest::d;
+int KmeansTest::k;
 
 TEST_F(KmeansTest, test1) {
 	random_seeds<float>(data,seeds,d,N,k,8,true);
@@ -207,7 +207,7 @@ TEST_F(KmeansTest, test5) {
 	{
 #pragma omp for private(i)
 		for(i = 0; i < _labels.rows; i++) {
-			int id = _labels.at<size_t>(i,0);
+			int id = _labels.at<int>(i,0);
 			Mat tmp = _data.row(i);
 			Mat c = _centers.row(id);
 			float d_t = norm(tmp,c,NORM_L2);
@@ -219,7 +219,7 @@ TEST_F(KmeansTest, test5) {
 
 TEST_F(KmeansTest, DISABLED_test7) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	for(size_t i = 0; i < 10; i++) {
+	for(int i = 0; i < 10; i++) {
 		simple_k_means<float>(
 				data,centers,label,seeds,
 				KmeansType::KMEANS_PLUS_SEEDS,

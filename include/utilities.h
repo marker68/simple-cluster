@@ -128,6 +128,34 @@ double distance_l1(
 }
 
 /**
+ * Calculate the L1-metric distance with two different data type
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType1, typename DataType2>
+double distance_l1(
+		DataType1 * x,
+		DataType2 * y,
+		int d) {
+	int i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = static_cast<double>(x[i])
+					- static_cast<double>(y[i]);
+			dis += fabs(tmp);
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return dis;
+}
+
+/**
  * Calculate the L1-metric distance between two vectors with multi-threading
  * @param x
  * @param y
@@ -190,6 +218,34 @@ double distance_l2(
 }
 
 /**
+ * Calculate the L2-metric distance with 2 different data types
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType1, typename DataType2>
+double distance_l2(
+		DataType1 * x,
+		DataType2 * y,
+		int d) {
+	int i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = static_cast<double>(x[i])
+					- static_cast<double>(y[i]);
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return sqrt(dis);
+}
+
+/**
  * Calculate the L2-metric distance
  * @param x
  * @param y
@@ -206,6 +262,34 @@ double distance_l2_square(
 	try {
 		for(i = 0; i < d; i++) {
 			tmp = x[i] - y[i];
+			dis += tmp * tmp;
+		}
+	} catch(exception& e) {
+		cerr << "Got an exception: " << e.what() << endl;
+		exit(1);
+	}
+
+	return dis;
+}
+
+/**
+ * Calculate the L2-metric distance with 2 different data types
+ * @param x
+ * @param y
+ * @param d
+ * @return the distance between x and y in d dimensional space
+ */
+template<typename DataType1, typename DataType2>
+double distance_l2_square(
+		DataType1 * x,
+		DataType2 * y,
+		int d) {
+	int i;
+	double dis = 0.0, tmp = 0.0;
+	try {
+		for(i = 0; i < d; i++) {
+			tmp = static_cast<double>(x[i])
+					- static_cast<double>(y[i]);
 			dis += tmp * tmp;
 		}
 	} catch(exception& e) {
