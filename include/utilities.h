@@ -28,6 +28,7 @@
 #include <vector>
 #include <exception>
 #include <cmath>
+#include <cstring>
 #include <cstdio>
 
 #ifdef _OPENMP
@@ -457,9 +458,10 @@ bool copy_array(
 	if(from == nullptr || to == nullptr)
 		return false;
 	try {
-		for(int i = 0; i < N; i++) {
-			to[i] = from[i];
-		}
+//		for(int i = 0; i < N; i++) {
+//			to[i] = from[i];
+//		}
+		memcpy(to,from,N*sizeof(DataType));
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
 		return false;
