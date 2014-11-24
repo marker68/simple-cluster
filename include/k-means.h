@@ -295,117 +295,6 @@ void linear_assign(
 }
 
 /**
- * After having a set of centers,
- * we need to assign data into each cluster respectively.
- * This solution uses kd-tree search to assign data.
- * @param d the dimensions of the data
- * @param N the number of the data
- * @param k the number of clusters
- * @param data input data
- * @param centers the centers
- * @param clusters the clusters
- * @param d_type the type of distance. Available options are NORM_L1, NORM_L2, HAMMING
- * @param n_thread the number of threads
- * @param verbose for debugging
- */
-template<typename DataType>
-void kd_nn_assign(
-		DataType ** data,
-		DataType ** centers,
-		vector<i_vector>& clusters,
-		DistanceType d_type,
-		int d,
-		int N,
-		int k,
-		int n_thread,
-		bool verbose) {
-	int i;
-	int tmp;
-	KDNode<DataType> * root = nullptr;
-	make_random_tree<DataType>(root,centers,k,d,0,verbose);
-	if(root == nullptr) return;
-
-	KDNode<DataType> query(d);
-#ifdef _OPENMP
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for private(i)
-#endif
-		for(i = 0; i < N; i++) {
-			KDNode<DataType> * nn = nullptr;
-			double min = FLT_MAX;
-			int visited = 0;
-			query.add_data(data[i]);
-			// Find the minimum distances between d_tmp and a centroid
-			nn_search<DataType>(root,&query,nn,d_type,min,d,0,visited,verbose);
-			tmp = nn->id;
-			// Assign the data[i] into cluster tmp
-			clusters[tmp].push_back(static_cast<int>(i));
-		}
-#ifdef _OPENMP
-	}
-#endif
-}
-
-/**
- * After having a set of centers,
- * we need to assign data into each cluster respectively.
- * This solution uses ANN kd-tree search to assign data.
- * @param d the dimensions of the data
- * @param N the number of the data
- * @param k the number of clusters
- * @param data input data
- * @param centers the centers
- * @param clusters the clusters
- * @param d_type the type of distance. Available options are NORM_L1, NORM_L2, HAMMING
- * @param n_thread the number of threads
- * @param verbose for debugging
- */
-template<typename DataType>
-void kd_ann_assign(
-		DataType ** data,
-		DataType ** centers,
-		vector<i_vector>& clusters,
-		DistanceType d_type,
-		int d,
-		int N,
-		int k,
-		int n_thread,
-		double alpha,
-		bool verbose) {
-	int i;
-	int tmp;
-	KDNode<DataType> * root = nullptr;
-	make_random_tree<DataType>(root,centers,k,d,0,verbose);
-	if(root == nullptr) return;
-
-	KDNode<DataType> query(d);
-
-#ifdef _OPENMP
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for private(i)
-#endif
-		for(i = 0; i < N; i++) {
-			KDNode<DataType> * nn = nullptr;
-			double min = FLT_MAX;
-			int visited = 0;
-			query.add_data(data[i]);
-			// Find the minimum distances between d_tmp and a centroid
-			ann_search<DataType>(root,&query,nn,d_type,min,alpha,d,0,visited,verbose);
-			tmp = nn->id;
-			// Assign the data[i] into cluster tmp
-			clusters[tmp].push_back(static_cast<int>(i));
-		}
-#ifdef _OPENMP
-	}
-#endif
-}
-
-
-/**
  * Initialize for Greg's method
  * @param data the point data
  * @param centers the centers of clusters
@@ -551,29 +440,15 @@ float distortion(
 		int d,
 		int N,
 		int k,
-		int n_thread,
 		bool verbose) {
 	float e = 0.0;
-	int i, j, start, end;
-#ifdef _OPENMP
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for private(i,j,start,end)
-#endif
-		for(i = 0; i < n_thread; i++) {
-			start = N / n_thread * i;
-			end = N > start + N / n_thread ? (start + N / n_thread) : N;
-			for(j = start; j < end; j++) {
-				if(d_type == DistanceType::NORM_L2)
-					e += distance_l2_square<DataType,float>(data[j],centers[label[j]],d);
-				else if(d_type == DistanceType::NORM_L1)
-					e += distance_l1<DataType,float>(data[j],centers[label[j]],d);
-			}
-		}
-#ifdef _OPENMP
+	int j;
+	for(j = 0; j < N; j++) {
+		if(d_type == DistanceType::NORM_L2)
+			e += distance_l2_square<DataType,float>(data[j],centers[label[j]],d);
+		else if(d_type == DistanceType::NORM_L1)
+			e += distance_l1<DataType,float>(data[j],centers[label[j]],d);
 	}
-#endif
 	return sqrt(e);
 }
 
@@ -634,7 +509,6 @@ void greg_kmeans(
 		int *& label,
 		float **& seeds,
 		KmeansType type,
-		KmeansAssignType assign,
 		KmeansCriteria criteria,
 		DistanceType d_type,
 		int N,
@@ -818,7 +692,8 @@ void greg_kmeans(
 		if(verbose)
 			cout << "Iterator " << it
 			<< "-th with error = " << e
-			<< " and distortion = " << distortion(data,centers,label,d_type,d,N,k,n_thread,false)
+			<< " and distortion = "
+			<< distortion(data,centers,label,d_type,d,N,k,false)
 			<< endl;
 		it++;
 		if(it >= iters || e < error || count >= 10) break;
@@ -961,7 +836,7 @@ void simple_kmeans(
 			<< "-th with error = " << e
 			<< " and distortion = " <<
 			distortion(data,centers,labels,d_type,
-					d,N,k,n_thread,false)
+					d,N,k,false)
 					<< endl;
 		it++;
 

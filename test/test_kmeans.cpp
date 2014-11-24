@@ -183,7 +183,6 @@ TEST_F(KmeansTest, test5) {
 	greg_kmeans<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::LINEAR,
 			criteria,
 			DistanceType::NORM_L2,
 			N,k,d,8,
