@@ -188,7 +188,7 @@ TEST_F(KmeansTest, test5) {
 			DistanceType::NORM_L2,
 			N,k,d,8,
 			false);
-	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
+	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,1,false) << endl;
 }
 
 /*TEST_F(KmeansTest, test6) {

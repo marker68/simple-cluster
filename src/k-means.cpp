@@ -103,10 +103,12 @@ void update_bounds(
 			}
 		}
 	}
+#ifdef _OPENMP
 	SET_THREAD_NUM;
 #pragma omp parallel
 	{
 #pragma omp for private(i)
+#endif
 		for(i = 0; i < N; i++) {
 			upper[i] += moved[label[i]];
 			sub = 0.0;
@@ -117,6 +119,8 @@ void update_bounds(
 			}
 			lower[i] = fabs(lower[i] - sub);
 		}
+#ifdef _OPENMP
 	}
+#endif
 }
 }
