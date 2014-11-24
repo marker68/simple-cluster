@@ -39,9 +39,6 @@
 
 #ifdef _OPENMP
 #include <omp.h>
-#define SET_THREAD_NUM omp_set_num_threads(n_thread)
-#else
-#define SET_THREAD_NUM 0 // disable multi-thread
 #endif
 
 #ifndef FLT_MAX
@@ -117,7 +114,7 @@ void random_seeds(
 	for(i = 0; i < k; i++)
 		tmp[i] = static_cast<int>(i);
 #ifdef _OPENMP
-	SET_THREAD_NUM;
+	omp_set_num_threads(n_thread);
 #pragma omp parallel
 	{
 #pragma omp for private(i)
@@ -184,7 +181,7 @@ void kmeans_pp_seeds(
 
 	int i;
 #ifdef _OPENMP
-	SET_THREAD_NUM;
+	omp_set_num_threads(n_thread);
 #pragma omp parallel
 	{
 #pragma omp for private(i)
@@ -335,7 +332,7 @@ void greg_initialize(
 	}
 
 #ifdef _OPENMP
-	SET_THREAD_NUM;
+	omp_set_num_threads(n_thread);
 #pragma omp parallel
 	{
 #pragma omp for private(i,j)
@@ -585,7 +582,7 @@ void greg_kmeans(
 		}
 
 #ifdef _OPENMP
-		SET_THREAD_NUM;
+		omp_set_num_threads(n_thread);
 #pragma omp parallel
 		{
 #pragma omp for private(i,j,d_tmp,m,min,min2,tmp)

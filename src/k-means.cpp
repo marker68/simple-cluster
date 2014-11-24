@@ -26,9 +26,6 @@
 
 #ifdef _OPENMP
 #include <omp.h>
-#define SET_THREAD_NUM omp_set_num_threads(n_thread)
-#else
-#define SET_THREAD_NUM 0 // disable multi-thread
 #endif
 
 namespace SimpleCluster {
@@ -104,7 +101,7 @@ void update_bounds(
 		}
 	}
 #ifdef _OPENMP
-	SET_THREAD_NUM;
+	omp_set_num_threads(n_thread);
 #pragma omp parallel
 	{
 #pragma omp for private(i)
