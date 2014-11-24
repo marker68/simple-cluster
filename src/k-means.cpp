@@ -60,7 +60,7 @@ void update_center(
 	for(i = 0; i < k; i++) {
 		copy_array<float>(centers[i],c_tmp,d);
 		for(int j = 0; j < d; j++) {
-			centers[i][j] = static_cast<float>((sum[i][j] + centers[i][j]) / (size[i] + 1));
+			centers[i][j] = static_cast<float>(sum[i][j] / size[i]);
 		}
 		if(d_type == DistanceType::NORM_L2)
 			moved[i] = distance_l2<float>(c_tmp,centers[i],d);

@@ -266,9 +266,9 @@ void linear_assign(
 	int tmp;
 
 	float min = FLT_MAX, min_tmp = 0.0;
-	min = FLT_MAX;
 	for(i = 0; i < N; i++) {
 		// Find the minimum distances between d_tmp and a centroid
+		min = FLT_MAX;
 		for(j = 0; j < k; j++) {
 			if(d_type == DistanceType::NORM_L2)
 				min_tmp = distance_l2<DataType,float>(data[i],centers[j],d);
@@ -592,7 +592,6 @@ void find_farthest(
 		int N,
 		int k,
 		int d,
-		int n_thread,
 		bool verbose) {
 	int i;
 	float d_tmp;
@@ -784,13 +783,13 @@ void greg_kmeans(
 				}
 				// Move the centers
 				find_farthest<DataType>(data,centers[i],label,d_type,
-						s_max,dfst,fst,N,k,d,n_thread,verbose);
+						s_max,dfst,fst,N,k,d,verbose);
 				for(j = 0; j < d; j++) {
 					centers[i][j] = static_cast<float>(data[fst][j]);
-					c_sum[i][j] += centers[i][j];
+					c_sum[i][j] = centers[i][j];
 					c_sum[s_max][j] -= centers[i][j];
 				}
-				size[i]++;
+				size[i] = 1;
 				size[s_max]--;
 				label[fst] = i;
 			}
@@ -924,7 +923,7 @@ void simple_kmeans(
 				}
 				// Move the centers
 				find_farthest<DataType>(data,centers[i],labels,d_type,
-						s_max,dfst,fst,N,k,d,n_thread,verbose);
+						s_max,dfst,fst,N,k,d,verbose);
 				for(j = 0; j < d; j++) {
 					centers[i][j] = static_cast<float>(data[fst][j]);
 					sum[i][j] += centers[i][j];
