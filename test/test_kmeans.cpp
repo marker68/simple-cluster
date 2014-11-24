@@ -76,7 +76,7 @@ protected:
 		// For generating random numbers
 		random_device rd;
 		mt19937 gen(rd());
-		uniform_real_distribution<float> real_dis(0.0, static_cast<float>(N));
+		uniform_real_distribution<float> real_dis(0.0, 255.0);
 
 		if(!init_array_2<float>(data,N,d)) {
 			cerr << "Cannot allocate memory for test data!" << endl;
@@ -154,7 +154,7 @@ TEST_F(KmeansTest, test2) {
 
 TEST_F(KmeansTest, DISABLED_test3) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means<float>(
+	simple_kmeans<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::ANN_KD_TREE,
@@ -167,7 +167,7 @@ TEST_F(KmeansTest, DISABLED_test3) {
 
 TEST_F(KmeansTest, DISABLED_test4) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means<float>(
+	simple_kmeans<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::NN_KD_TREE,
@@ -180,14 +180,27 @@ TEST_F(KmeansTest, DISABLED_test4) {
 
 TEST_F(KmeansTest, test5) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means<float>(
+	greg_kmeans<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::LINEAR,
 			criteria,
 			DistanceType::NORM_L2,
 			N,k,d,8,
-			false);
+			true);
+	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,1,false) << endl;
+}
+
+TEST_F(KmeansTest, test6) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_kmeans<float>(
+			data,centers,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			KmeansAssignType::LINEAR,
+			criteria,
+			DistanceType::NORM_L2,
+			N,k,d,8,
+			true);
 	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,1,false) << endl;
 }
 
@@ -220,7 +233,7 @@ TEST_F(KmeansTest, test5) {
 TEST_F(KmeansTest, DISABLED_test7) {
 	KmeansCriteria criteria = {2.0,1.0,100};
 	for(int i = 0; i < 10; i++) {
-		simple_k_means<float>(
+		simple_kmeans<float>(
 				data,centers,label,seeds,
 				KmeansType::KMEANS_PLUS_SEEDS,
 				KmeansAssignType::LINEAR,

@@ -251,33 +251,47 @@ void kmeans_pp_seeds(
 template<typename DataType>
 void linear_assign(
 		DataType ** data,
-		DataType ** centers,
-		vector<i_vector>& clusters,
+		float ** centers,
+		int *& labels,
+		int *& size,
+		float **& sum,
 		DistanceType d_type,
 		int d,
 		int N,
 		int k,
 		int n_thread,
 		bool verbose) {
-	int i;
+	if(n_thread < 1) n_thread = 1;
+	int i, j, m, i0, start, end;
 	int tmp;
 
-	double min = 0.0;
-#ifdef _OPENMP
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for private(i)
-#endif
-		for(i = 0; i < N; i++) {
-			// Find the minimum distances between d_tmp and a centroid
-			linear_search<DataType>(centers,data[i],d_type,tmp,min,k,d,verbose);
-			// Assign the data[i] into cluster tmp
-			clusters[tmp].push_back(static_cast<int>(i));
+	float min = FLT_MAX, min_tmp = 0.0;
+	min = FLT_MAX;
+	for(i = 0; i < N; i++) {
+		// Find the minimum distances between d_tmp and a centroid
+		for(j = 0; j < k; j++) {
+			if(d_type == DistanceType::NORM_L2)
+				min_tmp = distance_l2<DataType,float>(data[i],centers[j],d);
+			else if(d_type == DistanceType::NORM_L1)
+				min_tmp = distance_l1<DataType,float>(data[i],centers[j],d);
+			if(min > min_tmp) {
+				min = min_tmp;
+				tmp = j;
+			}
 		}
-#ifdef _OPENMP
+		// Assign the data[i] into cluster tmp
+		if(labels[i] > -1) {
+			size[labels[i]]--;
+			for(m = 0; m < d; m++) {
+				sum[labels[i]][m] -= static_cast<float>(data[i][m]);
+			}
+		}
+		labels[i] = tmp;
+		size[tmp]++;
+		for(m = 0; m < d; m++) {
+			sum[tmp][m] += static_cast<float>(data[i][m]);
+		}
 	}
-#endif
 }
 
 /**
@@ -564,6 +578,40 @@ float distortion(
 }
 
 /**
+ * Update the farthest distances
+ */
+template<typename DataType>
+void find_farthest(
+		DataType ** data,
+		float * centers,
+		int * labels,
+		DistanceType d_type,
+		int id,
+		float& dfst,
+		int& fst,
+		int N,
+		int k,
+		int d,
+		int n_thread,
+		bool verbose) {
+	int i;
+	float d_tmp;
+	dfst = FLT_MIN;
+	for(i = 0; i < N; i++) {
+		if(labels[i] == id) {
+			if(d_type == DistanceType::NORM_L2)
+				d_tmp = distance_l2<DataType,float>(data[i],centers,d);
+			else if(d_type == DistanceType::NORM_L1)
+				d_tmp = distance_l1<DataType,float>(data[i],centers,d);
+			if(dfst < d_tmp) {
+				dfst = d_tmp;
+				fst = i;
+			}
+		}
+	}
+}
+
+/**
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
  * @param type the type of seeding method
@@ -581,7 +629,7 @@ float distortion(
  * @param verbose for debugging
  */
 template<typename DataType>
-void simple_k_means(
+void greg_kmeans(
 		DataType ** data,
 		float **& centers,
 		int *& label,
@@ -624,56 +672,26 @@ void simple_k_means(
 	float ** c_sum;
 	float * moved;
 	float * closest;
-	int * farthest;
-	float * df;
 	float * upper;
 	float * lower;
 	int * size;
 
 	init_array_2<float>(c_sum,k,d);
 	init_array<float>(moved,k);
-	init_array<float>(df,k);
 	init_array<float>(closest,k);
 	init_array<float>(upper,N);
 	init_array<float>(lower,N);
 	init_array<int>(size,k);
-	init_array<int>(farthest,k);
 
-	int i, j;
-	int tmp = 0, max_pos, tmp2;
+	int i, j, s_max, l_tmp, fst;
+	int tmp = 0;
 	float min, min2, min_tmp = 0.0,
-			d_tmp = 0.0, m;
+			d_tmp = 0.0, m, dfst;
 
 	// Initialize the centers
 	copy_array_2<float>(seeds,centers,k,d);
 	greg_initialize<DataType>(data,centers,c_sum,upper,lower,
 			label,size,d_type,N,k,d,n_thread,verbose);
-	// Initialize the farthest observers
-	for(i = 0; i < k; i++) {
-		df[i] = DBL_MIN;
-		farthest[i] = -1;
-	}
-#ifdef _OPENMP
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for private(i,j)
-#endif
-		for(i = 0; i < N; i++) {
-			for(j = 0; j < k; j++) {
-				if(d_type == DistanceType::NORM_L2)
-					d_tmp = distance_l2<DataType,float>(data[i],centers[j],d);
-				else if(d_type == DistanceType::NORM_L1)
-					d_tmp = distance_l1<DataType,float>(data[i],centers[j],d);
-				if(df[j] < d_tmp) {
-					df[j] = d_tmp;
-					farthest[j] = i;
-				}
-			}
-		}
-#ifdef _OPENMP
-	}
-#endif
 	if(verbose)
 		cout << "Finished initialization" << endl;
 
@@ -697,7 +715,7 @@ void simple_k_means(
 		SET_THREAD_NUM;
 #pragma omp parallel
 		{
-#pragma omp for private(i,j,d_tmp,m,min,min2,tmp,max_pos, tmp2)
+#pragma omp for private(i,j,d_tmp,m,min,min2,tmp)
 #endif
 			for(i = 0; i < N; i++) {
 				// Update m for bound test
@@ -742,15 +760,6 @@ void simple_k_means(
 								if(verbose)
 									cout << "An empty cluster was found!"
 									" label = " << l << endl;
-								// Create a new cluster based on the furthest observer
-								max_pos = farthest[l];
-								tmp2 = label[max_pos];
-								for(j = 0; j < d; j++) {
-									c_sum[l][j] += static_cast<float>(data[max_pos][j]);
-									c_sum[tmp2][j] -= static_cast<float>(data[max_pos][j]);
-								}
-								size[tmp2]--;
-								size[l]++;
 							}
 							for(j = 0; j < d; j++) {
 								c_sum[tmp][j] += static_cast<float>(data[i][j]);
@@ -763,34 +772,41 @@ void simple_k_means(
 #ifdef _OPENMP
 		}
 #endif
-
-		// Move the centers
-		update_center(c_sum,size,centers,moved,d_type,k,d,n_thread);
-
-#ifdef _OPENMP
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for private(i,j)
-#endif
-		for(i = 0; i < N; i++) {
-			for(j = 0; j < k; j++) {
-				if(d_type == DistanceType::NORM_L2)
-					d_tmp = distance_l2<DataType,float>(data[i],centers[j],d);
-				else if(d_type == DistanceType::NORM_L1)
-					d_tmp = distance_l1<DataType,float>(data[i],centers[j],d);
-				if(df[j] < d_tmp) {
-					df[j] = d_tmp;
-					farthest[j] = i;
+		// Check for empty clusters
+		for(i = 0; i < k; i++) {
+			if(size[i] <= 0) {
+				l_tmp = 0;
+				for(j = 0; j < k; j++) {
+					if(l_tmp < size[j]) {
+						l_tmp = size[j];
+						s_max = j;
+					}
 				}
+				// Move the centers
+				find_farthest<DataType>(data,centers[i],label,d_type,
+						s_max,dfst,fst,N,k,d,n_thread,verbose);
+				for(j = 0; j < d; j++) {
+					centers[i][j] = static_cast<float>(data[fst][j]);
+					c_sum[i][j] += centers[i][j];
+					c_sum[s_max][j] -= centers[i][j];
+				}
+				size[i]++;
+				size[s_max]--;
+				label[fst] = i;
 			}
 		}
-#ifdef _OPENMP
-	}
-#endif
-
+		// Move the centers
+		update_center(c_sum,size,centers,moved,d_type,k,d,n_thread);
 		// Update the bounds
 		update_bounds(moved,label,upper,lower,N,k,n_thread);
+
+		if(verbose) {
+			cout << "Spec " << it << ":";
+			for(i = 0; i < k; i++) {
+				cout << size[i] << " ";
+			}
+			cout << endl;
+		}
 
 		// Calculate the distortion
 		e_prev = e;
@@ -812,6 +828,154 @@ void simple_k_means(
 	if(verbose)
 		cout << "Finished clustering with error is " <<
 		e << " after " << i << " iterations." << endl;
+}
+
+
+/**
+ * The k-means method: a description of the method can be found at
+ * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
+ * @param type the type of seeding method
+ * @param assign the type of assigning method
+ * @param d the dimensions of the data
+ * @param N the number of the data
+ * @param k the number of clusters
+ * @param criteria the criteria
+ * @param data input data
+ * @param centers the centers
+ * @param label the labels of data points
+ * @param seeds the initial centers = the seeds
+ * @param d_type the type of distance. Available options are NORM_L1, NORM_L2, HAMMING
+ * @param n_thread the number of threads
+ * @param verbose for debugging
+ */
+template<typename DataType>
+void simple_kmeans(
+		DataType ** data,
+		float **& centers,
+		int *& labels,
+		float **& seeds,
+		KmeansType type,
+		KmeansAssignType assign,
+		KmeansCriteria criteria,
+		DistanceType d_type,
+		int N,
+		int k,
+		int d,
+		int n_thread,
+		bool verbose) {
+	// Pre-check conditions
+	if (N < k) {
+		if(verbose)
+			cerr << "There will be some empty clusters!" << endl;
+		exit(1);
+	}
+
+	if(seeds == nullptr) {
+		init_array_2<float>(seeds,k,d);
+	}
+
+	// Seeding
+	if (type == KmeansType::RANDOM_SEEDS) {
+		random_seeds<DataType>(data,seeds,d,N,k,n_thread,verbose);
+	} else if(type == KmeansType::KMEANS_PLUS_SEEDS) {
+		kmeans_pp_seeds<DataType>(data,seeds,d_type,d,N,k,n_thread,verbose);
+	}
+
+	if(verbose)
+		cout << "Finished seeding" << endl;
+
+	// Criteria's setup
+	int iters = criteria.iterations, it = 0, count = 0;
+	float error = criteria.accuracy, e = error, e_prev,
+			d_tmp, dfst;
+	int i, j, f_tmp, fst,s_max, l_tmp;
+
+	// Initialize the centers
+	copy_array_2<float>(seeds,centers,k,d);
+	init_array<int>(labels,N);
+	for(i = 0; i < N; i++) labels[i] = -1;
+	int * size;
+	init_array<int>(size,k);
+	float ** sum;
+	float * c_tmp;
+	init_array<float>(c_tmp,d);
+	init_array_2<float>(sum,k,d);
+	for(i = 0; i < k; i++) {
+		for(j = 0; j < d; j++)
+			sum[i][j] = 0.0;
+		size[i] = 0;
+	}
+	if(verbose)
+		cout << "Finished initialization" << endl;
+
+	while (1) {
+		// Assigning
+		linear_assign<DataType>(data,centers,labels,size,sum,
+				d_type,d,N,k,n_thread,verbose);
+		// Check for empty clusters
+		for(i = 0; i < k; i++) {
+			if(size[i] <= 0) {
+				l_tmp = 0;
+				for(j = 0; j < k; j++) {
+					if(l_tmp < size[j]) {
+						l_tmp = size[j];
+						s_max = j;
+					}
+				}
+				// Move the centers
+				find_farthest<DataType>(data,centers[i],labels,d_type,
+						s_max,dfst,fst,N,k,d,n_thread,verbose);
+				for(j = 0; j < d; j++) {
+					centers[i][j] = static_cast<float>(data[fst][j]);
+					sum[i][j] += centers[i][j];
+					sum[s_max][j] -= centers[i][j];
+				}
+				size[i]++;
+				size[s_max]--;
+				labels[fst] = i;
+			}
+		}
+
+		if(verbose) {
+			cout << "Spec " << it << ":";
+			for(i = 0; i < k; i++) {
+				cout << size[i] << " ";
+			}
+			cout << endl;
+		}
+
+		// Update centers
+		e_prev = e;
+		e = 0.0;
+		for(i = 0; i < k; i++) {
+			for(j = 0; j < d; j++) {
+				c_tmp[j] = centers[i][j];
+				centers[i][j] = sum[i][j] / size[i];
+			}
+			e += distance_l2_square<float>(c_tmp,centers[i],d);
+		}
+		e = sqrt(e);
+		count += (fabs(e-e_prev) < error? 1 : 0);
+
+		if(verbose)
+			cout << "Iterator " << it
+			<< "-th with error = " << e
+			<< " and distortion = " <<
+			distortion(data,centers,labels,d_type,
+					d,N,k,n_thread,false)
+					<< endl;
+		it++;
+
+		if(
+				it >= iters ||
+				fabs(e-e_prev) < error ||
+				count >= 10
+		) break;
+	}
+
+	if(verbose)
+		cout << "Finished clustering with error is " <<
+		e << " after " << it << " iterations." << endl;
 }
 }
 
