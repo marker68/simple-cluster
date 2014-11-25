@@ -152,53 +152,25 @@ TEST_F(KmeansTest, test2) {
 	kmeans_pp_seeds<float>(data,seeds,DistanceType::NORM_L2,d,N,k,8,true);
 }
 
-TEST_F(KmeansTest, DISABLED_test3) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_kmeans<float>(
-			data,centers,label,seeds,
-			KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::ANN_KD_TREE,
-			criteria,
-			DistanceType::NORM_L2,
-			EmptyActs::SINGLETON,
-			N,k,d,8,
-			false);
-	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
-}
-
-TEST_F(KmeansTest, DISABLED_test4) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_kmeans<float>(
-			data,centers,label,seeds,
-			KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::NN_KD_TREE,
-			criteria,
-			DistanceType::NORM_L2,
-			EmptyActs::SINGLETON,
-			N,k,d,8,
-			false);
-	cout << "NN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
-}
-
-TEST_F(KmeansTest, test5) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	greg_kmeans<float>(
-			data,centers,label,seeds,
-			KmeansType::KMEANS_PLUS_SEEDS,
-			criteria,
-			DistanceType::NORM_L2,
-			EmptyActs::SINGLETON,
-			N,k,d,8,
-			true);
-	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
-}
-
-TEST_F(KmeansTest, test6) {
+TEST_F(KmeansTest, test3) {
 	KmeansCriteria criteria = {2.0,1.0,100};
 	simple_kmeans<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::LINEAR,
+			criteria,
+			DistanceType::NORM_L2,
+			EmptyActs::SINGLETON,
+			N,k,d,8,
+			true);
+	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
+}
+
+TEST_F(KmeansTest, test4) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	greg_kmeans<float>(
+			data,centers,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
 			criteria,
 			DistanceType::NORM_L2,
 			EmptyActs::SINGLETON,
@@ -233,23 +205,6 @@ TEST_F(KmeansTest, test6) {
 	cout << "Distortion is " << sqrt(distortion) << endl;
 }*/
 
-TEST_F(KmeansTest, DISABLED_test7) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	for(int i = 0; i < 10; i++) {
-		simple_kmeans<float>(
-				data,centers,label,seeds,
-				KmeansType::KMEANS_PLUS_SEEDS,
-				KmeansAssignType::LINEAR,
-				criteria,
-				DistanceType::NORM_L2,
-				EmptyActs::SINGLETON,
-				N,k,d,8,
-				false);
-		cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
-	}
-}
-
-#ifdef _WIN32
 int main(int argc, char * argv[])
 {
 	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
@@ -261,5 +216,4 @@ int main(int argc, char * argv[])
 	*/
 	return RUN_ALL_TESTS();
 }
-#endif
 

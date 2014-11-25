@@ -485,7 +485,6 @@ void greg_initialize(
 		int N,
 		int k,
 		int d,
-		int n_thread,
 		bool verbose) {
 	int i, j;
 	// Initializing size and vector sum
@@ -495,48 +494,38 @@ void greg_initialize(
 			sum[i][j] = 0.0;
 		}
 	}
-
-#ifdef _OPENMP
-	omp_set_num_threads(n_thread);
-#pragma omp parallel
-	{
-#pragma omp for private(i,j)
-#endif
-		for(i = 0; i < N; i++) {
-			float min = FLT_MAX;
-			float min2 = FLT_MAX;
-			float d_tmp = 0.0;
-			int tmp = -1;
-			for(j = 0; j < k; j++) {
-				if(d_type == DistanceType::NORM_L2) {
-					d_tmp = distance_l2<float,DataType>(centers[j],data[i],d);
-				} else if(d_type == DistanceType::NORM_L1) {
-					d_tmp = distance_l1<float,DataType>(centers[j],data[i],d);
-				}
-				if(min >= d_tmp) {
-					min2 = min;
-					min = d_tmp;
-					tmp = j;
-				} else {
-					if(min2 >= d_tmp) min2 = d_tmp;
-				}
+	for(i = 0; i < N; i++) {
+		float min = FLT_MAX;
+		float min2 = FLT_MAX;
+		float d_tmp = 0.0;
+		int tmp = -1;
+		for(j = 0; j < k; j++) {
+			if(d_type == DistanceType::NORM_L2) {
+				d_tmp = distance_l2<float,DataType>(centers[j],data[i],d);
+			} else if(d_type == DistanceType::NORM_L1) {
+				d_tmp = distance_l1<float,DataType>(centers[j],data[i],d);
 			}
-
-			label[i] = tmp; // Update the label
-			upper[i] = min; // Update the upper bound on this distance
-			lower[i] = min2; // Update the lower bound on this distance
-
-			// Update the size
-			size[tmp]++;
-
-			// Update the vector sum
-			for(j = 0; j < d; j++) {
-				sum[tmp][j] += static_cast<float>(data[i][j]);
+			if(min >= d_tmp) {
+				min2 = min;
+				min = d_tmp;
+				tmp = j;
+			} else {
+				if(min2 >= d_tmp) min2 = d_tmp;
 			}
 		}
-#ifdef _OPENMP
+
+		label[i] = tmp; // Update the label
+		upper[i] = min; // Update the upper bound on this distance
+		lower[i] = min2; // Update the lower bound on this distance
+
+		// Update the size
+		size[tmp]++;
+
+		// Update the vector sum
+		for(j = 0; j < d; j++) {
+			sum[tmp][j] += static_cast<float>(data[i][j]);
+		}
 	}
-#endif
 
 	int s_max, l_tmp, fst;
 	float dfst;
@@ -544,11 +533,13 @@ void greg_initialize(
 	if(ea != EmptyActs::NONE) {
 		for(i = 0; i < k; i++) {
 			if(size[i] <= 0) {
-				l_tmp = 0;
-				for(j = 0; j < k; j++) {
-					if(l_tmp < size[j]) {
-						l_tmp = size[j];
-						s_max = j;
+				if(ea == EmptyActs::SINGLETON_2) {
+					l_tmp = 0;
+					for(j = 0; j < k; j++) {
+						if(l_tmp < size[j]) {
+							l_tmp = size[j];
+							s_max = j;
+						}
 					}
 				}
 				// Move the centers
@@ -561,10 +552,10 @@ void greg_initialize(
 				for(j = 0; j < d; j++) {
 					centers[i][j] = static_cast<float>(data[fst][j]);
 					sum[i][j] = centers[i][j];
-					sum[s_max][j] -= centers[i][j];
+					sum[label[fst]][j] -= centers[i][j];
 				}
 				size[i] = 1;
-				size[s_max]--;
+				size[label[fst]]--;
 				label[fst] = i;
 			}
 		}
@@ -634,7 +625,7 @@ void greg_kmeans(
 	// Initialize the centers
 	copy_array_2<float>(seeds,centers,k,d);
 	greg_initialize<DataType>(data,centers,c_sum,upper,lower,
-			label,size,d_type,ea,N,k,d,n_thread,verbose);
+			label,size,d_type,ea,N,k,d,verbose);
 	if(verbose)
 		cout << "Finished initialization" << endl;
 
@@ -719,11 +710,13 @@ void greg_kmeans(
 		if(ea != EmptyActs::NONE) {
 			for(i = 0; i < k; i++) {
 				if(size[i] <= 0) {
-					l_tmp = 0;
-					for(j = 0; j < k; j++) {
-						if(l_tmp < size[j]) {
-							l_tmp = size[j];
-							s_max = j;
+					if(ea == EmptyActs::SINGLETON_2) {
+						l_tmp = 0;
+						for(j = 0; j < k; j++) {
+							if(l_tmp < size[j]) {
+								l_tmp = size[j];
+								s_max = j;
+							}
 						}
 					}
 					// Move the centers
@@ -736,10 +729,10 @@ void greg_kmeans(
 					for(j = 0; j < d; j++) {
 						centers[i][j] = static_cast<float>(data[fst][j]);
 						c_sum[i][j] = centers[i][j];
-						c_sum[s_max][j] -= centers[i][j];
+						c_sum[label[fst]][j] -= centers[i][j];
 					}
 					size[i] = 1;
-					size[s_max]--;
+					size[label[fst]]--;
 					label[fst] = i;
 				}
 			}
@@ -867,11 +860,13 @@ void simple_kmeans(
 		if(ea != EmptyActs::NONE) {
 			for(i = 0; i < k; i++) {
 				if(size[i] <= 0) {
-					l_tmp = 0;
-					for(j = 0; j < k; j++) {
-						if(l_tmp < size[j]) {
-							l_tmp = size[j];
-							s_max = j;
+					if(ea == EmptyActs::SINGLETON_2) {
+						l_tmp = 0;
+						for(j = 0; j < k; j++) {
+							if(l_tmp < size[j]) {
+								l_tmp = size[j];
+								s_max = j;
+							}
 						}
 					}
 					// Move the centers
@@ -884,10 +879,10 @@ void simple_kmeans(
 					for(j = 0; j < d; j++) {
 						centers[i][j] = static_cast<float>(data[fst][j]);
 						sum[i][j] = centers[i][j];
-						sum[s_max][j] -= centers[i][j];
+						sum[labels[fst]][j] -= centers[i][j];
 					}
 					size[i] = 1;
-					size[s_max]--;
+					size[labels[fst]]--;
 					labels[fst] = i;
 				}
 			}
