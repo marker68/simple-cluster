@@ -43,9 +43,9 @@ namespace SimpleCluster {
  * @return nothing
  */
 void update_center(
-		float ** sum,
+		float * sum,
 		int * size,
-		float **& centers,
+		float *& centers,
 		float *& moved,
 		DistanceType d_type,
 		int k,
@@ -53,16 +53,17 @@ void update_center(
 		int n_thread) {
 	float * c_tmp;
 	init_array<float>(c_tmp,d);
-	int i;
+	int i, base = 0;
+	c_tmp = centers;
 	for(i = 0; i < k; i++) {
-		copy_array<float>(centers[i],c_tmp,d);
 		for(int j = 0; j < d; j++) {
-			centers[i][j] = static_cast<float>(sum[i][j] / size[i]);
+			centers[base] = static_cast<float>(sum[base++] / size[i]);
 		}
 		if(d_type == DistanceType::NORM_L2)
-			moved[i] = distance_l2<float>(c_tmp,centers[i],d);
+			moved[i] = distance_l2<float>(c_tmp,centers + (base - d),d);
 		else if(d_type == DistanceType::NORM_L1)
-			moved[i] = distance_l1<float>(c_tmp,centers[i],d);
+			moved[i] = distance_l1<float>(c_tmp,centers + (base - d),d);
+		c_tmp += d;
 	}
 }
 
