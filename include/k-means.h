@@ -71,6 +71,15 @@ enum class KmeansType {
 };
 
 /**
+ * Empty actions: how we treat the empty clusters
+ */
+enum class EmptyActs {
+	SINGLETON,
+	SINGLETON_2,
+	NONE
+};
+
+/**
  * Criteria
  */
 typedef struct {
@@ -307,73 +316,6 @@ void linear_assign(
  * @param verbose enable it to see the log
  * @return nothing
  */
-template<typename DataType>
-void greg_initialize(
-		DataType ** data,
-		float ** centers,
-		float **& sum,
-		float *& upper,
-		float *& lower,
-		int *& label,
-		int *& size,
-		DistanceType d_type,
-		int N,
-		int k,
-		int d,
-		int n_thread,
-		bool verbose) {
-	int i, j;
-	// Initializing size and vector sum
-	for(i = 0; i < k; i++) {
-		size[i] = 0;
-		for(j = 0; j < d; j++) {
-			sum[i][j] = 0.0;
-		}
-	}
-
-#ifdef _OPENMP
-	omp_set_num_threads(n_thread);
-#pragma omp parallel
-	{
-#pragma omp for private(i,j)
-#endif
-		for(i = 0; i < N; i++) {
-			float min = FLT_MAX;
-			float min2 = FLT_MAX;
-			float d_tmp = 0.0;
-			int tmp = -1;
-			for(j = 0; j < k; j++) {
-				if(d_type == DistanceType::NORM_L2) {
-					d_tmp = distance_l2<float,DataType>(centers[j],data[i],d);
-				} else if(d_type == DistanceType::NORM_L1) {
-					d_tmp = distance_l1<float,DataType>(centers[j],data[i],d);
-				}
-				if(min >= d_tmp) {
-					min2 = min;
-					min = d_tmp;
-					tmp = j;
-				} else {
-					if(min2 >= d_tmp) min2 = d_tmp;
-				}
-			}
-
-			label[i] = tmp; // Update the label
-			upper[i] = min; // Update the upper bound on this distance
-			lower[i] = min2; // Update the lower bound on this distance
-
-			// Update the size
-			size[tmp]++;
-
-			// Update the vector sum
-			for(j = 0; j < d; j++) {
-				sum[tmp][j] += static_cast<float>(data[i][j]);
-			}
-		}
-#ifdef _OPENMP
-	}
-#endif
-}
-
 /**
  * Update the centers
  * @param sum the sum vector of all points in the cluster
@@ -483,6 +425,36 @@ void find_farthest(
 }
 
 /**
+ * Find a lonely observer
+ */
+template<typename DataType>
+void find_lonely(
+		DataType ** data,
+		float ** centers,
+		int * labels,
+		DistanceType d_type,
+		float& dfst,
+		int& fst,
+		int N,
+		int k,
+		int d,
+		bool verbose) {
+	int i;
+	float d_tmp;
+	dfst = FLT_MIN;
+	for(i = 0; i < N; i++) {
+		if(d_type == DistanceType::NORM_L2)
+			d_tmp = distance_l2<DataType,float>(data[i],centers[labels[i]],d);
+		else if(d_type == DistanceType::NORM_L1)
+			d_tmp = distance_l1<DataType,float>(data[i],centers[labels[i]],d);
+		if(dfst < d_tmp) {
+			dfst = d_tmp;
+			fst = i;
+		}
+	}
+}
+
+/**
  * The k-means method: a description of the method can be found at
  * http://home.deib.polimi.it/matteucc/Clustering/tutorial_html/kmeans.html
  * @param type the type of seeding method
@@ -500,6 +472,106 @@ void find_farthest(
  * @param verbose for debugging
  */
 template<typename DataType>
+void greg_initialize(
+		DataType ** data,
+		float ** centers,
+		float **& sum,
+		float *& upper,
+		float *& lower,
+		int *& label,
+		int *& size,
+		DistanceType d_type,
+		EmptyActs ea,
+		int N,
+		int k,
+		int d,
+		int n_thread,
+		bool verbose) {
+	int i, j;
+	// Initializing size and vector sum
+	for(i = 0; i < k; i++) {
+		size[i] = 0;
+		for(j = 0; j < d; j++) {
+			sum[i][j] = 0.0;
+		}
+	}
+
+#ifdef _OPENMP
+	omp_set_num_threads(n_thread);
+#pragma omp parallel
+	{
+#pragma omp for private(i,j)
+#endif
+		for(i = 0; i < N; i++) {
+			float min = FLT_MAX;
+			float min2 = FLT_MAX;
+			float d_tmp = 0.0;
+			int tmp = -1;
+			for(j = 0; j < k; j++) {
+				if(d_type == DistanceType::NORM_L2) {
+					d_tmp = distance_l2<float,DataType>(centers[j],data[i],d);
+				} else if(d_type == DistanceType::NORM_L1) {
+					d_tmp = distance_l1<float,DataType>(centers[j],data[i],d);
+				}
+				if(min >= d_tmp) {
+					min2 = min;
+					min = d_tmp;
+					tmp = j;
+				} else {
+					if(min2 >= d_tmp) min2 = d_tmp;
+				}
+			}
+
+			label[i] = tmp; // Update the label
+			upper[i] = min; // Update the upper bound on this distance
+			lower[i] = min2; // Update the lower bound on this distance
+
+			// Update the size
+			size[tmp]++;
+
+			// Update the vector sum
+			for(j = 0; j < d; j++) {
+				sum[tmp][j] += static_cast<float>(data[i][j]);
+			}
+		}
+#ifdef _OPENMP
+	}
+#endif
+
+	int s_max, l_tmp, fst;
+	float dfst;
+	// Check for empty clusters
+	if(ea != EmptyActs::NONE) {
+		for(i = 0; i < k; i++) {
+			if(size[i] <= 0) {
+				l_tmp = 0;
+				for(j = 0; j < k; j++) {
+					if(l_tmp < size[j]) {
+						l_tmp = size[j];
+						s_max = j;
+					}
+				}
+				// Move the centers
+				if(ea == EmptyActs::SINGLETON)
+					find_lonely<DataType>(data,centers,label,d_type,
+							dfst,fst,N,k,d,verbose);
+				else if(ea == EmptyActs::SINGLETON_2)
+					find_farthest<DataType>(data,centers[i],label,d_type,
+							s_max,dfst,fst,N,k,d,verbose);
+				for(j = 0; j < d; j++) {
+					centers[i][j] = static_cast<float>(data[fst][j]);
+					sum[i][j] = centers[i][j];
+					sum[s_max][j] -= centers[i][j];
+				}
+				size[i] = 1;
+				size[s_max]--;
+				label[fst] = i;
+			}
+		}
+	}
+}
+
+template<typename DataType>
 void greg_kmeans(
 		DataType ** data,
 		float **& centers,
@@ -508,6 +580,7 @@ void greg_kmeans(
 		KmeansType type,
 		KmeansCriteria criteria,
 		DistanceType d_type,
+		EmptyActs ea,
 		int N,
 		int k,
 		int d,
@@ -561,7 +634,7 @@ void greg_kmeans(
 	// Initialize the centers
 	copy_array_2<float>(seeds,centers,k,d);
 	greg_initialize<DataType>(data,centers,c_sum,upper,lower,
-			label,size,d_type,N,k,d,n_thread,verbose);
+			label,size,d_type,ea,N,k,d,n_thread,verbose);
 	if(verbose)
 		cout << "Finished initialization" << endl;
 
@@ -643,26 +716,32 @@ void greg_kmeans(
 		}
 #endif
 		// Check for empty clusters
-		for(i = 0; i < k; i++) {
-			if(size[i] <= 0) {
-				l_tmp = 0;
-				for(j = 0; j < k; j++) {
-					if(l_tmp < size[j]) {
-						l_tmp = size[j];
-						s_max = j;
+		if(ea != EmptyActs::NONE) {
+			for(i = 0; i < k; i++) {
+				if(size[i] <= 0) {
+					l_tmp = 0;
+					for(j = 0; j < k; j++) {
+						if(l_tmp < size[j]) {
+							l_tmp = size[j];
+							s_max = j;
+						}
 					}
+					// Move the centers
+					if(ea == EmptyActs::SINGLETON)
+						find_lonely<DataType>(data,centers,label,d_type,
+								dfst,fst,N,k,d,verbose);
+					else if(ea == EmptyActs::SINGLETON_2)
+						find_farthest<DataType>(data,centers[i],label,d_type,
+								s_max,dfst,fst,N,k,d,verbose);
+					for(j = 0; j < d; j++) {
+						centers[i][j] = static_cast<float>(data[fst][j]);
+						c_sum[i][j] = centers[i][j];
+						c_sum[s_max][j] -= centers[i][j];
+					}
+					size[i] = 1;
+					size[s_max]--;
+					label[fst] = i;
 				}
-				// Move the centers
-				find_farthest<DataType>(data,centers[i],label,d_type,
-						s_max,dfst,fst,N,k,d,verbose);
-				for(j = 0; j < d; j++) {
-					centers[i][j] = static_cast<float>(data[fst][j]);
-					c_sum[i][j] = centers[i][j];
-					c_sum[s_max][j] -= centers[i][j];
-				}
-				size[i] = 1;
-				size[s_max]--;
-				label[fst] = i;
 			}
 		}
 		// Move the centers
@@ -729,6 +808,7 @@ void simple_kmeans(
 		KmeansAssignType assign,
 		KmeansCriteria criteria,
 		DistanceType d_type,
+		EmptyActs ea,
 		int N,
 		int k,
 		int d,
@@ -784,26 +864,32 @@ void simple_kmeans(
 		linear_assign<DataType>(data,centers,labels,size,sum,
 				d_type,d,N,k,n_thread,verbose);
 		// Check for empty clusters
-		for(i = 0; i < k; i++) {
-			if(size[i] <= 0) {
-				l_tmp = 0;
-				for(j = 0; j < k; j++) {
-					if(l_tmp < size[j]) {
-						l_tmp = size[j];
-						s_max = j;
+		if(ea != EmptyActs::NONE) {
+			for(i = 0; i < k; i++) {
+				if(size[i] <= 0) {
+					l_tmp = 0;
+					for(j = 0; j < k; j++) {
+						if(l_tmp < size[j]) {
+							l_tmp = size[j];
+							s_max = j;
+						}
 					}
+					// Move the centers
+					if(ea == EmptyActs::SINGLETON)
+						find_lonely<DataType>(data,centers,labels,d_type,
+								dfst,fst,N,k,d,verbose);
+					else if(ea == EmptyActs::SINGLETON_2)
+						find_farthest<DataType>(data,centers[i],labels,d_type,
+								s_max,dfst,fst,N,k,d,verbose);
+					for(j = 0; j < d; j++) {
+						centers[i][j] = static_cast<float>(data[fst][j]);
+						sum[i][j] = centers[i][j];
+						sum[s_max][j] -= centers[i][j];
+					}
+					size[i] = 1;
+					size[s_max]--;
+					labels[fst] = i;
 				}
-				// Move the centers
-				find_farthest<DataType>(data,centers[i],labels,d_type,
-						s_max,dfst,fst,N,k,d,verbose);
-				for(j = 0; j < d; j++) {
-					centers[i][j] = static_cast<float>(data[fst][j]);
-					sum[i][j] += centers[i][j];
-					sum[s_max][j] -= centers[i][j];
-				}
-				size[i]++;
-				size[s_max]--;
-				labels[fst] = i;
 			}
 		}
 
