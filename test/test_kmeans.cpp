@@ -162,7 +162,7 @@ TEST_F(KmeansTest, DISABLED_test3) {
 			DistanceType::NORM_L2,
 			N,k,d,8,
 			false);
-	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
+	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, DISABLED_test4) {
@@ -175,7 +175,7 @@ TEST_F(KmeansTest, DISABLED_test4) {
 			DistanceType::NORM_L2,
 			N,k,d,8,
 			false);
-	cout << "NN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
+	cout << "NN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, test5) {
@@ -187,7 +187,7 @@ TEST_F(KmeansTest, test5) {
 			DistanceType::NORM_L2,
 			N,k,d,8,
 			true);
-	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,1,false) << endl;
+	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
 TEST_F(KmeansTest, test6) {
@@ -200,7 +200,7 @@ TEST_F(KmeansTest, test6) {
 			DistanceType::NORM_L2,
 			N,k,d,8,
 			true);
-	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,1,false) << endl;
+	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
 /*TEST_F(KmeansTest, test6) {
@@ -240,7 +240,7 @@ TEST_F(KmeansTest, DISABLED_test7) {
 				DistanceType::NORM_L2,
 				N,k,d,8,
 				false);
-		cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,8,false) << endl;
+		cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 	}
 }
 
