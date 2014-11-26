@@ -248,16 +248,13 @@ void kmeans_pp_seeds(
 					end = start + N / n_thread;
 					if(end >= N) end = N;
 					d_tmp2 = data + start * d;
+					d_tmp = seeds + (count - 1) * d; // We only need to compare the old closest distances with the new one
 					for(i = start; i < end; i++) {
-						d_tmp = seeds;
-						for(j = 0; j < count; j++) {
-							if(d_type == DistanceType::NORM_L2)
-								tmp2 = distance_l2_square<float,DataType>(d_tmp,d_tmp2,d);
-							else if(d_type == DistanceType::NORM_L1)
-								tmp2 = distance_l1<float,DataType>(d_tmp,d_tmp2,d);
-							if(distances[i] > tmp2) distances[i] = tmp2;
-							d_tmp += d;
-						}
+						if(d_type == DistanceType::NORM_L2)
+							tmp2 = distance_l2_square<float,DataType>(d_tmp,d_tmp2,d);
+						else if(d_type == DistanceType::NORM_L1)
+							tmp2 = distance_l1<float,DataType>(d_tmp,d_tmp2,d);
+						if(distances[i] > tmp2) distances[i] = tmp2;
 						d_tmp2 += d;
 					}
 				}
