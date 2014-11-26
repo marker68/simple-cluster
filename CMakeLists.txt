@@ -40,8 +40,8 @@ set(CMAKE_BUILD_TYPE Release)
 message(WARNING "A ${CMAKE_BUILD_TYPE} build configuration is detected")
 
 # THE LOCATION OF OUTPUT BINARIES
-set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/${EX_PLATFORM_NAME}/lib)
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/${EX_PLATFORM_NAME}/bin)
+set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_LIBRARY_DIR})
  
@@ -73,10 +73,10 @@ ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp
 if(NOT MSVC)
 	if (OPENMP_FOUND)
     	list (APPEND CMAKE_CXX_FLAGS 
-    	"-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
+    	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
 	else()
     	list(APPEND CMAKE_CXX_FLAGS 
-    	"-Wall -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
+    	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
 	endif()
 endif()
 
@@ -85,12 +85,10 @@ add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(${PROJECT_NAME} gtest_main)
 add_library(${PROJECT_NAME}_static STATIC ${PROJECT_SRCS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(${PROJECT_NAME}_static gtest_main)
 
 # OUTPUT EXECUTABLES
 if(NOT MSVC)
@@ -114,7 +112,7 @@ target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(test_kdtree test_utilities gtest_main)
+add_dependencies(test_kdtree gtest_main)
 add_executable(test_kmeans 
     ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
     ${PROJECT_SRCS} )
@@ -122,7 +120,7 @@ target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(test_kmeans test_utilities gtest_main)
+add_dependencies(test_kmeans gtest_main)
 # Only build this example when found OpenCV
 # if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
 #    # OpenCV paths

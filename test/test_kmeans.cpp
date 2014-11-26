@@ -49,9 +49,9 @@ using namespace SimpleCluster;
 /**
  * A converter
  */
-/*void convert_array_to_mat(float ** data, Mat& result, size_t M, size_t N) {
-	for(size_t i = 0; i < M; i++) {
-		for(size_t j = 0; j < N; j++) {
+/*void convert_array_to_mat(float ** data, Mat& result, int M, int N) {
+	for(int i = 0; i < M; i++) {
+		for(int j = 0; j < N; j++) {
 			result.push_back(data[i][j]);
 		}
 	}
@@ -71,32 +71,33 @@ protected:
 		N = 10000;
 		d = 128;
 		k = 256;
-		size_t i, j;
+		int i, j;
 
 		// For generating random numbers
 		random_device rd;
 		mt19937 gen(rd());
-		uniform_real_distribution<float> real_dis(0.0, static_cast<float>(N));
+		uniform_real_distribution<float> real_dis(0.0, 255.0);
 
-		if(!init_array_2<float>(data,N,d)) {
+		if(!init_array<float>(data,N*d)) {
 			cerr << "Cannot allocate memory for test data!" << endl;
 			exit(1);
 		}
+		int base = 0;
 		for(i = 0; i < N; i++) {
 			for(j = 0; j < d; j++) {
-				data[i][j] = real_dis(gen);
+				data[base++] = real_dis(gen);
 			}
 		}
 
-		if(!init_array_2<float>(seeds,k,d)) {
+		if(!init_array<float>(seeds,k*d)) {
 			cerr << "Cannot allocate memory for seeds data!" << endl;
 			exit(1);
 		}
-		if(!init_array_2<float>(centers,k,d)) {
+		if(!init_array<float>(centers,k*d)) {
 			cerr << "Cannot allocate memory for centers data!" << endl;
 			exit(1);
 		}
-		label = (size_t *)calloc(N,sizeof(size_t));
+		label = (int *)calloc(N,sizeof(int));
 		if(label == NULL) {
 			cerr << "Cannot allocate memory for label data!" << endl;
 			exit(1);
@@ -108,19 +109,14 @@ protected:
 	// Called after the last test in this test case.
 	// Can be omitted if not needed.
 	static void TearDownTestCase() {
-		if(!dealloc_array_2<float>(data,N)) {
-			cerr << "data: Deallocating failed!" << endl;
-			exit(1);
-		}
-		if(!dealloc_array_2<float>(seeds,k)) {
-			cerr << "seeds: Deallocating failed!" << endl;
-			exit(1);
-		}
-		if(!dealloc_array_2<float>(centers,k)) {
-			cerr << "centers: Deallocating failed!" << endl;
-			exit(1);
-		}
+		::delete data;
+		data = nullptr;
+		::delete seeds;
+		seeds = nullptr;
+		::delete centers;
+		centers = nullptr;
 		::delete label;
+		label = nullptr;
 	}
 
 	// You can define per-test set-up and tear-down logic as usual.
@@ -129,63 +125,81 @@ protected:
 
 public:
 	// Some expensive resource shared by all tests.
-	static float ** data;
-	static float ** seeds;
-	static float ** centers;
-	static size_t * label;
-	static size_t N, d, k;
+	static float * data;
+	static float * seeds;
+	static float * centers;
+	static int * label;
+	static int N, d, k;
 };
 
-float ** KmeansTest::data;
-float ** KmeansTest::seeds;
-float ** KmeansTest::centers;
-size_t * KmeansTest::label;
-size_t KmeansTest::N;
-size_t KmeansTest::d;
-size_t KmeansTest::k;
+float * KmeansTest::data;
+float * KmeansTest::seeds;
+float * KmeansTest::centers;
+int * KmeansTest::label;
+int KmeansTest::N;
+int KmeansTest::d;
+int KmeansTest::k;
 
 TEST_F(KmeansTest, test1) {
-	random_seeds(data,seeds,d,N,k,8,true);
+	random_seeds<float>(data,seeds,d,N,k,8,true);
 }
 
 TEST_F(KmeansTest, test2) {
-	kmeans_pp_seeds(data,seeds,d,N,k,8,true);
+	kmeans_pp_seeds<float>(data,seeds,DistanceType::NORM_L2,d,N,k,8,true);
 }
 
-TEST_F(KmeansTest, DISABLED_test3) {
+TEST_F(KmeansTest, test3) {
 	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(
-			data,centers,label,seeds,
-			KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::ANN_KD_TREE,
-			criteria,
-			N,k,d,8,
-			false);
-	cout << "ANN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
-}
-
-TEST_F(KmeansTest, DISABLED_test4) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(
-			data,centers,label,seeds,
-			KmeansType::KMEANS_PLUS_SEEDS,
-			KmeansAssignType::NN_KD_TREE,
-			criteria,
-			N,k,d,8,
-			false);
-	cout << "NN: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
-}
-
-TEST_F(KmeansTest, test5) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	simple_k_means(
+	simple_kmeans<float>(
 			data,centers,label,seeds,
 			KmeansType::KMEANS_PLUS_SEEDS,
 			KmeansAssignType::LINEAR,
 			criteria,
+			DistanceType::NORM_L2,
+			EmptyActs::SINGLETON,
 			N,k,d,8,
-			false);
-	cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
+			true);
+	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
+}
+
+TEST_F(KmeansTest, test4) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	simple_kmeans<float>(
+			data,centers,label,seeds,
+			KmeansType::RANDOM_SEEDS,
+			KmeansAssignType::LINEAR,
+			criteria,
+			DistanceType::NORM_L2,
+			EmptyActs::SINGLETON,
+			N,k,d,8,
+			true);
+	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
+}
+
+TEST_F(KmeansTest, test5) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	greg_kmeans<float>(
+			data,centers,label,seeds,
+			KmeansType::RANDOM_SEEDS,
+			criteria,
+			DistanceType::NORM_L2,
+			EmptyActs::SINGLETON,
+			N,k,d,8,
+			true);
+	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
+}
+
+TEST_F(KmeansTest, test6) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	greg_kmeans<float>(
+			data,centers,label,seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			criteria,
+			DistanceType::NORM_L2,
+			EmptyActs::SINGLETON,
+			N,k,d,8,
+			true);
+	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
 /*TEST_F(KmeansTest, test6) {
@@ -204,7 +218,7 @@ TEST_F(KmeansTest, test5) {
 	{
 #pragma omp for private(i)
 		for(i = 0; i < _labels.rows; i++) {
-			int id = _labels.at<size_t>(i,0);
+			int id = _labels.at<int>(i,0);
 			Mat tmp = _data.row(i);
 			Mat c = _centers.row(id);
 			float d_t = norm(tmp,c,NORM_L2);
@@ -214,21 +228,6 @@ TEST_F(KmeansTest, test5) {
 	cout << "Distortion is " << sqrt(distortion) << endl;
 }*/
 
-TEST_F(KmeansTest, DISABLED_test7) {
-	KmeansCriteria criteria = {2.0,1.0,100};
-	for(size_t i = 0; i < 10; i++) {
-		simple_k_means(
-				data,centers,label,seeds,
-				KmeansType::KMEANS_PLUS_SEEDS,
-				KmeansAssignType::LINEAR,
-				criteria,
-				N,k,d,8,
-				false);
-		cout << "LINEAR: Distortion is " << distortion(data,centers,label,d,N,k,8,false) << endl;
-	}
-}
-
-#ifdef _WIN32
 int main(int argc, char * argv[])
 {
 	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
@@ -240,5 +239,4 @@ int main(int argc, char * argv[])
 	*/
 	return RUN_ALL_TESTS();
 }
-#endif
 
