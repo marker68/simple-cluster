@@ -131,17 +131,18 @@ void random_seeds(
 		for(i = k; i < N; i++) {
 			uniform_int_distribution<> int_dis(i,N-1);
 			j = int_dis(gen);
-			if(j < k)
-				tmp[j] = static_cast<int>(i);
+			if(j < k + i)
+				tmp[j - i] = static_cast<int>(i);
 		}
 #ifdef _OPENMP
 	}
 #endif
 
-	int base = 0;
+	int base = 0, base1;
 	for(i = 0; i < k; i++) {
+		base1 = tmp[i] * d;
 		for(j = 0; j < d; j++) {
-			seeds[base++] = static_cast<float>(data[tmp[i] * d + j]);
+			seeds[base++] = static_cast<float>(data[base1++]);
 		}
 	}
 }
