@@ -211,7 +211,6 @@ TEST_F(KDTreeTest, test10) {
 	cout << "Visited " << visited << " nodes" << endl;
 }
 
-#ifdef _WIN32
 int main(int argc, char * argv[])
 {
 	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
@@ -223,4 +222,3 @@ int main(int argc, char * argv[])
 	*/
 	return RUN_ALL_TESTS();
 }
-#endif

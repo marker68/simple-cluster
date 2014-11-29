@@ -102,64 +102,13 @@ float ** UtilTest::data;
 int UtilTest::N;
 int UtilTest::d;
 
-// Let's start with some testcases
 TEST_F(UtilTest, test1) {
-	EXPECT_EQ(0.0, distance(data[0],data[0],d));
-	EXPECT_EQ(0.0, distance_thread(data[0],data[0],d,16));
-}
-
-TEST_F(UtilTest, test2) {
-	EXPECT_EQ(0.0, distance_square(data[0],data[0],d));
-	EXPECT_EQ(0.0, distance_square_thread(data[0],data[0],d,16));
-}
-
-TEST_F(UtilTest, test3) {
-	for(int i = 0; i < 1000000; i++) {
-		EXPECT_LT(0.0f,distance(data[0],data[1],d));
-	}
-}
-
-TEST_F(UtilTest, test4) {
-	int n_thread = 8;
-#ifdef _WIN32
-	int i;
-#else
-	int i;
-#endif
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for
-		for(i = 0; i < 1000000; i++) {
-			EXPECT_LT(0.0f,distance(data[0],data[1],d));
-		}
-	}
-}
-
-TEST_F(UtilTest, test5) {
-	int index[] = {0,1,2,3,4};
-	int * index2 = (int *)malloc(5 * sizeof(int));
-	for(int i = 0; i < 5; i++)
-		index2[i] = i;
-
-	float * tmp = (float *)calloc(d,sizeof(float));
-	float * v1 = mean_vector(data,index,tmp,d,5);
-	float * v2 = mean_vector(data,index2,tmp,d,5);
-	EXPECT_EQ(0.0, distance(v1,v2,d));
-
-	free(index2);
-	free(tmp);
-	free(v1);
-	free(v2);
-}
-
-TEST_F(UtilTest, test6) {
 	float arr[] = {1.0, 3.0, 5.0, 7.0, 9.0};
 	float m = quick_select_k(arr,5,3,compare_float);
 	EXPECT_EQ(7.0,m);
 }
 
-TEST_F(UtilTest, test7) {
+TEST_F(UtilTest, test2) {
 	float arr[10000];
 	for(int i = 0; i < 10000; i++)
 		arr[i] = i;
@@ -167,12 +116,12 @@ TEST_F(UtilTest, test7) {
 	EXPECT_EQ(5000.0,m);
 }
 
-TEST_F(UtilTest, test8) {
+TEST_F(UtilTest, test3) {
 	float * t;
 	EXPECT_TRUE(init_array<float>(t,1000) && t!=nullptr);
 }
 
-TEST_F(UtilTest, test9) {
+TEST_F(UtilTest, test4) {
 	float * t;
 	EXPECT_TRUE(init_array<float>(t,d) && t != nullptr);
 	EXPECT_TRUE(copy_array<float>(data[0],t,d));
@@ -181,12 +130,12 @@ TEST_F(UtilTest, test9) {
 	}
 }
 
-TEST_F(UtilTest, test10) {
+TEST_F(UtilTest, test5) {
 	float ** t;
 	EXPECT_TRUE(init_array_2<float>(t,1000,200) && t!=nullptr);
 }
 
-TEST_F(UtilTest, test11) {
+TEST_F(UtilTest, test6) {
 	float ** t;
 	EXPECT_TRUE(init_array_2<float>(t,N,d) && t != nullptr);
 	EXPECT_TRUE(copy_array_2<float>(data,t,N,d));
@@ -197,19 +146,18 @@ TEST_F(UtilTest, test11) {
 	}
 }
 
-TEST_F(UtilTest, test12) {
+TEST_F(UtilTest, test7) {
 	float ** t;
 	EXPECT_TRUE(init_array_2<float>(t,N,d) && t != nullptr);
 	EXPECT_TRUE(dealloc_array_2<float>(t,N));
 }
 
-TEST_F(UtilTest, test13) {
+TEST_F(UtilTest, test8) {
 	unsigned char x[3] = {1,2,3};
 	unsigned char y[3] = {128,225,123};
 	EXPECT_LT(0.0,distance_l2<unsigned char>(x,y,3));
 }
 
-#ifdef _WIN32
 int main(int argc, char * argv[])
 {
 	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
@@ -221,4 +169,3 @@ int main(int argc, char * argv[])
 	*/
 	return RUN_ALL_TESTS();
 }
-#endif
