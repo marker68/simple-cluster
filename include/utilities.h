@@ -44,8 +44,6 @@ using namespace std;
  * The main namespace
  */
 namespace SimpleCluster {
-typedef vector<double> d_vector;
-typedef vector<int> i_vector;
 
 /**
  * Types of distances
@@ -57,45 +55,6 @@ enum class DistanceType {
 };
 
 void check_env();
-
-float distance(
-		float *,
-		float *,
-		int);
-float distance_thread(
-		float *,
-		float *,
-		int,
-		int);
-float distance_square(
-		float *,
-		float *,
-		int);
-float distance_square_thread(
-		float *,
-		float *,
-		int,
-		int);
-void all_mean_vector(
-		float **,
-		int *,
-		int *,
-		float **&,
-		float *&,
-		int,
-		int,
-		int);
-float * mean_vector(
-		float **,
-		const int *,
-		float *,
-		int,
-		int);
-float * mean_vector(
-		float **,
-		const i_vector,
-		float *,
-		int);
 unsigned long get_millisecond_time();
 void print_vector(
 		float **,
@@ -385,9 +344,6 @@ bool init_array(
 		return false;
 	try {
 		arr = (DataType *)::operator  new(N * sizeof(DataType));
-		for(int i = 0; i < N; i++) {
-			::new(arr + i) DataType;
-		}
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
 		return false;
@@ -414,8 +370,6 @@ bool init_array_2(
 		for(int i = 0; i < M; i++) {
 			::new(arr + i) DataType *;
 			arr[i] = (DataType *)::operator new(N * sizeof(DataType));
-			for(int j = 0; j < N; j++)
-				::new(arr[i] + j) DataType;
 		}
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
@@ -458,9 +412,6 @@ bool copy_array(
 	if(from == nullptr || to == nullptr)
 		return false;
 	try {
-//		for(int i = 0; i < N; i++) {
-//			to[i] = from[i];
-//		}
 		memcpy(to,from,N*sizeof(DataType));
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
