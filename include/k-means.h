@@ -175,28 +175,28 @@ void kmeans_pp_seeds(
 	uniform_int_distribution<int> int_dis(0, N - 1);
 	int tmp = int_dis(gen);
 
-	float * d_tmp;
 	size_t base = (size_t)(tmp) * (size_t)(d);
     int i, i0, start, end, p = N / n_thread;
 	for(i = 0; i < d; i++) {
 		seeds[i] = static_cast<float>(data[base++]);
 	}
-	d_tmp = seeds;
+
 	float * distances;
 	init_array<float>(distances,N);
 	float * sum_distances;
 	init_array<float>(sum_distances,N);
-	DataType * d_tmp2 = data;
 #ifdef _OPENMP
 	omp_set_num_threads(n_thread);
 #pragma omp parallel
 	{
-#pragma omp for private(i, start, end, i0,d_tmp2,d_tmp)
+#pragma omp for private(i, start, end, i0)
 #endif
 		for(i0 = 0; i0 < n_thread; i0++) {
 			start = p * i0;
 			end = start + p;
 			if(end >= N || i0 == n_thread - 1) end = N;
+			DataType * d_tmp2 = data + start * d;
+			float * d_tmp = seeds;
 			for(i = start; i < end; i++) {
 				if(d_type == DistanceType::NORM_L2)
 					distances[i] = distance_l2_square<DataType,float>(d_tmp2, d_tmp, d);
@@ -239,14 +239,14 @@ void kmeans_pp_seeds(
 			omp_set_num_threads(n_thread);
 #pragma omp parallel
 			{
-#pragma omp for private(i, start, end, i0, d_tmp, d_tmp2,tmp2)
+#pragma omp for private(i, start, end, i0, tmp2)
 #endif
 				for(i0 = 0; i0 < n_thread; i0++) {
 					start = p * i0;
 					end = start + p;
 					if(end >= N || i0 == n_thread - 1) end = N;
-					d_tmp2 = data + start * d;
-					d_tmp = seeds + (count - 1) * d; // We only need to compare the old closest distances with the new one
+					DataType * d_tmp2 = data + start * d;
+					float * d_tmp = seeds + (count - 1) * d; // We only need to compare the old closest distances with the new one
 					for(i = start; i < end; i++) {
 						if(d_type == DistanceType::NORM_L2)
 							tmp2 = distance_l2_square<float,DataType>(d_tmp,d_tmp2,d);
@@ -620,7 +620,6 @@ void greg_kmeans(
 	if(seeds == nullptr) {
 		init_array<float>(seeds,k * d);
 	}
-cout << "here" << endl;
 
 	// Seeding
 	if (type == KmeansType::RANDOM_SEEDS) {
