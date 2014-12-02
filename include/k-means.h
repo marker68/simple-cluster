@@ -578,10 +578,10 @@ void greg_initialize(
 				base = i * d;
 				if(ea == EmptyActs::SINGLETON)
 					find_lonely<DataType>(data,centers,label,d_type,
-							dfst,fst,N,k,d,verbose);
+							dfst,(int&)fst,N,k,d,verbose);
 				else if(ea == EmptyActs::SINGLETON_2)
 					find_farthest<DataType>(data,centers + base,label,d_type,
-							s_max,dfst,fst,N,k,d,verbose);
+							s_max,dfst,(int&)fst,N,k,d,verbose);
 				base2 = fst * d;
 				base3 = label[fst] * d;
 				for(j = 0; j < d; j++) {
