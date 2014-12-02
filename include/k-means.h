@@ -511,7 +511,7 @@ void greg_initialize(
 		int k,
 		int d,
 		bool verbose) {
-	int i, j, base = 0, base0 = 0;
+	size_t i, j, base = 0, base0 = 0;
 	// Initializing size and vector sum
 	for(i = 0; i < k; i++) {
 		size[i] = 0;
@@ -521,7 +521,7 @@ void greg_initialize(
 	}
 
 	float min, min2, d_tmp;
-	int tmp;
+	size_t tmp;
 	DataType * dt = data;
 	for(i = 0; i < N; i++) {
 		min = FLT_MAX;
@@ -559,7 +559,7 @@ void greg_initialize(
 		dt += d;
 	}
 
-	int s_max, l_tmp, fst, base2, base3;
+	size_t s_max, l_tmp, fst, base2, base3;
 	float dfst;
 	// Check for empty clusters
 	if(ea != EmptyActs::NONE) {

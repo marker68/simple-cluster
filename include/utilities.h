@@ -339,7 +339,7 @@ double distance_l2_square_thread(
 template<typename DataType>
 bool init_array(
 		DataType *& arr,
-		int N) {
+		size_t N) {
 	if(N <= 0)
 		return false;
 	try {
