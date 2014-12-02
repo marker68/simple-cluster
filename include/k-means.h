@@ -195,7 +195,7 @@ void kmeans_pp_seeds(
 			start = p * i0;
 			end = start + p;
 			if(end >= N || i0 == n_thread - 1) end = N;
-			DataType * d_tmp2 = data + start * d;
+			DataType * d_tmp2 = data + (size_t)(start) * (size_t)(d);
 			float * d_tmp = seeds;
 			for(i = start; i < end; i++) {
 				if(d_type == DistanceType::NORM_L2)
@@ -211,7 +211,7 @@ void kmeans_pp_seeds(
 #endif
 	float sum, tmp2 = 0.0, sum1, sum2, pivot;
 	int count = 1, j, t;
-	int base1, base2;
+	size_t base1, base2;
 	for(count = 1; count < k; count++) {
 		sum = 0.0;
 		for(i = 0; i < N; i++) {
@@ -229,11 +229,12 @@ void kmeans_pp_seeds(
 		}
 		j = (i + 1) % N;
 		base1 = count * d;
-		base2 = j * d;
+		base2 = (size_t)(j) * d;
 		for(t = 0; t < d; t++) {
 			seeds[base1++] = static_cast<float>(data[base2++]);
 		}
-		// Update the distances
+		
+        // Update the distances
 		if(count < k) {
 #ifdef _OPENMP
 			omp_set_num_threads(n_thread);
@@ -245,7 +246,7 @@ void kmeans_pp_seeds(
 					start = p * i0;
 					end = start + p;
 					if(end >= N || i0 == n_thread - 1) end = N;
-					DataType * d_tmp2 = data + start * d;
+					DataType * d_tmp2 = data + (size_t)(start) * (size_t)(d);
 					float * d_tmp = seeds + (count - 1) * d; // We only need to compare the old closest distances with the new one
 					for(i = start; i < end; i++) {
 						if(d_type == DistanceType::NORM_L2)
@@ -260,6 +261,8 @@ void kmeans_pp_seeds(
 			}
 #endif
 		}
+        if(verbose)
+            cout << "Got " << count << " centers" << endl;
 	}
 }
 
