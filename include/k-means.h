@@ -175,7 +175,7 @@ void kmeans_pp_seeds(
 	uniform_int_distribution<int> int_dis(0, N - 1);
 	int tmp = int_dis(gen);
 
-	size_t base = (size_t)(tmp) * (size_t)(d);
+	size_t base = static_cast<size_t>(tmp) * static_cast<size_t>(d);
     int i, i0, start, end, p = N / n_thread;
 	for(i = 0; i < d; i++) {
 		seeds[i] = static_cast<float>(data[base++]);
@@ -195,7 +195,7 @@ void kmeans_pp_seeds(
 			start = p * i0;
 			end = start + p;
 			if(end >= N || i0 == n_thread - 1) end = N;
-			DataType * d_tmp2 = data + (size_t)(start) * (size_t)(d);
+			DataType * d_tmp2 = data + static_cast<size_t>(start) * static_cast<size_t>(d);
 			float * d_tmp = seeds;
 			for(i = start; i < end; i++) {
 				if(d_type == DistanceType::NORM_L2)
@@ -229,7 +229,7 @@ void kmeans_pp_seeds(
 		}
 		j = (i + 1) % N;
 		base1 = count * d;
-		base2 = (size_t)(j) * d;
+		base2 = static_cast<size_t>(j) * d;
 		for(t = 0; t < d; t++) {
 			seeds[base1++] = static_cast<float>(data[base2++]);
 		}
@@ -246,7 +246,7 @@ void kmeans_pp_seeds(
 					start = p * i0;
 					end = start + p;
 					if(end >= N || i0 == n_thread - 1) end = N;
-					DataType * d_tmp2 = data + (size_t)(start) * (size_t)(d);
+					DataType * d_tmp2 = data + static_cast<size_t>(start) * static_cast<size_t>(d);
 					float * d_tmp = seeds + (count - 1) * d; // We only need to compare the old closest distances with the new one
 					for(i = start; i < end; i++) {
 						if(d_type == DistanceType::NORM_L2)
