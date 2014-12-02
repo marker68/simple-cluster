@@ -195,8 +195,9 @@ void kmeans_pp_seeds(
 #pragma omp for private(i, start, end, i0)
 #endif
 		for(i0 = 0; i0 < n_thread; i0++) {
-			start = N * i0 / n_thread;
-			end = start + N / n_thread;
+			int p = N / n_thread;
+			start = p * i0;
+			end = start + p;
 			if(end >= N) end = N;
 			for(i = start; i < end; i++) {
 				if(d_type == DistanceType::NORM_L2)
