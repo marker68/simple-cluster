@@ -135,24 +135,7 @@ TEST_F(UtilTest, test5) {
 	EXPECT_TRUE(init_array_2<float>(t,1000,200) && t!=nullptr);
 }
 
-TEST_F(UtilTest, test6) {
-	float ** t;
-	EXPECT_TRUE(init_array_2<float>(t,N,d) && t != nullptr);
-	EXPECT_TRUE(copy_array_2<float>(data,t,N,d));
-	for(int i = 0; i < N; i++) {
-		for(int j = 0; j < d; j++) {
-			EXPECT_TRUE(data[i][j] == t[i][j]);
-		}
-	}
-}
-
 TEST_F(UtilTest, test7) {
-	float ** t;
-	EXPECT_TRUE(init_array_2<float>(t,N,d) && t != nullptr);
-	EXPECT_TRUE(dealloc_array_2<float>(t,N));
-}
-
-TEST_F(UtilTest, test8) {
 	unsigned char x[3] = {1,2,3};
 	unsigned char y[3] = {128,225,123};
 	EXPECT_LT(0.0,distance_l2<unsigned char>(x,y,3));
@@ -166,6 +149,6 @@ int main(int argc, char * argv[])
 	/*RUN_ALL_TESTS automatically detects and runs all the tests defined using the TEST macro.
 	It's must be called only once in the code because multiple calls lead to conflicts and,
 	therefore, are not supported.
-	*/
+	 */
 	return RUN_ALL_TESTS();
 }

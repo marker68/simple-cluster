@@ -74,14 +74,9 @@ double distance_l1(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = x[i] - y[i];
-			dis += fabs(tmp);
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = x[i] - y[i];
+		dis += fabs(tmp);
 	}
 
 	return dis;
@@ -101,15 +96,10 @@ double distance_l1(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = static_cast<double>(x[i])
-					- static_cast<double>(y[i]);
-			dis += fabs(tmp);
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = static_cast<double>(x[i])
+							- static_cast<double>(y[i]);
+		dis += fabs(tmp);
 	}
 
 	return dis;
@@ -164,14 +154,9 @@ double distance_l2(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = x[i] - y[i];
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = x[i] - y[i];
+		dis += tmp * tmp;
 	}
 
 	return sqrt(dis);
@@ -191,17 +176,11 @@ double distance_l2(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = static_cast<double>(x[i])
-					- static_cast<double>(y[i]);
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = static_cast<double>(x[i])
+							- static_cast<double>(y[i]);
+		dis += tmp * tmp;
 	}
-
 	return sqrt(dis);
 }
 
@@ -219,14 +198,9 @@ double distance_l2_square(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = x[i] - y[i];
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = x[i] - y[i];
+		dis += tmp * tmp;
 	}
 
 	return dis;
@@ -246,15 +220,10 @@ double distance_l2_square(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = static_cast<double>(x[i])
-					- static_cast<double>(y[i]);
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = static_cast<float>(x[i])
+							- static_cast<float>(y[i]);
+		dis += tmp * tmp;
 	}
 
 	return dis;
@@ -380,24 +349,6 @@ bool init_array_2(
 }
 
 /**
- * Initialize a vector.
- * @param vec the input vector
- * @param N the size of the vector
- * @return true if everything's OK, otherwise return false
- */
-template<typename DataType>
-bool init_vector(
-		vector<DataType>& vec,
-		int N) {
-	DataType tmp;
-	vec.clear();
-	for(int i = 0; i < N; i++) {
-		vec.push_back(tmp);
-	}
-	return true;
-}
-
-/**
  * Copy an array.
  * @param from The input array
  * @param to the copy destination
@@ -411,67 +362,10 @@ bool copy_array(
 		int N) {
 	if(from == nullptr || to == nullptr)
 		return false;
-	try {
-		memcpy(to,from,N*sizeof(DataType));
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		return false;
-	}
+	memcpy(to,from,N*sizeof(DataType));
 	return true;
 }
 
-/**
- * Copy a 2-D array.
- * @param from The input array
- * @param to the copy destination
- * @param M the number of the elements to be copied
- * @param N the number of the elements to be copied
- * @return true if copy was succeeded, otherwise return false.
- */
-template<typename DataType>
-bool copy_array_2(
-		DataType ** from,
-		DataType **& to,
-		int M,
-		int N) {
-	if(from == nullptr || to == nullptr)
-		return false;
-	try {
-		for(int i = 0; i < M; i++) {
-			if(!copy_array<DataType>(from[i],to[i],N)) {
-				return false;
-			}
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		return false;
-	}
-	return true;
-}
-
-/**
- * De-alloc a 2-D array
- * @param arr The input array
- * @param M the size of the input array
- * @return true if everything's OK, otherwise return false.
- */
-template<typename DataType>
-bool dealloc_array_2(
-		DataType **& arr,
-		int M) {
-	try {
-		for(int i = 0; i < M; i++) {
-			::delete arr[i];
-			arr[i] = nullptr;
-		}
-		::delete arr;
-		arr = nullptr;
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		return false;
-	}
-	return true;
-}
 
 /**
  * Swap two elements in an array
