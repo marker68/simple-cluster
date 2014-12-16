@@ -308,7 +308,7 @@ void linear_assign(
 		d_tmp1 = centers;
 		for(j = 0; j < k; j++) {
 			if(d_type == DistanceType::NORM_L2)
-				min_tmp = distance_l2<DataType,float>(d_tmp,d_tmp1,d);
+				min_tmp = distance_l2_square<DataType,float>(d_tmp,d_tmp1,d);
 			else if(d_type == DistanceType::NORM_L1)
 				min_tmp = distance_l1<DataType,float>(d_tmp,d_tmp1,d);
 			if(min > min_tmp) {
@@ -436,7 +436,7 @@ void find_farthest(
 	for(i = 0; i < N; i++) {
 		if(labels[i] == id) {
 			if(d_type == DistanceType::NORM_L2)
-				d_tmp = distance_l2<DataType,float>(tmp,centers,d);
+				d_tmp = distance_l2_square<DataType,float>(tmp,centers,d);
 			else if(d_type == DistanceType::NORM_L1)
 				d_tmp = distance_l1<DataType,float>(tmp,centers,d);
 			if(dfst < d_tmp) {
@@ -446,6 +446,7 @@ void find_farthest(
 		}
 		tmp += d;
 	}
+	dfst = sqrt(dfst);
 }
 
 /**
@@ -469,7 +470,7 @@ void find_lonely(
 	DataType * tmp = data;
 	for(i = 0; i < N; i++) {
 		if(d_type == DistanceType::NORM_L2)
-			d_tmp = distance_l2<DataType,float>(tmp,centers + labels[i] * d,d);
+			d_tmp = distance_l2_square<DataType,float>(tmp,centers + labels[i] * d,d);
 		else if(d_type == DistanceType::NORM_L1)
 			d_tmp = distance_l1<DataType,float>(tmp,centers + labels[i] * d,d);
 		if(dfst < d_tmp) {
@@ -478,6 +479,7 @@ void find_lonely(
 		}
 		tmp += d;
 	}
+	dfst = sqrt(dfst);
 }
 
 /**
@@ -531,7 +533,7 @@ void greg_initialize(
 		tmp = -1;
 		for(j = 0; j < k; j++) {
 			if(d_type == DistanceType::NORM_L2) {
-				d_tmp = distance_l2<float,DataType>(centers + j * d,dt,d);
+				d_tmp = distance_l2_square<float,DataType>(centers + j * d,dt,d);
 			} else if(d_type == DistanceType::NORM_L1) {
 				d_tmp = distance_l1<float,DataType>(centers + j * d,dt,d);
 			}
@@ -545,8 +547,8 @@ void greg_initialize(
 		}
 
 		label[i] = tmp; // Update the label
-		upper[i] = min; // Update the upper bound on this distance
-		lower[i] = min2; // Update the lower bound on this distance
+		upper[i] = sqrt(min); // Update the upper bound on this distance
+		lower[i] = sqrt(min2); // Update the lower bound on this distance
 
 		// Update the size
 		size[tmp]++;
@@ -676,14 +678,14 @@ void greg_kmeans(
 			for(j = 0; j < k; j++) {
 				if(j != i) {
 					if(d_type == DistanceType::NORM_L2)
-						min_tmp = distance_l2<float>(fpt1,fpt2,d);
+						min_tmp = distance_l2_square<float>(fpt1,fpt2,d);
 					else if(d_type == DistanceType::NORM_L1)
 						min_tmp = distance_l1<float>(fpt1,fpt2,d);
 					if(min > min_tmp) min = min_tmp;
 				}
 				fpt2 += d;
 			}
-			closest[i] = min;
+			closest[i] = sqrt(min);
 			fpt1 += d;
 		}
 
@@ -713,7 +715,7 @@ void greg_kmeans(
 						fpt1 = centers;
 						for(j = 0; j < k; j++) {
 							if(d_type == DistanceType::NORM_L2)
-								d_tmp = distance_l2<float,DataType>(fpt1,data + i * d,d);
+								d_tmp = distance_l2_square<float,DataType>(fpt1,data + i * d,d);
 							else if(d_type == DistanceType::NORM_L1)
 								d_tmp = distance_l1<float,DataType>(fpt1,data + i * d,d);
 							if(min >= d_tmp) {
@@ -728,8 +730,8 @@ void greg_kmeans(
 
 						// Assign the data[i] into cluster tmp
 						label[i] = tmp; // Update the label
-						upper[i] = min; // Update the upper bound on this distance
-						lower[i] = min2; // Update the lower bound on this distance
+						upper[i] = sqrt(min); // Update the upper bound on this distance
+						lower[i] = sqrt(min2); // Update the lower bound on this distance
 
 						if(l != tmp) {
 							size[tmp]++;
