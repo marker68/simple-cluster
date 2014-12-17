@@ -99,7 +99,7 @@ typedef struct {
  * @param verbose for debugging
  */
 template<typename DataType>
-void random_seeds(
+inline void random_seeds(
 		DataType * data,
 		float *& seeds,
 		int d,
@@ -159,7 +159,7 @@ void random_seeds(
  * @param verbose for debugging
  */
 template<typename DataType>
-void kmeans_pp_seeds(
+inline void kmeans_pp_seeds(
 		DataType * data,
 		float *& seeds,
 		DistanceType d_type,
@@ -281,7 +281,7 @@ void kmeans_pp_seeds(
  * @param verbose for debugging
  */
 template<typename DataType>
-void linear_assign(
+inline void linear_assign(
 		DataType * data,
 		float * centers,
 		int *& labels,
@@ -348,7 +348,7 @@ void linear_assign(
  * @param n_thread the number of threads
  * @return nothing
  */
-void update_center(
+inline void update_center(
 		float * sum,
 		int * size,
 		float *& centers,
@@ -356,7 +356,22 @@ void update_center(
 		DistanceType d_type,
 		int k,
 		int d,
-		int n_thread);
+		int n_thread) {
+	float * c_tmp;
+	init_array<float>(c_tmp,d);
+	int i, base = 0;
+	c_tmp = centers;
+	for(i = 0; i < k; i++) {
+		for(int j = 0; j < d; j++) {
+			centers[base] = static_cast<float>(sum[base++] / size[i]);
+		}
+		if(d_type == DistanceType::NORM_L2)
+			moved[i] = distance_l2<float>(c_tmp,centers + (base - d),d);
+		else if(d_type == DistanceType::NORM_L1)
+			moved[i] = distance_l1<float>(c_tmp,centers + (base - d),d);
+		c_tmp += d;
+	}
+}
 
 /**
  * Update the bounds
@@ -369,14 +384,49 @@ void update_center(
  * @param d
  * @param n_thread the number of threads
  */
-void update_bounds(
+inline void update_bounds(
 		float * moved,
 		int * label,
 		float *& upper,
 		float *& lower,
 		int N,
 		int k,
-		int n_thread);
+		int n_thread) {
+	int r = 0;
+	int i;
+
+	float max = 0.0, max2 = 0.0, sub;
+	for(i = 0; i < k; i++) {
+		if(max <= moved[i]) {
+			max2 = max;
+			max = moved[i];
+			r = i;
+		} else {
+			if(max2 <= moved[i]) {
+				max2 = moved[i];
+			}
+		}
+	}
+#ifdef _OPENMP
+	omp_set_num_threads(n_thread);
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+#endif
+		for(i = 0; i < N; i++) {
+			upper[i] += moved[label[i]];
+			sub = 0.0;
+			if(r == label[i]) {
+				sub = max2;
+			} else {
+				sub = max;
+			}
+			lower[i] = fabs(lower[i] - sub);
+		}
+#ifdef _OPENMP
+	}
+#endif
+}
 
 /**
  * Calculate the distortion of a set of clusters.
@@ -391,7 +441,7 @@ void update_bounds(
  * @param verbose for debugging
  */
 template<typename DataType>
-float distortion(
+inline float distortion(
 		DataType * data,
 		float * centers,
 		int * label,
@@ -417,7 +467,7 @@ float distortion(
  * Update the farthest distances
  */
 template<typename DataType>
-void find_farthest(
+inline void find_farthest(
 		DataType * data,
 		float * centers,
 		int * labels,
@@ -453,7 +503,7 @@ void find_farthest(
  * Find a lonely observer
  */
 template<typename DataType>
-void find_lonely(
+inline void find_lonely(
 		DataType * data,
 		float * centers,
 		int * labels,
@@ -500,7 +550,7 @@ void find_lonely(
  * @param verbose for debugging
  */
 template<typename DataType>
-void greg_initialize(
+inline void greg_initialize(
 		DataType * data,
 		float * centers,
 		float *& sum,
@@ -601,7 +651,7 @@ void greg_initialize(
 }
 
 template<typename DataType>
-void greg_kmeans(
+inline void greg_kmeans(
 		DataType * data,
 		float *& centers,
 		int *& label,
@@ -844,7 +894,7 @@ void greg_kmeans(
  * @param verbose for debugging
  */
 template<typename DataType>
-void simple_kmeans(
+inline void simple_kmeans(
 		DataType * data,
 		float *& centers,
 		int *& labels,
