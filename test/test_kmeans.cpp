@@ -141,11 +141,11 @@ int KmeansTest::d;
 int KmeansTest::k;
 
 TEST_F(KmeansTest, test1) {
-	random_seeds<float>(data,seeds,d,N,k,8,true);
+	random_seeds<float>(data,seeds,d,N,k,8,false);
 }
 
 TEST_F(KmeansTest, test2) {
-	kmeans_pp_seeds<float>(data,seeds,DistanceType::NORM_L2,d,N,k,8,true);
+	kmeans_pp_seeds<float>(data,seeds,DistanceType::NORM_L2,d,N,k,8,false);
 }
 
 TEST_F(KmeansTest, test3) {
@@ -158,7 +158,7 @@ TEST_F(KmeansTest, test3) {
 			DistanceType::NORM_L2,
 			EmptyActs::SINGLETON,
 			N,k,d,8,
-			true);
+			false);
 	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
@@ -172,7 +172,7 @@ TEST_F(KmeansTest, test4) {
 			DistanceType::NORM_L2,
 			EmptyActs::SINGLETON,
 			N,k,d,8,
-			true);
+			false);
 	cout << "ANN: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
@@ -184,8 +184,8 @@ TEST_F(KmeansTest, test5) {
 			criteria,
 			DistanceType::NORM_L2,
 			EmptyActs::SINGLETON,
-			N,k,d,8,
-			true);
+			N,k,d,4,
+			false);
 	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 
@@ -197,8 +197,8 @@ TEST_F(KmeansTest, test6) {
 			criteria,
 			DistanceType::NORM_L2,
 			EmptyActs::SINGLETON,
-			N,k,d,8,
-			true);
+			N,k,d,4,
+			false);
 	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
 }
 

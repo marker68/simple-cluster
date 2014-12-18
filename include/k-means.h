@@ -176,7 +176,7 @@ inline void kmeans_pp_seeds(
 	int tmp = int_dis(gen);
 
 	size_t base = static_cast<size_t>(tmp) * static_cast<size_t>(d);
-    int i, i0, start, end, p = N / n_thread;
+	int i, i0, start, end, p = N / n_thread;
 	for(i = 0; i < d; i++) {
 		seeds[i] = static_cast<float>(data[base++]);
 	}
@@ -233,8 +233,8 @@ inline void kmeans_pp_seeds(
 		for(t = 0; t < d; t++) {
 			seeds[base1++] = static_cast<float>(data[base2++]);
 		}
-		
-        // Update the distances
+
+		// Update the distances
 		if(count < k) {
 #ifdef _OPENMP
 			omp_set_num_threads(n_thread);
@@ -261,8 +261,8 @@ inline void kmeans_pp_seeds(
 			}
 #endif
 		}
-        if(verbose)
-            cout << "Got " << count << " centers" << endl;
+		if(verbose)
+			cout << "Got " << count << " centers" << endl;
 	}
 }
 
@@ -563,12 +563,13 @@ inline void greg_initialize(
 		int N,
 		int k,
 		int d,
+		int n_thread,
 		bool verbose) {
-	size_t i, j, base = 0, base0 = 0;
+	size_t base = 0, p = N / n_thread;
 	// Initializing size and vector sum
-	for(i = 0; i < k; i++) {
+	for(int i = 0; i < k; i++) {
 		size[i] = 0;
-		for(j = 0; j < d; j++) {
+		for(int j = 0; j < d; j++) {
 			sum[base++] = 0.0;
 		}
 	}
@@ -576,51 +577,66 @@ inline void greg_initialize(
 	float min, min2, d_tmp;
 	size_t tmp;
 	DataType * dt = data;
-	for(i = 0; i < N; i++) {
-		min = FLT_MAX;
-		min2 = FLT_MAX;
-		d_tmp = 0.0;
-		tmp = -1;
-		for(j = 0; j < k; j++) {
-			if(d_type == DistanceType::NORM_L2) {
-				d_tmp = distance_l2_square<float,DataType>(centers + j * d,dt,d);
-			} else if(d_type == DistanceType::NORM_L1) {
-				d_tmp = distance_l1<float,DataType>(centers + j * d,dt,d);
-			}
-			if(min >= d_tmp) {
-				min2 = min;
-				min = d_tmp;
-				tmp = j;
-			} else {
-				if(min2 >= d_tmp) min2 = d_tmp;
+#ifdef _OPENMP
+	omp_set_num_threads(n_thread);
+#pragma omp parallel
+	{
+#pragma omp for private(d_tmp,min,min2,tmp)
+#endif
+		for(int i0 = 0; i0 < n_thread; i0++) {
+			size_t start = p * i0;
+			size_t end = start + p;
+			size_t base1 = 0, base2 = 0;
+			if(end > N || i0 == n_thread - 1) end = N;
+			for(size_t i = start; i < end; i++) {
+				min = FLT_MAX;
+				min2 = FLT_MAX;
+				d_tmp = 0.0;
+				tmp = -1;
+				for(size_t j = 0; j < k; j++) {
+					if(d_type == DistanceType::NORM_L2) {
+						d_tmp = distance_l2_square<float,DataType>(centers + j * d,dt,d);
+					} else if(d_type == DistanceType::NORM_L1) {
+						d_tmp = distance_l1<float,DataType>(centers + j * d,dt,d);
+					}
+					if(min >= d_tmp) {
+						min2 = min;
+						min = d_tmp;
+						tmp = j;
+					} else {
+						if(min2 >= d_tmp) min2 = d_tmp;
+					}
+				}
+
+				label[i] = tmp; // Update the label
+				upper[i] = sqrt(min); // Update the upper bound on this distance
+				lower[i] = sqrt(min2); // Update the lower bound on this distance
+
+				// Update the size
+				size[tmp]++;
+
+				// Update the vector sum
+				base1 = tmp * d;
+				base2 = i * d;
+				for(size_t j = 0; j < d; j++) {
+					sum[base1++] += static_cast<float>(data[base2++]);
+				}
+				dt += d;
 			}
 		}
-
-		label[i] = tmp; // Update the label
-		upper[i] = sqrt(min); // Update the upper bound on this distance
-		lower[i] = sqrt(min2); // Update the lower bound on this distance
-
-		// Update the size
-		size[tmp]++;
-
-		// Update the vector sum
-		base = tmp * d;
-		base0 = i * d;
-		for(j = 0; j < d; j++) {
-			sum[base++] += static_cast<float>(data[base0++]);
-		}
-		dt += d;
+#ifdef _OPENMP
 	}
+#endif
 
-	size_t s_max, l_tmp, fst, base2, base3;
+	size_t s_max, l_tmp, fst, base3, base4;
 	float dfst;
 	// Check for empty clusters
 	if(ea != EmptyActs::NONE) {
-		for(i = 0; i < k; i++) {
+		for(int i = 0; i < k; i++) {
 			if(size[i] <= 0) {
 				if(ea == EmptyActs::SINGLETON_2) {
 					l_tmp = 0;
-					for(j = 0; j < k; j++) {
+					for(int j = 0; j < k; j++) {
 						if(l_tmp < size[j]) {
 							l_tmp = size[j];
 							s_max = j;
@@ -635,12 +651,12 @@ inline void greg_initialize(
 				else if(ea == EmptyActs::SINGLETON_2)
 					find_farthest<DataType>(data,centers + base,label,d_type,
 							s_max,dfst,(int&)fst,N,k,d,verbose);
-				base2 = fst * d;
-				base3 = label[fst] * d;
-				for(j = 0; j < d; j++) {
-					centers[base] = static_cast<float>(data[base2++]);
+				base3 = fst * d;
+				base4 = label[fst] * d;
+				for(int j = 0; j < d; j++) {
+					centers[base] = static_cast<float>(data[base3++]);
 					sum[base] = centers[base];
-					sum[base3++] -= centers[base++];
+					sum[base4++] -= centers[base++];
 				}
 				size[i] = 1;
 				size[label[fst]]--;
@@ -715,7 +731,7 @@ inline void greg_kmeans(
 	// Initialize the centers
 	copy_array<float>(seeds,centers,k * d);
 	greg_initialize<DataType>(data,centers,c_sum,upper,lower,
-			label,size,d_type,ea,N,k,d,verbose);
+			label,size,d_type,ea,N,k,d,n_thread,verbose);
 	if(verbose)
 		cout << "Finished initialization" << endl;
 
