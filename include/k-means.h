@@ -895,7 +895,7 @@ inline void greg_kmeans(
 
 	if(verbose)
 		cout << "Finished clustering with error is " <<
-		e << " after " << i << " iterations." << endl;
+		e << " after " << it << " iterations." << endl;
 }
 
 
