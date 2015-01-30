@@ -319,7 +319,7 @@ inline bool init_array(
  * Initialize a 2-D array.
  * @param M the size of the input array
  * @param N the size of the input array
- * @return true if the array was initalized successfully, otherwise return false.
+ * @return true if the array was initialized successfully, otherwise return false.
  */
 template<typename DataType>
 inline bool init_array_2(
