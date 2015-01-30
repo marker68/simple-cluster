@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Simple-k-means by marker68</title>
+    <title>Simple-cluster by marker68</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -16,13 +16,13 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1 class="header">Simple-k-means</h1>
+        <h1 class="header">Simple-cluster</h1>
         <p class="header">A simple implementation for clustering methods such as k-means, EM algorithm, ...</p>
 
         <ul>
-          <li class="download"><a class="buttons" href="https://github.com/marker68/simple-k-means/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/marker68/simple-k-means/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/marker68/simple-k-means">View On GitHub</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/marker68/simple-cluster/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/marker68/simple-cluster/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/marker68/simple-cluster">View On GitHub</a></li>
         </ul>
 
         <p class="header">This project is maintained by <a class="header name" href="https://github.com/marker68">marker68</a></p>
@@ -31,20 +31,20 @@
       </header>
       <section>
         <h1>
-<a name="simple-clusters" class="anchor" href="#simple-clusters"><span class="octicon octicon-link"></span></a>Simple Clusters</h1>
+<a id="simple-clustering" class="anchor" href="#simple-clustering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple Clustering</h1>
 
-<p><a href="https://travis-ci.org/marker68/simple-k-means"><img src="https://travis-ci.org/marker68/simple-k-means.svg?branch=master" alt="Build Status"></a></p>
+<p><a href="https://travis-ci.org/marker68/simple-cluster"><img src="https://travis-ci.org/marker68/simple-cluster.svg?branch=master" alt="Build Status"></a></p>
 
 <h2>
-<a name="what-is-this" class="anchor" href="#what-is-this"><span class="octicon octicon-link"></span></a>What is this?</h2>
+<a id="what-is-this" class="anchor" href="#what-is-this" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is this?</h2>
 
 <p>This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
 The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
-If you need any other licenses, feel free to contact me at <a href="mailto:t_nguyen@hal.t.u-tokyo.ac.jp">t_nguyen@hal.t.u-tokyo.ac.jp</a>
+If you need any other licenses, feel free to contact me at <a href="mailto:t_nguyen@hal.t.u-tokyo.ac.jp">t_nguyen@hal.t.u-tokyo.ac.jp</a>.
 The purpose of this project is to provide a more flexible interface for clustering methods.</p>
 
 <h2>
-<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
 <li>Supported k-means algorithm.</li>
@@ -52,11 +52,13 @@ The purpose of this project is to provide a more flexible interface for clusteri
 <li>Supported only L2 metric distance.</li>
 <li>Supported KD-tree with ANN search.</li>
 <li>Supported GNU C++ Compiler and clang compiler.</li>
-</ul><h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <h3>
-<a name="prerequisites" class="anchor" href="#prerequisites"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
+<a id="prerequisites" class="anchor" href="#prerequisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
 
 <ul>
 <li>An Unix or Windows(<a href="https://www.cygwin.com/">Cygwin</a> not native Windows with an MSVC compiler) Operating System. Tested on Mac OS X 10.9 and Ubuntu 14.04.</li>
@@ -65,22 +67,22 @@ The purpose of this project is to provide a more flexible interface for clusteri
 <li>An GNU C++ Compiler or clang compiler that support C++ 11.</li>
 <li>
 <a href="http://opencv.org/downloads.html">OpenCV</a> 2.4.8 or newer. This library is used for testing only. Just for comparing the performance with our implementations.</li>
-</ul><h3>
-<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h3>
+</ul>
+
+<h3>
+<a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h3>
 
 <p>We use CMake as the build system. On terminal,</p>
 
-<div class="highlight highlight-bash"><pre><span class="nv">$ </span>git clone git@github.com:marker68/simple-k-means.git simple-cluster
-<span class="nv">$ </span><span class="nb">cd</span> ./simple-cluster
-<span class="nv">$ </span>cmake -H. -Bbuild <span class="o">&amp;&amp;</span> cmake --build build -- -j3
-</pre></div>
+<div class="highlight highlight-bash"><pre>$ git clone git@github.com:marker68/simple-cluster.git simple-cluster
+$ <span class="pl-s3">cd</span> ./simple-cluster
+$ cmake -H. -Bbuild <span class="pl-k">&amp;&amp;</span> cmake --build build -- -j3</pre></div>
 
 <p>This script will create the following files in your <code>bin/</code> directory.</p>
 
-<div class="highlight highlight-bash"><pre><span class="nv">$ </span>ls  bin
+<div class="highlight highlight-bash"><pre>$ ls  bin
 CMakeFiles  libgtest_main.a      test_kdtree  test_utilities
-libgtest.a  libsimplecluster.so  test_kmeans
-</pre></div>
+libgtest.a  libsimplecluster.so  test_kmeans</pre></div>
 
 <ul>
 <li>
@@ -89,25 +91,26 @@ libgtest.a  libsimplecluster.so  test_kmeans
 <code>libsimplecluster.{so,dylib,dll}</code>: dynamic library(shared library) files for SimpleCluster.</li>
 <li>
 <code>test_utilities, test_kdtree, test_kmeans</code>: test programs. See their source code in <code>test/</code> directory to know the basics of this library.</li>
-</ul><h2>
-<a name="samples" class="anchor" href="#samples"><span class="octicon octicon-link"></span></a>Samples</h2>
+</ul>
+
+<h2>
+<a id="samples" class="anchor" href="#samples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Samples</h2>
 
 <p>Samples for the usage of this library could be found at: <a href="https://github.com/marker68/example-simplecluster">https://github.com/marker68/example-simplecluster</a></p>
 
 <h2>
-<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
 <p>This project uses Doxygen to generate its documentation. You cand find it in <code>doc/</code> or an online version at <a href="http://simplecluster.tech-codes.com/">http://simplecluster.tech-codes.com/</a>
 To generate the documentation:</p>
 
-<div class="highlight highlight-bash"><pre><span class="nv">$ </span><span class="nb">cd</span> ./doc
-<span class="nv">$ </span>doxygen config.doxygen
-</pre></div>
+<div class="highlight highlight-bash"><pre>$ <span class="pl-s3">cd</span> ./doc
+$ doxygen config.doxygen</pre></div>
 
 <p>The documentation files will be generated in HTML and LaTeX format.</p>
 
 <h2>
-<a name="change-log" class="anchor" href="#change-log"><span class="octicon octicon-link"></span></a>Change log</h2>
+<a id="change-log" class="anchor" href="#change-log" aria-hidden="true"><span class="octicon octicon-link"></span></a>Change log</h2>
 
 <ul>
 <li>
