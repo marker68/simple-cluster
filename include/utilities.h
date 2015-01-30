@@ -44,8 +44,6 @@ using namespace std;
  * The main namespace
  */
 namespace SimpleCluster {
-typedef vector<double> d_vector;
-typedef vector<int> i_vector;
 
 /**
  * Types of distances
@@ -57,45 +55,6 @@ enum class DistanceType {
 };
 
 void check_env();
-
-float distance(
-		float *,
-		float *,
-		int);
-float distance_thread(
-		float *,
-		float *,
-		int,
-		int);
-float distance_square(
-		float *,
-		float *,
-		int);
-float distance_square_thread(
-		float *,
-		float *,
-		int,
-		int);
-void all_mean_vector(
-		float **,
-		int *,
-		int *,
-		float **&,
-		float *&,
-		int,
-		int,
-		int);
-float * mean_vector(
-		float **,
-		const int *,
-		float *,
-		int,
-		int);
-float * mean_vector(
-		float **,
-		const i_vector,
-		float *,
-		int);
 unsigned long get_millisecond_time();
 void print_vector(
 		float **,
@@ -109,20 +68,15 @@ void print_vector(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
-double distance_l1(
+inline double distance_l1(
 		DataType * x,
 		DataType * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = x[i] - y[i];
-			dis += fabs(tmp);
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = x[i] - y[i];
+		dis += fabs(tmp);
 	}
 
 	return dis;
@@ -136,21 +90,16 @@ double distance_l1(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType1, typename DataType2>
-double distance_l1(
+inline double distance_l1(
 		DataType1 * x,
 		DataType2 * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = static_cast<double>(x[i])
-					- static_cast<double>(y[i]);
-			dis += fabs(tmp);
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = static_cast<double>(x[i])
+													- static_cast<double>(y[i]);
+		dis += fabs(tmp);
 	}
 
 	return dis;
@@ -165,7 +114,7 @@ double distance_l1(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
-double distance_l1_thread(
+inline double distance_l1_thread(
 		DataType * x,
 		DataType * y,
 		int d,
@@ -199,20 +148,15 @@ double distance_l1_thread(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
-double distance_l2(
+inline double distance_l2(
 		DataType * x,
 		DataType * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = x[i] - y[i];
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = x[i] - y[i];
+		dis += tmp * tmp;
 	}
 
 	return sqrt(dis);
@@ -226,23 +170,17 @@ double distance_l2(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType1, typename DataType2>
-double distance_l2(
+inline double distance_l2(
 		DataType1 * x,
 		DataType2 * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = static_cast<double>(x[i])
-					- static_cast<double>(y[i]);
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = static_cast<double>(x[i])
+													- static_cast<double>(y[i]);
+		dis += tmp * tmp;
 	}
-
 	return sqrt(dis);
 }
 
@@ -254,20 +192,15 @@ double distance_l2(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
-double distance_l2_square(
+inline double distance_l2_square(
 		DataType * x,
 		DataType * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = x[i] - y[i];
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = x[i] - y[i];
+		dis += tmp * tmp;
 	}
 
 	return dis;
@@ -281,21 +214,16 @@ double distance_l2_square(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType1, typename DataType2>
-double distance_l2_square(
+inline double distance_l2_square(
 		DataType1 * x,
 		DataType2 * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-	try {
-		for(i = 0; i < d; i++) {
-			tmp = static_cast<double>(x[i])
-					- static_cast<double>(y[i]);
-			dis += tmp * tmp;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
+	for(i = 0; i < d; i++) {
+		tmp = static_cast<float>(x[i])
+													- static_cast<float>(y[i]);
+		dis += tmp * tmp;
 	}
 
 	return dis;
@@ -310,7 +238,7 @@ double distance_l2_square(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
-double distance_l2_thread(
+inline double distance_l2_thread(
 		DataType * x,
 		DataType * y,
 		int d,
@@ -345,7 +273,7 @@ double distance_l2_thread(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
-double distance_l2_square_thread(
+inline double distance_l2_square_thread(
 		DataType * x,
 		DataType * y,
 		int d,
@@ -378,21 +306,12 @@ double distance_l2_square_thread(
  * @return true if the array was initalized successfully, otherwise return false.
  */
 template<typename DataType>
-bool init_array(
+inline bool init_array(
 		DataType *& arr,
-		int N) {
+		size_t N) {
 	if(N <= 0)
 		return false;
-	try {
-		arr = (DataType *)::operator  new(N * sizeof(DataType));
-		for(int i = 0; i < N; i++) {
-			::new(arr + i) DataType;
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		return false;
-	}
-
+	arr = (DataType *)::operator  new(N * sizeof(DataType));
 	return true;
 }
 
@@ -400,10 +319,10 @@ bool init_array(
  * Initialize a 2-D array.
  * @param M the size of the input array
  * @param N the size of the input array
- * @return true if the array was initalized successfully, otherwise return false.
+ * @return true if the array was initialized successfully, otherwise return false.
  */
 template<typename DataType>
-bool init_array_2(
+inline bool init_array_2(
 		DataType **& arr,
 		int M,
 		int N) {
@@ -414,32 +333,12 @@ bool init_array_2(
 		for(int i = 0; i < M; i++) {
 			::new(arr + i) DataType *;
 			arr[i] = (DataType *)::operator new(N * sizeof(DataType));
-			for(int j = 0; j < N; j++)
-				::new(arr[i] + j) DataType;
 		}
 	} catch(exception& e) {
 		cerr << "Got an exception: " << e.what() << endl;
 		return false;
 	}
 
-	return true;
-}
-
-/**
- * Initialize a vector.
- * @param vec the input vector
- * @param N the size of the vector
- * @return true if everything's OK, otherwise return false
- */
-template<typename DataType>
-bool init_vector(
-		vector<DataType>& vec,
-		int N) {
-	DataType tmp;
-	vec.clear();
-	for(int i = 0; i < N; i++) {
-		vec.push_back(tmp);
-	}
 	return true;
 }
 
@@ -451,76 +350,16 @@ bool init_vector(
  * @return true if copy was succeeded, otherwise return false.
  */
 template<typename DataType>
-bool copy_array(
+inline bool copy_array(
 		DataType * from,
 		DataType *& to,
 		int N) {
 	if(from == nullptr || to == nullptr)
 		return false;
-	try {
-//		for(int i = 0; i < N; i++) {
-//			to[i] = from[i];
-//		}
-		memcpy(to,from,N*sizeof(DataType));
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		return false;
-	}
+	memcpy(to,from,N*sizeof(DataType));
 	return true;
 }
 
-/**
- * Copy a 2-D array.
- * @param from The input array
- * @param to the copy destination
- * @param M the number of the elements to be copied
- * @param N the number of the elements to be copied
- * @return true if copy was succeeded, otherwise return false.
- */
-template<typename DataType>
-bool copy_array_2(
-		DataType ** from,
-		DataType **& to,
-		int M,
-		int N) {
-	if(from == nullptr || to == nullptr)
-		return false;
-	try {
-		for(int i = 0; i < M; i++) {
-			if(!copy_array<DataType>(from[i],to[i],N)) {
-				return false;
-			}
-		}
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		return false;
-	}
-	return true;
-}
-
-/**
- * De-alloc a 2-D array
- * @param arr The input array
- * @param M the size of the input array
- * @return true if everything's OK, otherwise return false.
- */
-template<typename DataType>
-bool dealloc_array_2(
-		DataType **& arr,
-		int M) {
-	try {
-		for(int i = 0; i < M; i++) {
-			::delete arr[i];
-			arr[i] = nullptr;
-		}
-		::delete arr;
-		arr = nullptr;
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		return false;
-	}
-	return true;
-}
 
 /**
  * Swap two elements in an array
@@ -529,7 +368,7 @@ bool dealloc_array_2(
  * @param N the size of data
  */
 template<typename DataType>
-void swap(
+inline void swap(
 		DataType * data,
 		int m,
 		int n,
@@ -538,14 +377,9 @@ void swap(
 		cerr << "Out of bounds!" << endl;
 		exit(1);
 	}
-	try {
-		DataType c = data[m];
-		data[m] = data[n];
-		data[n] = c;
-	} catch(exception& e) {
-		cerr << "Got an exception: " << e.what() << endl;
-		exit(1);
-	}
+	DataType c = data[m];
+	data[m] = data[n];
+	data[n] = c;
 }
 
 /**
@@ -559,27 +393,21 @@ void swap(
  * @return the index of the separator
  */
 template<typename DataType>
-int partition(
+inline int partition(
 		DataType * data,
 		DataType pivot,
 		int N,
 		int (*compare)(const DataType *, const DataType *)) {
 	int i=0, j=N-1;
 	while(i <= j) {
-		try {
-			while((*compare)(&data[i],&pivot) < 0)
-				i++;
-		} catch(exception& e) {
-			cerr << "Got an exception: " << e.what() << " at i = " << i << endl;
-			exit(1);
-		}
-		try {
-			while((*compare)(&data[j],&pivot) >= 0)
-				j--;
-		} catch(exception& e) {
-			cerr << "Got an exception: " << e.what() << " at j = " << j << endl;
-			exit(1);
-		}
+
+		while((*compare)(&data[i],&pivot) < 0)
+			i++;
+
+
+		while((*compare)(&data[j],&pivot) >= 0)
+			j--;
+
 		if(i <= j) {
 			swap(data,i,j,N);
 			i++;
@@ -597,7 +425,7 @@ int partition(
  * @param compare the comparator
  */
 template<typename DataType>
-void bbsort(
+inline void bbsort(
 		DataType * data,
 		int N,
 		int (*compare)(const DataType *, const DataType *)) {
@@ -630,7 +458,7 @@ void bbsort(
  * @return the index of the k-th smallest element
  */
 template<typename DataType>
-int quick_select_k_id(
+inline int quick_select_k_id(
 		DataType * data,
 		int N,
 		int k,
@@ -683,7 +511,7 @@ int quick_select_k_id(
  * @return the value of the k-th smallest element
  */
 template<typename DataType>
-DataType quick_select_k(
+inline DataType quick_select_k(
 		DataType * data,
 		int N,
 		int k,

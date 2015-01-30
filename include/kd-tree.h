@@ -140,7 +140,7 @@ public:
  * @verbose true to print verbose. Just for debugging.
  */
 template<typename DataType>
-void kd_insert(
+inline void kd_insert(
 		KDNode<DataType> *& root,
 		DataType * _data,
 		int N,
@@ -180,7 +180,7 @@ void kd_insert(
  * @return the distance between two KDNode if no error occurs, otherwise return DBL_MAX
  */
 template<typename DataType>
-double kd_distance(
+inline double kd_distance(
 		KDNode<DataType> * _a,
 		KDNode<DataType> * _b,
 		DistanceType d_type,
@@ -206,7 +206,7 @@ double kd_distance(
  * @param _a, _b two float numbers
  */
 template<typename DataType>
-int comparator(
+inline int comparator(
 		const DataType * _a,
 		const DataType * _b) {
 	if(*_a > *_b) return 1;
@@ -223,7 +223,7 @@ int comparator(
  * @return the index of the median
  */
 template<typename DataType>
-int find_median(
+inline int find_median(
 		DataType ** data,
 		int M,
 		int N,
@@ -256,7 +256,7 @@ int find_median(
  * @param verbose just for debugging
  */
 template<typename DataType>
-void make_balanced_tree(
+inline void make_balanced_tree(
 		KDNode<DataType> *& root,
 		DataType ** data,
 		int M,
@@ -287,7 +287,7 @@ void make_balanced_tree(
  * @param verbose just for debugging
  */
 template<typename DataType>
-void make_random_tree(
+inline void make_random_tree(
 		KDNode<DataType> *& root,
 		DataType ** data,
 		int M,
@@ -320,7 +320,7 @@ void make_random_tree(
  * @param verbose for debugging
  */
 template<typename DataType>
-void nn_search(
+inline void nn_search(
 		KDNode<DataType> * root,
 		KDNode<DataType> * query,
 		KDNode<DataType> *& result,
@@ -382,7 +382,7 @@ void nn_search(
  * @param verbose for debugging
  */
 template<typename DataType>
-void ann_search(
+inline void ann_search(
 		KDNode<DataType> * root,
 		KDNode<DataType> * query,
 		KDNode<DataType> *& result,
@@ -441,7 +441,7 @@ void ann_search(
  * @param verbose for debugging
  */
 template<typename DataType>
-void linear_search(
+inline void linear_search(
 		DataType ** data,
 		DataType * query,
 		DistanceType d_type,
@@ -480,7 +480,7 @@ void linear_search(
  * @param level the cut-plane level
  */
 template<typename DataType>
-void kd_travel(
+inline void kd_travel(
 		KDNode<DataType> * root,
 		int N,
 		int level) {

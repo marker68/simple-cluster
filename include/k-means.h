@@ -99,7 +99,7 @@ typedef struct {
  * @param verbose for debugging
  */
 template<typename DataType>
-void random_seeds(
+inline void random_seeds(
 		DataType * data,
 		float *& seeds,
 		int d,
@@ -159,7 +159,7 @@ void random_seeds(
  * @param verbose for debugging
  */
 template<typename DataType>
-void kmeans_pp_seeds(
+inline void kmeans_pp_seeds(
 		DataType * data,
 		float *& seeds,
 		DistanceType d_type,
@@ -175,19 +175,16 @@ void kmeans_pp_seeds(
 	uniform_int_distribution<int> int_dis(0, N - 1);
 	int tmp = int_dis(gen);
 
-	float * d_tmp;
-
-	int base = tmp * d, i, i0, start, end;
+	size_t base = static_cast<size_t>(tmp) * static_cast<size_t>(d);
+	int i, i0, start, end, p = N / n_thread;
 	for(i = 0; i < d; i++) {
 		seeds[i] = static_cast<float>(data[base++]);
 	}
-	d_tmp = seeds;
+
 	float * distances;
 	init_array<float>(distances,N);
 	float * sum_distances;
 	init_array<float>(sum_distances,N);
-	DataType * d_tmp2 = data;
-
 #ifdef _OPENMP
 	omp_set_num_threads(n_thread);
 #pragma omp parallel
@@ -195,9 +192,11 @@ void kmeans_pp_seeds(
 #pragma omp for private(i, start, end, i0)
 #endif
 		for(i0 = 0; i0 < n_thread; i0++) {
-			start = N * i0 / n_thread;
-			end = start + N / n_thread;
-			if(end >= N) end = N;
+			start = p * i0;
+			end = start + p;
+			if(end >= N || i0 == n_thread - 1) end = N;
+			DataType * d_tmp2 = data + static_cast<size_t>(start) * static_cast<size_t>(d);
+			float * d_tmp = seeds;
 			for(i = start; i < end; i++) {
 				if(d_type == DistanceType::NORM_L2)
 					distances[i] = distance_l2_square<DataType,float>(d_tmp2, d_tmp, d);
@@ -210,10 +209,9 @@ void kmeans_pp_seeds(
 #ifdef _OPENMP
 	}
 #endif
-
 	float sum, tmp2 = 0.0, sum1, sum2, pivot;
 	int count = 1, j, t;
-	int base1, base2;
+	size_t base1, base2;
 	for(count = 1; count < k; count++) {
 		sum = 0.0;
 		for(i = 0; i < N; i++) {
@@ -231,33 +229,31 @@ void kmeans_pp_seeds(
 		}
 		j = (i + 1) % N;
 		base1 = count * d;
-		base2 = j * d;
+		base2 = static_cast<size_t>(j) * d;
 		for(t = 0; t < d; t++) {
 			seeds[base1++] = static_cast<float>(data[base2++]);
 		}
+
 		// Update the distances
 		if(count < k) {
 #ifdef _OPENMP
 			omp_set_num_threads(n_thread);
 #pragma omp parallel
 			{
-#pragma omp for private(i, start, end, i0)
+#pragma omp for private(i, start, end, i0, tmp2)
 #endif
 				for(i0 = 0; i0 < n_thread; i0++) {
-					start = N * i0 / n_thread;
-					end = start + N / n_thread;
-					if(end >= N) end = N;
-					d_tmp2 = data + start * d;
+					start = p * i0;
+					end = start + p;
+					if(end >= N || i0 == n_thread - 1) end = N;
+					DataType * d_tmp2 = data + static_cast<size_t>(start) * static_cast<size_t>(d);
+					float * d_tmp = seeds + (count - 1) * d; // We only need to compare the old closest distances with the new one
 					for(i = start; i < end; i++) {
-						d_tmp = seeds;
-						for(j = 0; j < count; j++) {
-							if(d_type == DistanceType::NORM_L2)
-								tmp2 = distance_l2_square<float,DataType>(d_tmp,d_tmp2,d);
-							else if(d_type == DistanceType::NORM_L1)
-								tmp2 = distance_l1<float,DataType>(d_tmp,d_tmp2,d);
-							if(distances[i] > tmp2) distances[i] = tmp2;
-							d_tmp += d;
-						}
+						if(d_type == DistanceType::NORM_L2)
+							tmp2 = distance_l2_square<float,DataType>(d_tmp,d_tmp2,d);
+						else if(d_type == DistanceType::NORM_L1)
+							tmp2 = distance_l1<float,DataType>(d_tmp,d_tmp2,d);
+						if(distances[i] > tmp2) distances[i] = tmp2;
 						d_tmp2 += d;
 					}
 				}
@@ -265,6 +261,8 @@ void kmeans_pp_seeds(
 			}
 #endif
 		}
+		if(verbose)
+			cout << "Got " << count << " centers" << endl;
 	}
 }
 
@@ -283,7 +281,7 @@ void kmeans_pp_seeds(
  * @param verbose for debugging
  */
 template<typename DataType>
-void linear_assign(
+inline void linear_assign(
 		DataType * data,
 		float * centers,
 		int *& labels,
@@ -310,7 +308,7 @@ void linear_assign(
 		d_tmp1 = centers;
 		for(j = 0; j < k; j++) {
 			if(d_type == DistanceType::NORM_L2)
-				min_tmp = distance_l2<DataType,float>(d_tmp,d_tmp1,d);
+				min_tmp = distance_l2_square<DataType,float>(d_tmp,d_tmp1,d);
 			else if(d_type == DistanceType::NORM_L1)
 				min_tmp = distance_l1<DataType,float>(d_tmp,d_tmp1,d);
 			if(min > min_tmp) {
@@ -350,7 +348,7 @@ void linear_assign(
  * @param n_thread the number of threads
  * @return nothing
  */
-void update_center(
+inline void update_center(
 		float * sum,
 		int * size,
 		float *& centers,
@@ -358,7 +356,22 @@ void update_center(
 		DistanceType d_type,
 		int k,
 		int d,
-		int n_thread);
+		int n_thread) {
+	float * c_tmp;
+	init_array<float>(c_tmp,d);
+	int i, base = 0;
+	c_tmp = centers;
+	for(i = 0; i < k; i++) {
+		for(int j = 0; j < d; j++) {
+			centers[base] = static_cast<float>(sum[base++] / size[i]);
+		}
+		if(d_type == DistanceType::NORM_L2)
+			moved[i] = distance_l2<float>(c_tmp,centers + (base - d),d);
+		else if(d_type == DistanceType::NORM_L1)
+			moved[i] = distance_l1<float>(c_tmp,centers + (base - d),d);
+		c_tmp += d;
+	}
+}
 
 /**
  * Update the bounds
@@ -371,14 +384,49 @@ void update_center(
  * @param d
  * @param n_thread the number of threads
  */
-void update_bounds(
+inline void update_bounds(
 		float * moved,
 		int * label,
 		float *& upper,
 		float *& lower,
 		int N,
 		int k,
-		int n_thread);
+		int n_thread) {
+	int r = 0;
+	int i;
+
+	float max = 0.0, max2 = 0.0, sub;
+	for(i = 0; i < k; i++) {
+		if(max <= moved[i]) {
+			max2 = max;
+			max = moved[i];
+			r = i;
+		} else {
+			if(max2 <= moved[i]) {
+				max2 = moved[i];
+			}
+		}
+	}
+#ifdef _OPENMP
+	omp_set_num_threads(n_thread);
+#pragma omp parallel
+	{
+#pragma omp for private(i)
+#endif
+		for(i = 0; i < N; i++) {
+			upper[i] += moved[label[i]];
+			sub = 0.0;
+			if(r == label[i]) {
+				sub = max2;
+			} else {
+				sub = max;
+			}
+			lower[i] = fabs(lower[i] - sub);
+		}
+#ifdef _OPENMP
+	}
+#endif
+}
 
 /**
  * Calculate the distortion of a set of clusters.
@@ -393,7 +441,7 @@ void update_bounds(
  * @param verbose for debugging
  */
 template<typename DataType>
-float distortion(
+inline float distortion(
 		DataType * data,
 		float * centers,
 		int * label,
@@ -419,7 +467,7 @@ float distortion(
  * Update the farthest distances
  */
 template<typename DataType>
-void find_farthest(
+inline void find_farthest(
 		DataType * data,
 		float * centers,
 		int * labels,
@@ -438,7 +486,7 @@ void find_farthest(
 	for(i = 0; i < N; i++) {
 		if(labels[i] == id) {
 			if(d_type == DistanceType::NORM_L2)
-				d_tmp = distance_l2<DataType,float>(tmp,centers,d);
+				d_tmp = distance_l2_square<DataType,float>(tmp,centers,d);
 			else if(d_type == DistanceType::NORM_L1)
 				d_tmp = distance_l1<DataType,float>(tmp,centers,d);
 			if(dfst < d_tmp) {
@@ -448,13 +496,14 @@ void find_farthest(
 		}
 		tmp += d;
 	}
+	dfst = sqrt(dfst);
 }
 
 /**
  * Find a lonely observer
  */
 template<typename DataType>
-void find_lonely(
+inline void find_lonely(
 		DataType * data,
 		float * centers,
 		int * labels,
@@ -471,7 +520,7 @@ void find_lonely(
 	DataType * tmp = data;
 	for(i = 0; i < N; i++) {
 		if(d_type == DistanceType::NORM_L2)
-			d_tmp = distance_l2<DataType,float>(tmp,centers + labels[i] * d,d);
+			d_tmp = distance_l2_square<DataType,float>(tmp,centers + labels[i] * d,d);
 		else if(d_type == DistanceType::NORM_L1)
 			d_tmp = distance_l1<DataType,float>(tmp,centers + labels[i] * d,d);
 		if(dfst < d_tmp) {
@@ -480,6 +529,7 @@ void find_lonely(
 		}
 		tmp += d;
 	}
+	dfst = sqrt(dfst);
 }
 
 /**
@@ -500,7 +550,7 @@ void find_lonely(
  * @param verbose for debugging
  */
 template<typename DataType>
-void greg_initialize(
+inline void greg_initialize(
 		DataType * data,
 		float * centers,
 		float *& sum,
@@ -513,64 +563,80 @@ void greg_initialize(
 		int N,
 		int k,
 		int d,
+		int n_thread,
 		bool verbose) {
-	int i, j, base = 0, base0 = 0;
+	size_t base = 0, p = N / n_thread;
 	// Initializing size and vector sum
-	for(i = 0; i < k; i++) {
+	for(int i = 0; i < k; i++) {
 		size[i] = 0;
-		for(j = 0; j < d; j++) {
+		for(int j = 0; j < d; j++) {
 			sum[base++] = 0.0;
 		}
 	}
 
 	float min, min2, d_tmp;
 	int tmp;
-	DataType * dt = data;
-	for(i = 0; i < N; i++) {
-		min = FLT_MAX;
-		min2 = FLT_MAX;
-		d_tmp = 0.0;
-		tmp = -1;
-		for(j = 0; j < k; j++) {
-			if(d_type == DistanceType::NORM_L2) {
-				d_tmp = distance_l2<float,DataType>(centers + j * d,dt,d);
-			} else if(d_type == DistanceType::NORM_L1) {
-				d_tmp = distance_l1<float,DataType>(centers + j * d,dt,d);
-			}
-			if(min >= d_tmp) {
-				min2 = min;
-				min = d_tmp;
-				tmp = j;
-			} else {
-				if(min2 >= d_tmp) min2 = d_tmp;
+#ifdef _OPENMP
+	omp_set_num_threads(n_thread);
+#pragma omp parallel
+	{
+#pragma omp for private(d_tmp,min,min2,tmp)
+#endif
+		for(int i0 = 0; i0 < n_thread; i0++) {
+			size_t start = p * i0;
+			size_t end = start + p;
+			size_t base1 = 0, base2 = 0;
+			if(end > N || i0 == n_thread - 1) end = N;
+			DataType * dt = data + start * static_cast<size_t>(d);
+			for(size_t i = start; i < end; i++) {
+				min = FLT_MAX;
+				min2 = FLT_MAX;
+				d_tmp = 0.0;
+				tmp = -1;
+				for(size_t j = 0; j < k; j++) {
+					if(d_type == DistanceType::NORM_L2) {
+						d_tmp = distance_l2_square<float,DataType>(centers + j * d,dt,d);
+					} else if(d_type == DistanceType::NORM_L1) {
+						d_tmp = distance_l1<float,DataType>(centers + j * d,dt,d);
+					}
+					if(min >= d_tmp) {
+						min2 = min;
+						min = d_tmp;
+						tmp = j;
+					} else {
+						if(min2 >= d_tmp) min2 = d_tmp;
+					}
+				}
+
+				label[i] = tmp; // Update the label
+				upper[i] = sqrt(min); // Update the upper bound on this distance
+				lower[i] = sqrt(min2); // Update the lower bound on this distance
+
+				// Update the size
+				size[tmp]++;
+
+				// Update the vector sum
+				base1 = tmp * d;
+				base2 = i * d;
+				for(size_t j = 0; j < d; j++) {
+					sum[base1++] += static_cast<float>(data[base2++]);
+				}
+				dt += d;
 			}
 		}
-
-		label[i] = tmp; // Update the label
-		upper[i] = min; // Update the upper bound on this distance
-		lower[i] = min2; // Update the lower bound on this distance
-
-		// Update the size
-		size[tmp]++;
-
-		// Update the vector sum
-		base = tmp * d;
-		base0 = i * d;
-		for(j = 0; j < d; j++) {
-			sum[base++] += static_cast<float>(data[base0++]);
-		}
-		dt += d;
+#ifdef _OPENMP
 	}
+#endif
 
-	int s_max, l_tmp, fst, base2, base3;
+	size_t s_max, l_tmp, fst, base3, base4;
 	float dfst;
 	// Check for empty clusters
 	if(ea != EmptyActs::NONE) {
-		for(i = 0; i < k; i++) {
+		for(int i = 0; i < k; i++) {
 			if(size[i] <= 0) {
 				if(ea == EmptyActs::SINGLETON_2) {
 					l_tmp = 0;
-					for(j = 0; j < k; j++) {
+					for(int j = 0; j < k; j++) {
 						if(l_tmp < size[j]) {
 							l_tmp = size[j];
 							s_max = j;
@@ -581,16 +647,16 @@ void greg_initialize(
 				base = i * d;
 				if(ea == EmptyActs::SINGLETON)
 					find_lonely<DataType>(data,centers,label,d_type,
-							dfst,fst,N,k,d,verbose);
+							dfst,(int&)fst,N,k,d,verbose);
 				else if(ea == EmptyActs::SINGLETON_2)
 					find_farthest<DataType>(data,centers + base,label,d_type,
-							s_max,dfst,fst,N,k,d,verbose);
-				base2 = fst * d;
-				base3 = label[fst] * d;
-				for(j = 0; j < d; j++) {
-					centers[base] = static_cast<float>(data[base2++]);
+							s_max,dfst,(int&)fst,N,k,d,verbose);
+				base3 = fst * d;
+				base4 = label[fst] * d;
+				for(int j = 0; j < d; j++) {
+					centers[base] = static_cast<float>(data[base3++]);
 					sum[base] = centers[base];
-					sum[base3++] -= centers[base++];
+					sum[base4++] -= centers[base++];
 				}
 				size[i] = 1;
 				size[label[fst]]--;
@@ -601,7 +667,7 @@ void greg_initialize(
 }
 
 template<typename DataType>
-void greg_kmeans(
+inline void greg_kmeans(
 		DataType * data,
 		float *& centers,
 		int *& label,
@@ -655,7 +721,8 @@ void greg_kmeans(
 	init_array<float>(lower,N);
 	init_array<int>(size,k);
 
-	int i, j, s_max, l_tmp, fst, base, base0, base1, base2;
+	int i0, i, j, s_max, l_tmp, fst, base, base0, base1, base2;
+	size_t p = N / n_thread;
 	float * fpt1, * fpt2;
 	DataType * dpt = data;
 	int tmp = 0;
@@ -665,7 +732,7 @@ void greg_kmeans(
 	// Initialize the centers
 	copy_array<float>(seeds,centers,k * d);
 	greg_initialize<DataType>(data,centers,c_sum,upper,lower,
-			label,size,d_type,ea,N,k,d,verbose);
+			label,size,d_type,ea,N,k,d,n_thread,verbose);
 	if(verbose)
 		cout << "Finished initialization" << endl;
 
@@ -678,14 +745,14 @@ void greg_kmeans(
 			for(j = 0; j < k; j++) {
 				if(j != i) {
 					if(d_type == DistanceType::NORM_L2)
-						min_tmp = distance_l2<float>(fpt1,fpt2,d);
+						min_tmp = distance_l2_square<float>(fpt1,fpt2,d);
 					else if(d_type == DistanceType::NORM_L1)
 						min_tmp = distance_l1<float>(fpt1,fpt2,d);
 					if(min > min_tmp) min = min_tmp;
 				}
 				fpt2 += d;
 			}
-			closest[i] = min;
+			closest[i] = sqrt(min);
 			fpt1 += d;
 		}
 
@@ -695,58 +762,64 @@ void greg_kmeans(
 		{
 #pragma omp for private(i,j,d_tmp,m,min,min2,tmp)
 #endif
-			for(i = 0; i < N; i++) {
-				// Update m for bound test
-				d_tmp = closest[label[i]]/2.0;
-				m = std::max(d_tmp,lower[i]);
-				// First bound test
-				if(upper[i] > m) {
-					// We need to tighten the upper bound
-					if(d_type == DistanceType::NORM_L2)
-						upper[i] = distance_l2<DataType,float>(data + i * d,centers + label[i] * d,d);
-					else if(d_type == DistanceType::NORM_L1)
-						upper[i] = distance_l1<DataType,float>(data + i * d,centers + label[i] * d,d);
-					// Second bound test
+			for(i0 = 0; i0 < n_thread; i0++) {
+				size_t start = p * i0;
+				size_t end = start + p;
+				if(end > N || i0 == n_thread - 1) end = N;
+				int l;
+				for(i = start; i < end; i++) {
+					// Update m for bound test
+					d_tmp = closest[label[i]]/2.0;
+					m = std::max(d_tmp,lower[i]);
+					// First bound test
 					if(upper[i] > m) {
-						int l = label[i];
-						min2 = min = FLT_MAX;
-						tmp = -1;
-						// Assign the data to clusters
-						fpt1 = centers;
-						for(j = 0; j < k; j++) {
-							if(d_type == DistanceType::NORM_L2)
-								d_tmp = distance_l2<float,DataType>(fpt1,data + i * d,d);
-							else if(d_type == DistanceType::NORM_L1)
-								d_tmp = distance_l1<float,DataType>(fpt1,data + i * d,d);
-							if(min >= d_tmp) {
-								min2 = min;
-								min = d_tmp;
-								tmp = j;
-							} else {
-								if(min2 > d_tmp) min2 = d_tmp;
+						// We need to tighten the upper bound
+						if(d_type == DistanceType::NORM_L2)
+							upper[i] = distance_l2<DataType,float>(data + i * d,centers + label[i] * d,d);
+						else if(d_type == DistanceType::NORM_L1)
+							upper[i] = distance_l1<DataType,float>(data + i * d,centers + label[i] * d,d);
+						// Second bound test
+						if(upper[i] > m) {
+							l = label[i];
+							min2 = min = FLT_MAX;
+							tmp = -1;
+							// Assign the data to clusters
+							fpt1 = centers;
+							for(j = 0; j < k; j++) {
+								if(d_type == DistanceType::NORM_L2)
+									d_tmp = distance_l2_square<float,DataType>(fpt1,data + i * d,d);
+								else if(d_type == DistanceType::NORM_L1)
+									d_tmp = distance_l1<float,DataType>(fpt1,data + i * d,d);
+								if(min >= d_tmp) {
+									min2 = min;
+									min = d_tmp;
+									tmp = j;
+								} else {
+									if(min2 > d_tmp) min2 = d_tmp;
+								}
+								fpt1 += d;
 							}
-							fpt1 += d;
-						}
 
-						// Assign the data[i] into cluster tmp
-						label[i] = tmp; // Update the label
-						upper[i] = min; // Update the upper bound on this distance
-						lower[i] = min2; // Update the lower bound on this distance
+							// Assign the data[i] into cluster tmp
+							label[i] = tmp; // Update the label
+							upper[i] = sqrt(min); // Update the upper bound on this distance
+							lower[i] = sqrt(min2); // Update the lower bound on this distance
 
-						if(l != tmp) {
-							size[tmp]++;
-							size[l]--;
-							if(size[l] == 0) {
-								if(verbose)
-									cout << "An empty cluster was found!"
-									" label = " << l << endl;
-							}
-							base = i * d;
-							base0 = tmp * d;
-							base1 = l * d;
-							for(j = 0; j < d; j++) {
-								c_sum[base0++] += static_cast<float>(data[base]);
-								c_sum[base1++] -= static_cast<float>(data[base++]);
+							if(l != tmp) {
+								size[tmp]++;
+								size[l]--;
+								if(size[l] == 0) {
+									if(verbose)
+										cout << "An empty cluster was found!"
+										" label = " << l << endl;
+								}
+								base = i * d;
+								base0 = tmp * d;
+								base1 = l * d;
+								for(j = 0; j < d; j++) {
+									c_sum[base0++] += static_cast<float>(data[base]);
+									c_sum[base1++] -= static_cast<float>(data[base++]);
+								}
 							}
 						}
 					}
@@ -822,7 +895,7 @@ void greg_kmeans(
 
 	if(verbose)
 		cout << "Finished clustering with error is " <<
-		e << " after " << i << " iterations." << endl;
+		e << " after " << it << " iterations." << endl;
 }
 
 
@@ -844,7 +917,7 @@ void greg_kmeans(
  * @param verbose for debugging
  */
 template<typename DataType>
-void simple_kmeans(
+inline void simple_kmeans(
 		DataType * data,
 		float *& centers,
 		int *& labels,

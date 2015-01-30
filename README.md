@@ -1,7 +1,7 @@
 Simple Clusters
 ===============================
 
-[![Build Status](https://travis-ci.org/marker68/simple-k-means.svg?branch=master)](https://travis-ci.org/marker68/simple-k-means)
+[![Build Status](https://travis-ci.org/marker68/simple-cluster.svg?branch=master)](https://travis-ci.org/marker68/simple-cluster)
 
 ## What is this?
 

@@ -1,6 +1,5 @@
 /*
- *  SIMPLE CLUSTERS: A simple library for clustering works.
- *  Copyright (C) 2014 Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
+ *  Copyright (C) 2015 Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,19 +13,25 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ *  xmeans.h
  *
- * k-means.cpp
- *
- *  Created on: 2014/09/04
+ *  Created on: 2015/01/30
  *      Author: Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
  */
 
-#include <cmath>
-#include "k-means.h"
+#ifndef INCLUDE_XMEANS_H_
+#define INCLUDE_XMEANS_H_
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include <iostream>
+
+
+using namespace std;
 
 namespace SimpleCluster {
+
 }
+
+
+
+#endif /* INCLUDE_XMEANS_H_ */
