@@ -1,4 +1,4 @@
-Simple Clusters
+Simple Clustering
 ===============================
 
 [![Build Status](https://travis-ci.org/marker68/simple-cluster.svg?branch=master)](https://travis-ci.org/marker68/simple-cluster)
@@ -7,7 +7,7 @@ Simple Clusters
 
 This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
 The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
-If you need any other licenses, feel free to contact me at [t_nguyen@hal.t.u-tokyo.ac.jp](mailto:t_nguyen@hal.t.u-tokyo.ac.jp)
+If you need any other licenses, feel free to contact me at [t_nguyen@hal.t.u-tokyo.ac.jp](mailto:t_nguyen@hal.t.u-tokyo.ac.jp).
 The purpose of this project is to provide a more flexible interface for clustering methods.
 
 ## Features
@@ -30,7 +30,7 @@ The purpose of this project is to provide a more flexible interface for clusteri
 ### Build
 We use CMake as the build system. On terminal,
 ```bash
-$ git clone git@github.com:marker68/simple-k-means.git simple-cluster
+$ git clone git@github.com:marker68/simple-cluster.git simple-cluster
 $ cd ./simple-cluster
 $ cmake -H. -Bbuild && cmake --build build -- -j3
 ```
