@@ -98,7 +98,7 @@ inline double distance_l1(
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = static_cast<double>(x[i])
-													- static_cast<double>(y[i]);
+																	- static_cast<double>(y[i]);
 		dis += fabs(tmp);
 	}
 
@@ -178,7 +178,7 @@ inline double distance_l2(
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = static_cast<double>(x[i])
-													- static_cast<double>(y[i]);
+																	- static_cast<double>(y[i]);
 		dis += tmp * tmp;
 	}
 	return sqrt(dis);
@@ -222,7 +222,7 @@ inline double distance_l2_square(
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = static_cast<float>(x[i])
-													- static_cast<float>(y[i]);
+																	- static_cast<float>(y[i]);
 		dis += tmp * tmp;
 	}
 
@@ -548,6 +548,61 @@ inline DataType quick_select_k(
 	if(k < p) return quick_select_k(data,p,k,*compare);
 	else if(k == p) return data[p];
 	else return quick_select_k(&data[p],N-p,k-p,*compare);
+}
+
+/**
+ * Find the mean vector of all values in each row or column of
+ * a matrix A.
+ */
+template<typename DataType>
+void mean(
+		DataType * A,
+		int m,
+		int n,
+		int type,
+		DataType *& B,
+		bool verbose) {
+	if(m <= 0 || n <= 0) return;
+	int size = 0;
+	int i, j;
+	if(type == 1)
+		size = n;
+	else if(type == 2)
+		size = m;
+	else size = m * n;
+
+	B = (DataType *)::operator new(size * sizeof(DataType));
+
+	if(type < 1 || type > 2) {
+		memcpy(B,A,size * sizeof(DataType));
+		return;
+	}
+
+	if(type == 2) {
+		// TODO Use OpenMP?
+		for(i = 0; i < m; i++) {
+			B[i] = 0;
+			for(j = 0; j < n; j++) {
+				B[i] += A[0];
+				A++;
+			}
+			B[i] /= n;
+		}
+		return;
+	}
+
+	if(type == 1) {
+		for(i = 0; i < n; i++) B[i] = 0;
+		// TODO Use OpenMP?
+		for(i = 0; i < m; i++) {
+			for(j = 0; j < n; j++) {
+				B[j] += A[0];
+				A++;
+			}
+		}
+		for(i = 0; i < n; i++) B[i] /= m;
+		return;
+	}
 }
 }
 
