@@ -1,0 +1,7 @@
+/cblas.h
+/f77blas.h
+/lapacke_config.h
+/lapacke_mangling.h
+/lapacke_utils.h
+/lapacke.h
+/openblas_config.h

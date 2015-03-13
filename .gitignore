@@ -1,5 +1,9 @@
 /.*.html
-/lib
+/lib/*.so*
+/lib/*.dylib*
+/lib/*.dll*
+/lib/*.a*
+/lib/cmake
 /.autotools
 /*~
 /x86

@@ -57,6 +57,12 @@ include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #find_package(OpenCV)
 find_package(OpenMP)
+# This project uses OpenBLAS
+# To build this library, you need to
+# $ cd ./lib/OpenBLAS
+# $ make
+# $ make PREFIX=../.. install
+
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
 # of this distribution is 1.7.0.
