@@ -36,6 +36,10 @@
 #include <cmath>
 #include "utilities.h"
 
+// Use BLAS/LAPACK packages
+#include <lapacke.h>
+#include <cblas.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -50,16 +54,17 @@ typedef struct {
 	int type;
 } CKModel;
 
-template<typename DataType>
 void ok_init(
-		DataType * X,
+		float * X,
 		int m,
 		int n,
 		int p,
 		CKModel& model,
-		DataType *& mu,
-		DataType *& R,
+		float *& mu,
+		float *& X_mu,
+		float *& R,
 		bool verbose) {
+	mean(X,n,p,2,mu,verbose);
 
 }
 }
