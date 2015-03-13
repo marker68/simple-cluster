@@ -141,6 +141,27 @@ TEST_F(UtilTest, test7) {
 	EXPECT_LT(0.0,distance_l2<unsigned char>(x,y,3));
 }
 
+TEST_F(UtilTest, test8) {
+	float a[] = {0.1, 1.2, 3.5, 6.3};
+	float * b;
+	mean(a,2,2,2,b,true);
+	EXPECT_LT(fabs(b[0]-0.65),1e-04);
+	EXPECT_LT(fabs(b[1]-4.90),1e-04);
+}
+
+TEST_F(UtilTest, test9) {
+	float * a = (float *)::operator new((1 << 20) * sizeof(float));
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_real_distribution<float> real_dis(0.0, static_cast<float>(N));
+
+	for(int i = 0; i < (1 << 20); i++) {
+		a[i] = real_dis(gen);
+	}
+	float * b;
+	mean(a,1 << 8,1 << 12,2,b,true);
+}
+
 int main(int argc, char * argv[])
 {
 	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
