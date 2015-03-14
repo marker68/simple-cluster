@@ -59,13 +59,40 @@ void ok_init(
 		int m,
 		int n,
 		int p,
+		int nthread,
 		CKModel& model,
 		float *& mu,
 		float *& X_mu,
 		float *& R,
 		bool verbose) {
+	if(nthread <= 0) nthread = 1;
+
+	// Init mu
 	mean(X,n,p,2,mu,verbose);
 
+	// Init X_mu
+	cblas_scopy(n * p,X,1,X_mu,1);
+	int i0, i, j;
+	int blk = n / nthread;
+#ifdef _OPENMP
+	omp_set_num_threads(nthread);
+#pragma omp parallel
+	{
+#pragma omp for private(i, i0)
+#endif
+	for(i0 = 0; i0 < nthread; i0++) {
+		int start = i0 * blk;
+		int end = start + blk;
+		if(end > n) end = n;
+		float * tmp1 = X_mu + start;
+		for(i = start; i < end; i++) {
+			cblas_saxpy(p,-1.0f,mu,1,tmp1,1);
+			tmp1 += p;
+		}
+	}
+#ifdef _OPENMP
+	}
+#endif
 }
 }
 
