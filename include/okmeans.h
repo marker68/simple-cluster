@@ -101,6 +101,21 @@ void ok_init(
 	float * C = (float *)::operator new (p * p * sizeof(float));
 	cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans,
 			p, p, n, 1.0f / p, X_mu, p,X_mu, n, 0.0f, C, p);
+
+	// Generate a random m * m matrix and decompose it by SVD
+	float * rm;
+	gen_rand_vector_float(rm,m * m,0.0f,1.0f * m,true);
+	R = (float *)::operator new(m * m * sizeof(float)); // R
+	float * S = (float *)::operator new(m * m * sizeof(float)); // S
+	float * V = (float *)::operator new(m * m * sizeof(float)); // V
+	float * superb = (float *)::operator new(m * sizeof(float));
+	LAPACKE_sgesvd(LAPACK_ROW_MAJOR,'A','A',m,m,rm,m,S,R,m,V,m,superb);
+
+	// Calculate eigenvalues of C and init R.
+	// Note: C is a symmetric matrix.
+	if(p > m) {
+//		LAPACKE_ssyevr(LAPACK_ROW_MAJOR,'V','A','U',p,);
+	}
 }
 }
 
