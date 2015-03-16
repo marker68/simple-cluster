@@ -35,6 +35,7 @@
 #include <cfloat>
 #include <cmath>
 #include "utilities.h"
+#include "rand.h"
 
 // Use BLAS/LAPACK packages
 #include <lapacke.h>
@@ -66,9 +67,11 @@ void ok_init(
 		float *& R,
 		bool verbose) {
 	if(nthread <= 0) nthread = 1;
+	if(m <= 0 || n <= 0 || p <= 0)
+		return;
 
 	// Init mu
-	mean(X,n,p,2,mu,verbose);
+	mean(X,n,p,1,mu,verbose);
 
 	// Init X_mu
 	cblas_scopy(n * p,X,1,X_mu,1);
@@ -80,19 +83,24 @@ void ok_init(
 	{
 #pragma omp for private(i, i0)
 #endif
-	for(i0 = 0; i0 < nthread; i0++) {
-		int start = i0 * blk;
-		int end = start + blk;
-		if(end > n) end = n;
-		float * tmp1 = X_mu + start;
-		for(i = start; i < end; i++) {
-			cblas_saxpy(p,-1.0f,mu,1,tmp1,1);
-			tmp1 += p;
+		for(i0 = 0; i0 < nthread; i0++) {
+			int start = i0 * blk;
+			int end = start + blk;
+			if(end > n) end = n;
+			float * tmp1 = X_mu + start;
+			for(i = start; i < end; i++) {
+				cblas_saxpy(p,-1.0f,mu,1,tmp1,1);
+			}
 		}
-	}
 #ifdef _OPENMP
 	}
 #endif
+
+	// Compute the co-variance matrix of X_mu
+	// C = 1/p * X_mu' * X_mu (note: E[X_mu] = 0)
+	float * C = (float *)::operator new (p * p * sizeof(float));
+	cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans,
+			p, p, n, 1.0f / p, X_mu, p,X_mu, n, 0.0f, C, p);
 }
 }
 
