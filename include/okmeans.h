@@ -65,6 +65,7 @@ void ok_init(
 		float *& mu,
 		float *& X_mu,
 		float *& R,
+		float *& R_pc,
 		bool verbose) {
 	if(nthread <= 0) nthread = 1;
 	if(m <= 0 || n <= 0 || p <= 0)
@@ -99,8 +100,16 @@ void ok_init(
 	// Compute the co-variance matrix of X_mu
 	// C = 1/p * X_mu' * X_mu (note: E[X_mu] = 0)
 	float * C = (float *)::operator new (p * p * sizeof(float));
-	cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans,
-			p, p, n, 1.0f / p, X_mu, p,X_mu, n, 0.0f, C, p);
+	cblas_sgemm(
+			CblasRowMajor,
+			CblasTrans,
+			CblasNoTrans,
+			p, p, n,
+			1.0f / p,
+			X_mu, p,
+			X_mu, n,
+			0.0f,
+			C, p);
 
 	// Generate a random m * m matrix and decompose it by SVD
 	float * rm;
@@ -109,13 +118,69 @@ void ok_init(
 	float * S = (float *)::operator new(m * m * sizeof(float)); // S
 	float * V = (float *)::operator new(m * m * sizeof(float)); // V
 	float * superb = (float *)::operator new(m * sizeof(float));
-	LAPACKE_sgesvd(LAPACK_ROW_MAJOR,'A','A',m,m,rm,m,S,R,m,V,m,superb);
+	LAPACKE_sgesvd(
+			LAPACK_ROW_MAJOR,
+			'A',
+			'A',
+			m,m,
+			rm,m,
+			S,
+			R,m,
+			V,m,
+			superb);
 
 	// Calculate eigenvalues of C and init R.
 	// Note: C is a symmetric matrix.
+	int found, * isuppz;
+	float * w, * z, * z_pc;
 	if(p > m) {
-//		LAPACKE_ssyevr(LAPACK_ROW_MAJOR,'V','A','U',p,);
+		R_pc = (float *)::operator new(p * m * sizeof(float)); // R
+		w = (float *)::operator new(p * sizeof(float)); // eigenvalues
+		z = (float *)::operator new(p * p * sizeof(float)); // eigenvectors ASC
+		z_pc = (float *)::operator new(p * m * sizeof(float)); // eigenvectors DESC
+		isuppz = (int *)::operator new((m << 1) * sizeof(float));
+		// Calculate m largest magnitude eigenvalues and corresponding eigenvectors
+		LAPACKE_ssyevr(
+				LAPACK_COL_MAJOR,
+				'V',
+				'A',
+				'U',
+				p,
+				C,
+				p,
+				0.0f,
+				0.0f,
+				1,
+				p,
+				LAPACKE_slamch('S'),
+				&found,
+				w, // l
+				z, // pc
+				p,
+				isuppz);
+
+		// convert into DESC order
+		for(i = 0; i < m; i++) {
+			cblas_scopy(p,z+(p-i-1) * p,1,z_pc+i * p,1);
+		}
+
+		// R_pc = z_pc * R
+		cblas_sgemm(
+				CblasRowMajor,
+				CblasTrans,
+				CblasNoTrans,
+				p, m, m,
+				1.0f,
+				z_pc, p,
+				R, m,
+				0.0f,
+				R_pc, p);
 	}
+}
+
+void ok_loop(
+		) {
+
 }
 }
 

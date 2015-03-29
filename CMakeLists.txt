@@ -98,10 +98,12 @@ endif()
 
 # OUTPUT EXECUTABLES
 if(NOT MSVC)
-	set(TEST_LIBS_FLAGS ${CMAKE_LIBRARY_DIR}/libgtest_main.a m gtest pthread)
+	set(TEST_LIBS_FLAGS ${CMAKE_LIBRARY_DIR}/libgtest_main.a m gtest pthread ${CMAKE_LIBRARY_DIR}/libopenblas.a gfortran)
 else()
-	set(TEST_LIBS_FLAGS gtest)
+	set(TEST_LIBS_FLAGS gtest openblas gfortran)
 endif()
+
+## Basic tests
 add_executable(test_utilities 
     ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp)
@@ -127,6 +129,17 @@ if(MSVC)
     set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(test_kmeans gtest_main)
+
+## A test for LAPACKE
+add_executable(test_lapacke 
+    ${PROJECT_SOURCE_DIR}/test/test_lapacke.cpp 
+    ${PROJECT_SRCS} )
+target_link_libraries(test_lapacke ${TEST_LIBS_FLAGS})
+if(MSVC)
+    set_target_properties(test_lapacke PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
+endif()
+add_dependencies(test_lapacke gtest_main)
+
 # Only build this example when found OpenCV
 # if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
 #    # OpenCV paths
