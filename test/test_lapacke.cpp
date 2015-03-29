@@ -31,6 +31,7 @@
 #include <lapacke.h>
 
 #include "rand.h"
+#include "utilities.h"
 
 using namespace std;
 using namespace SimpleCluster;
@@ -47,6 +48,13 @@ protected:
 
 		R = (float *)::operator new(4 * sizeof(float));
 		R_pc = (float *)::operator new(6 * sizeof(float));
+		X = (float *)::operator new(6 * sizeof(float));
+		X[0] = 1.0f;
+		X[1] = 0.0f;
+		X[2] = 2.3f;
+		X[3] = 3.1f;
+		X[4] = 1.25f;
+		X[5] = 5.6f;
 
 		w = (float *)::operator new(3 * sizeof(float)); // eigenvalues
 		z = (float *)::operator new(9 * sizeof(float)); // eigenvectors ASC
@@ -65,13 +73,16 @@ protected:
 	virtual void TearDown() {}
 
 public:
-	static float * C, * R, * R_pc;
+	static float * C, * R, * R_pc, * R2;
 	static float * w, * z, * z_pc;
+	static float * X;
 	static int * isuppz;
 };
 
 float * LapackeTest::C;
 float * LapackeTest::R;
+float * LapackeTest::R2;
+float * LapackeTest::X;
 float * LapackeTest::R_pc;
 float * LapackeTest::w;
 float * LapackeTest::z;
@@ -202,7 +213,56 @@ TEST_F(LapackeTest, test4) {
 		}
 		cout << "]" << endl;
 	}
+}
 
+TEST_F(LapackeTest, test5) {
+	R2 = (float *)::operator new(6 * sizeof(float));
+
+	// R2 = R_pc'
+	transpose(R_pc, R2, 2, 3, true);
+	cout << "R2:" << endl;
+	float * tmp = R2;
+	for(int i = 0; i < 3; i++) {
+		cout << "[";
+		for(int j = 0; j < 2; j++) {
+			cout << *(tmp++) << " ";
+		}
+		cout << "]" << endl;
+	}
+}
+
+TEST_F(LapackeTest, test6) {
+	float * RX = (float *)::operator new(4 * sizeof(float));
+	// RX = R_pc * X = R2' * X
+//	cblas_sgemm(
+//			CblasRowMajor,
+//			CblasNoTrans,
+//			CblasNoTrans,
+//			2, 2, 3,
+//			1.0f,
+//			R_pc, 3,
+//			X, 2,
+//			0.0f,
+//			RX, 2);
+	cblas_sgemm(
+			CblasRowMajor,
+			CblasTrans,
+			CblasNoTrans,
+			2, 2, 3,
+			1.0f,
+			R2, 2,
+			X, 2,
+			0.0f,
+			RX, 2);
+	cout << "RX:" << endl;
+	float * tmp = RX;
+	for(int i = 0; i < 2; i++) {
+		cout << "[";
+		for(int j = 0; j < 2; j++) {
+			cout << *(tmp++) << " ";
+		}
+		cout << "]" << endl;
+	}
 }
 
 int main(int argc, char * argv[])

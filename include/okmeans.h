@@ -77,20 +77,22 @@ void ok_init(
 	// Init X_mu
 	cblas_scopy(n * p,X,1,X_mu,1);
 	int i0, i, j;
-	int blk = n / nthread;
+	int blk = p / nthread;
 #ifdef _OPENMP
 	omp_set_num_threads(nthread);
 #pragma omp parallel
 	{
-#pragma omp for private(i, i0)
+#pragma omp for private(i, j, i0)
 #endif
 		for(i0 = 0; i0 < nthread; i0++) {
 			int start = i0 * blk;
 			int end = start + blk;
-			if(end > n) end = n;
+			if(end > p) end = p;
 			float * tmp1 = X_mu + start;
 			for(i = start; i < end; i++) {
-				cblas_saxpy(p,-1.0f,mu,1,tmp1,1);
+				for(j = 0; j < n; j++) {
+					*(tmp1++) -= mu[i];
+				}
 			}
 		}
 #ifdef _OPENMP
@@ -98,16 +100,16 @@ void ok_init(
 #endif
 
 	// Compute the co-variance matrix of X_mu
-	// C = 1/p * X_mu' * X_mu (note: E[X_mu] = 0)
+	// C = 1/n * X_mu * X_mu' (note: E[X_mu] = 0)
 	float * C = (float *)::operator new (p * p * sizeof(float));
 	cblas_sgemm(
 			CblasRowMajor,
-			CblasTrans,
 			CblasNoTrans,
+			CblasTrans,
 			p, p, n,
-			1.0f / p,
+			1.0f / n,
 			X_mu, p,
-			X_mu, n,
+			X_mu, p,
 			0.0f,
 			C, p);
 
@@ -166,19 +168,183 @@ void ok_init(
 
 		// R_pc = z_pc * R
 		cblas_sgemm(
-				CblasRowMajor,
-				CblasTrans,
+				CblasColMajor,
 				CblasNoTrans,
+				CblasTrans,
 				p, m, m,
 				1.0f,
 				z_pc, p,
 				R, m,
 				0.0f,
 				R_pc, p);
+		// Tranpose R_pc to R (pxm)
+		R = (float *)::operator new(p * m * sizeof(float));
+		transpose(R_pc, R, m, p, verbose);
 	}
 }
 
 void ok_loop(
+		int p,
+		int m,
+		int n,
+		float * X,
+		float *& R, // = R in ok_init
+		float *& R_pc,
+		float *& X_mu, // = X_mu in ok_init
+		float *& B,
+		float *& D,
+		float *& DB,
+		float *& RX,
+		float *& RDB,
+		float *& XDB,
+		float *& S,
+		float *& V,
+		float *& U,
+		float *& mu,
+		int nthread,
+		bool verbose
+		) {
+	if(nthread <= 0) nthread = 1;
+	if(m <= 0 || n <= 0 || p <= 0)
+		return;
+	if(m > p) return;
+	// RX = R' * X
+	cblas_sgemm(
+			CblasRowMajor,
+			CblasTrans,
+			CblasNoTrans,
+			m, n, p,
+			1.0f,
+			R, m,
+			X_mu, n,
+			0.0f,
+			RX, m);
+
+	sign(RX,B,m * n,nthread,verbose);
+	float * tmp;
+	abs(RX,tmp,m * n, nthread,verbose);
+	mean(tmp,m,n,2,D,verbose);
+
+	// Calculate the matrix DB
+	int i0, i, j;
+	int blk = m / nthread;
+#ifdef _OPENMP
+	omp_set_num_threads(nthread);
+#pragma omp parallel
+	{
+#pragma omp for private(i, j, i0)
+#endif
+		for(i0 = 0; i0 < nthread; i0++) {
+			int start = i0 * blk;
+			int end = start + blk;
+			if(end > p) end = p;
+			float * tmp1 = B + start;
+			float * tmp2 = DB + start;
+			for(i = start; i < end; i++) {
+				for(j = 0; j < n; j++) {
+					*(tmp2++) = *(tmp1++) * D[i];
+				}
+			}
+		}
+#ifdef _OPENMP
+	}
+#endif
+
+	// Calculate the XDB = X_mu * DB'
+	cblas_sgemm(
+			CblasRowMajor,
+			CblasNoTrans,
+			CblasTrans,
+			p, m, n,
+			1.0f,
+			X_mu, p,
+			DB, m,
+			0.0f,
+			XDB, p);
+
+	// SVD
+	U = (float *)::operator new(p * m * sizeof(float)); // U
+	S = (float *)::operator new(m * m * sizeof(float)); // S
+	V = (float *)::operator new(m * m * sizeof(float)); // V
+	float * superb = (float *)::operator new(m * sizeof(float));
+	LAPACKE_sgesvd(
+			LAPACK_ROW_MAJOR,
+			'S',
+			'S',
+			p,m,
+			XDB,p,
+			S,
+			U,p,
+			V,m,
+			superb);
+
+	// Update R = U * V'
+	cblas_sgemm(
+			CblasRowMajor,
+			CblasNoTrans,
+			CblasTrans,
+			p, m, m,
+			1.0f,
+			U, p,
+			V, m,
+			0.0f,
+			R, p);
+
+	// RDB = R * DB
+	cblas_sgemm(
+			CblasRowMajor,
+			CblasNoTrans,
+			CblasNoTrans,
+			p, n, m,
+			1.0f,
+			R, p,
+			DB, n,
+			0.0f,
+			RDB, p);
+
+
+	// Init X_mu2
+	float * X_mu2 = (float *)::operator new(p * n * sizeof(float));
+	cblas_scopy(n * p,X,1,X_mu2,1);
+	cblas_saxpy(p * n, -1.0f, RDB, 1, X_mu2, 1);
+	// Update mu
+	mean(X_mu2,n,p,1,mu,verbose);
+
+	blk = p / nthread;
+#ifdef _OPENMP
+	omp_set_num_threads(nthread);
+#pragma omp parallel
+	{
+#pragma omp for private(i, j, i0)
+#endif
+		for(i0 = 0; i0 < nthread; i0++) {
+			int start = i0 * blk;
+			int end = start + blk;
+			if(end > p) end = p;
+			float * tmp1 = X_mu + start;
+			float * tmp2 = X_mu2 + start;
+			for(i = start; i < end; i++) {
+				for(j = 0; j < n; j++) {
+					*(tmp1++) = *(tmp2++) - mu[i];
+				}
+			}
+		}
+#ifdef _OPENMP
+	}
+#endif
+}
+
+void ok_means(
+		float * X,
+		float *& R_pc,
+		float *& B,
+		int m,
+		int n,
+		int p,
+		int nthread,
+		int niter,
+		float err,
+		bool verbose
 		) {
 
 }

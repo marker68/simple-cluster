@@ -126,6 +126,71 @@ void print_vector(
 		return;
 	}
 }
+
+/**
+ * Get sign of each elements in a
+ */
+void sign(
+		float * a,
+		float *& b,
+		int size,
+		int nthread,
+		bool verbose) {
+	if(size <= 0) return;
+	int i, i0;
+	int blk = size / nthread;
+#ifdef _OPENMP
+	omp_set_num_threads(nthread);
+#pragma omp parallel
+	{
+#pragma omp for private(i, i0)
+#endif
+		for(i0 = 0; i0 < nthread; i0++) {
+			int start = i0 * blk;
+			int end = start + blk;
+			if(end > size) end = size;
+			float * tmp = a + start;
+			float * tmp2 = b + start;
+			for(i = start; i < end; i++) {
+				if(*tmp > 0.0f) *(tmp2++) = 1.0f;
+				else if(*tmp < 0.0f) *(tmp2++) = -1.0f;
+				else *(tmp2++) = 0.0f;
+			}
+		}
+#ifdef _OPENMP
+	}
+#endif
+}
+
+void abs(
+		float * a,
+		float *& b,
+		int size,
+		int nthread,
+		bool verbose) {
+	if(size <= 0) return;
+	int i, i0;
+	int blk = size / nthread;
+#ifdef _OPENMP
+	omp_set_num_threads(nthread);
+#pragma omp parallel
+	{
+#pragma omp for private(i, i0)
+#endif
+		for(i0 = 0; i0 < nthread; i0++) {
+			int start = i0 * blk;
+			int end = start + blk;
+			if(end > size) end = size;
+			float * tmp = a + start;
+			float * tmp2 = b + start;
+			for(i = start; i < end; i++) {
+				*(tmp2++) = fabs(*(tmp++));
+			}
+		}
+#ifdef _OPENMP
+	}
+#endif
+}
 }
 
 

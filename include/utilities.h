@@ -604,39 +604,19 @@ void mean(
 	}
 }
 
-/**
- * Get sign of each elements in a
- */
-void sign(
-		float * a,
-		int *& b,
-		int size,
-		int nthread,
+template<typename DataType>
+void transpose(
+		DataType * a,
+		DataType *& b,
+		int m,
+		int n,
 		bool verbose) {
-	if(size <= 0) return;
-	int i, i0;
-	int blk = size / nthread;
-#ifdef _OPENMP
-	omp_set_num_threads(nthread);
-#pragma omp parallel
-	{
-#pragma omp for private(i, i0)
-#endif
-		for(i0 = 0; i0 < nthread; i0++) {
-			int start = i0 * blk;
-			int end = start + blk;
-			if(end > size) end = size;
-			float * tmp = a + start;
-			int * tmp2 = b + start;
-			for(i = start; i < end; i++) {
-				if(*tmp > 0.0f) *(b++) = 1;
-				else if(*tmp < 0.0f) *(b++) = -1;
-				else *(b++) = 0;
-			}
+	int i, j;
+	for(i = 0; i < m; i++) {
+		for(j = 0; j < n; j++) {
+			b[j * m + i] = a[i * n + j];
 		}
-#ifdef _OPENMP
 	}
-#endif
 }
 }
 
