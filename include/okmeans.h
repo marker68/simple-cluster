@@ -60,6 +60,7 @@ void ok_init(
 		CKModel& model,
 		float *& mu,
 		float *& X_mu,
+		float *& C,
 		float *& R,
 		float *& R_pc,
 		bool verbose);

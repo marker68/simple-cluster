@@ -58,6 +58,7 @@ void ok_init(
 		CKModel& model,
 		float *& mu,
 		float *& X_mu,
+		float *& C,
 		float *& R,
 		float *& R_pc,
 		bool verbose) {
@@ -93,15 +94,15 @@ void ok_init(
 	}
 #endif
 
-	// Compute the co-variance matrix of X_mu
-	// C = 1/n * X_mu * X_mu' (note: E[X_mu] = 0)
-	float * C = (float *)::operator new (p * p * sizeof(float));
+	// Compute the co-variance matrix of X_mu'
+	// C = 1/(n-1) * X_mu' * X_mu (note: E[X_mu] = 0)
+	C = (float *)::operator new (p * p * sizeof(float));
 	cblas_sgemm(
 			CblasRowMajor,
 			CblasNoTrans,
 			CblasTrans,
 			p, p, n,
-			1.0f / n,
+			1.0f / (n-1),
 			X_mu, p,
 			X_mu, p,
 			0.0f,

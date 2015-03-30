@@ -66,6 +66,7 @@ protected:
 public:
 	static float * X, * X_mu, * mu;
 	static float * R, * R_pc;
+	static float * C;
 };
 
 float * OkmeansTest::X;
@@ -73,6 +74,7 @@ float * OkmeansTest::X_mu;
 float * OkmeansTest::mu;
 float * OkmeansTest::R;
 float * OkmeansTest::R_pc;
+float * OkmeansTest::C;
 
 TEST_F(OkmeansTest, test1) {
 	CKModel model;
@@ -85,9 +87,34 @@ TEST_F(OkmeansTest, test1) {
 			model,
 			mu,
 			X_mu,
+			C,
 			R,
 			R_pc,
 			true);
+
+	cout << "mu:" << endl << "[";
+	for(int i = 0; i < 3; i++) {
+		cout << mu[i] << " ";
+	}
+	cout << "]" << endl;
+
+	cout << "X_mu:" << endl << "[";
+	for(int i = 0; i < 9; i++) {
+		cout << X_mu[i] << " ";
+	}
+	cout << "]" << endl;
+
+	cout << "C:" << endl << "[";
+	for(int i = 0; i < 9; i++) {
+		cout << C[i] << " ";
+	}
+	cout << "]" << endl;
+
+	cout << "R_pc:" << endl << "[";
+	for(int i = 0; i < 6; i++) {
+		cout << R_pc[i] << " ";
+	}
+	cout << "]" << endl;
 }
 
 int main(int argc, char * argv[])
