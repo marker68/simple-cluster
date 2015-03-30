@@ -55,7 +55,6 @@ void ok_init(
 		int n,
 		int p,
 		int nthread,
-		CKModel& model,
 		float *& mu,
 		float *& X_mu,
 		float *& C,
@@ -67,7 +66,7 @@ void ok_init(
 		return;
 
 	// Init mu
-	mean(X,n,p,1,mu,verbose);
+	mean(X,n,p,2,mu,verbose);
 
 	// Init X_mu
 	cblas_scopy(n * p,X,1,X_mu,1);
@@ -258,9 +257,6 @@ void ok_loop(
 			XDB, p);
 
 	// SVD
-	U = (float *)::operator new(p * m * sizeof(float)); // U
-	S = (float *)::operator new(m * m * sizeof(float)); // S
-	V = (float *)::operator new(m * m * sizeof(float)); // V
 	float * superb = (float *)::operator new(m * sizeof(float));
 	LAPACKE_sgesvd(
 			LAPACK_ROW_MAJOR,
@@ -341,7 +337,49 @@ void ok_means(
 		float err,
 		bool verbose
 		) {
+	float * mu;
+	float * X_mu;
+	float * C;
+	float * R;
+	ok_init(X,m,n,p,nthread,mu,X_mu,C,R,R_pc,verbose);
 
+	int iter;
+	float obj = FLT_MAX;
+	float objlast;
+
+	B = (float *)::operator new(m * n * sizeof(float));
+	float * D = (float *)::operator new(m * sizeof(float));
+	float * DB = (float *)::operator new(m * n * sizeof(float));
+	float * RX = (float *)::operator new(m * n * sizeof(float));
+	float * RDB = (float *)::operator new(p * n * sizeof(float));
+	float * XDB = (float *)::operator new(p * m * sizeof(float));
+
+	float * U = (float *)::operator new(p * m * sizeof(float)); // U
+	float * S = (float *)::operator new(m * m * sizeof(float)); // S
+	float * V = (float *)::operator new(m * m * sizeof(float)); // V
+	float * tmp;
+
+	while(iter < niter) {
+		ok_loop(p,m,n,X,R,R_pc,X_mu,B,D,DB,RX,RDB,XDB,S,V,U,mu,nthread,verbose);
+
+		if(iter % 10 == 0) {
+			objlast = obj;
+			cblas_saxpy(p * n, -1.0f, X_mu, 1, RDB, 1);
+			// RDB = RDB.^2
+			cblas_sdot(p * n, RDB, 1, RDB, 1);
+			mean(RDB,p,n,0,tmp,verbose);
+			obj = *tmp;
+		}
+
+		iter++;
+
+		if(fabs(objlast - obj) < err) {
+			cout << "Breaking at iter=" << iter << endl;
+			break;
+		}
+	}
+
+	return;
 }
 
 }
