@@ -111,6 +111,19 @@ void transpose(
 		}
 	}
 }
+
+void mabs(
+		float * a,
+		float *& b,
+		int size,
+		int nthread,
+		bool verbose);
+void sign(
+		float * a,
+		float *& b,
+		int size,
+		int nthread,
+		bool verbose);
 }
 
 

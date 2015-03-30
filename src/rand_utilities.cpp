@@ -1,5 +1,6 @@
 /*
- *  Copyright (C) 2015 Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
+ *  SIMPLE CLUSTERS: A simple library for clustering works.
+ *  Copyright (C) 2014 Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,23 +15,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- *  rand.h
+ *  rand_utilities.cpp
  *
- *  Created on: 2015/03/16
+ *  Created on: 2015/03/30
  *      Author: Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
  */
 
-#ifndef INCLUDE_RAND_H_
-#define INCLUDE_RAND_H_
+
 
 #include <iostream>
 #include <random>
-
+#include "rand_utilities.h"
 
 using namespace std;
 
 namespace SimpleCluster {
-
 void gen_rand_vector_float(float *& seed, int size, float low, float high, bool verbose) {
 	if(size <= 0) return;
 	random_device rd;
@@ -43,7 +42,3 @@ void gen_rand_vector_float(float *& seed, int size, float low, float high, bool 
 	}
 }
 }
-
-
-
-#endif /* INCLUDE_RAND_H_ */

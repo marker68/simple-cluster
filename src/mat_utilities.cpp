@@ -78,7 +78,7 @@ void sign(
 #endif
 }
 
-void abs(
+void mabs(
 		float * a,
 		float *& b,
 		int size,

@@ -73,6 +73,7 @@ set(PROJECT_SRCS
 ${PROJECT_SOURCE_DIR}/src/k-means.cpp 
 ${PROJECT_SOURCE_DIR}/src/utilities.cpp
 ${PROJECT_SOURCE_DIR}/src/mat_utilities.cpp
+${PROJECT_SOURCE_DIR}/src/rand_utilities.cpp
 ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp 
 ${PROJECT_SOURCE_DIR}/src/okmeans.cpp
 )
@@ -88,22 +89,25 @@ if(NOT MSVC)
 	endif()
 endif()
 
+if(NOT MSVC)
+    set(TEST_LIBS_FLAGS ${CMAKE_LIBRARY_DIR}/libgtest_main.a m gtest pthread ${CMAKE_LIBRARY_DIR}/libopenblas.a gfortran)
+else()
+    set(TEST_LIBS_FLAGS gtest openblas gfortran)
+endif()
+
 # OUTPUT LIBRARIES
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
+target_link_libraries(${PROJECT_NAME} ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_library(${PROJECT_NAME}_static STATIC ${PROJECT_SRCS})
+target_link_libraries(${PROJECT_NAME}_static ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 
 # OUTPUT EXECUTABLES
-if(NOT MSVC)
-	set(TEST_LIBS_FLAGS ${CMAKE_LIBRARY_DIR}/libgtest_main.a m gtest pthread ${CMAKE_LIBRARY_DIR}/libopenblas.a gfortran)
-else()
-	set(TEST_LIBS_FLAGS gtest openblas gfortran)
-endif()
 
 ## Basic tests
 add_executable(test_utilities 
@@ -141,6 +145,16 @@ if(MSVC)
     set_target_properties(test_lapacke PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(test_lapacke gtest_main)
+
+## A test for okmeans
+add_executable(test_okmeans 
+    ${PROJECT_SOURCE_DIR}/test/test_okmeans.cpp 
+    ${PROJECT_SRCS} )
+target_link_libraries(test_okmeans ${TEST_LIBS_FLAGS})
+if(MSVC)
+    set_target_properties(test_okmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
+endif()
+add_dependencies(test_okmeans gtest_main)
 
 # Only build this example when found OpenCV
 # if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)

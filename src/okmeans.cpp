@@ -32,18 +32,21 @@
 #include <cstdlib>
 #include <cfloat>
 #include <cmath>
+#include "mat_utilities.h"
 #include "utilities.h"
-#include "rand.h"
+#include "rand_utilities.h"
 
 // Use BLAS/LAPACK packages
 #include <lapacke.h>
 #include <cblas.h>
 
+#include "okmeans.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-using namspace std;
+using namespace std;
 
 namespace SimpleCluster {
 void ok_init(
@@ -213,7 +216,7 @@ void ok_loop(
 
 	sign(RX,B,m * n,nthread,verbose);
 	float * tmp;
-	abs(RX,tmp,m * n, nthread,verbose);
+	mabs(RX,tmp,m * n, nthread,verbose);
 	mean(tmp,m,n,2,D,verbose);
 
 	// Calculate the matrix DB

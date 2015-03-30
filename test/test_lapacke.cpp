@@ -30,7 +30,7 @@
 #include <cblas.h>
 #include <lapacke.h>
 
-#include "rand.h"
+#include "rand_utilities.h"
 #include "utilities.h"
 #include "mat_utilities.h"
 

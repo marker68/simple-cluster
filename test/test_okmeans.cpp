@@ -32,9 +32,6 @@
 #include <cblas.h>
 #include <lapacke.h>
 
-#include "rand.h"
-#include "utilities.h"
-#include "mat_utilities.h"
 #include "okmeans.h"
 
 using namespace std;
@@ -43,7 +40,21 @@ using namespace SimpleCluster;
 class OkmeansTest : public ::testing::Test {
 protected:
 	static void SetUpTestCase() {
+		X = (float *)::operator new (9 * sizeof(float));
+		X_mu = (float *)::operator new (9 * sizeof(float));
+		X[0] = 0.9f;
+		X[1] = 1.2f;
+		X[2] = 2.3f;
+		X[3] = 0.1f;
+		X[4] = 1.3f;
+		X[5] = 4.3f;
+		X[6] = 0.4f;
+		X[7] = 0.3f;
+		X[8] = 0.5f;
 
+		mu = (float *)::operator new(3 * sizeof(float));
+		R = (float *)::operator new(4 * sizeof(float));
+		R_pc = (float *)::operator new(6 * sizeof(float));
 	}
 
 	static void TearDownTestCase() {
@@ -53,7 +64,30 @@ protected:
 	virtual void SetUp() {}
 	virtual void TearDown() {}
 public:
-	static float * X;
+	static float * X, * X_mu, * mu;
+	static float * R, * R_pc;
+};
+
+float * OkmeansTest::X;
+float * OkmeansTest::X_mu;
+float * OkmeansTest::mu;
+float * OkmeansTest::R;
+float * OkmeansTest::R_pc;
+
+TEST_F(OkmeansTest, test1) {
+	CKModel model;
+	ok_init(
+			X,
+			2,
+			3,
+			3,
+			1,
+			model,
+			mu,
+			X_mu,
+			R,
+			R_pc,
+			true);
 }
 
 int main(int argc, char * argv[])

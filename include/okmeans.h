@@ -35,11 +35,7 @@
 #include <cfloat>
 #include <cmath>
 #include "utilities.h"
-#include "rand.h"
-
-// Use BLAS/LAPACK packages
-#include <lapacke.h>
-#include <cblas.h>
+#include "rand_utilities.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -54,6 +50,41 @@ typedef struct {
 	int p;
 	int type;
 } CKModel;
+
+void ok_init(
+		float * X,
+		int m,
+		int n,
+		int p,
+		int nthread,
+		CKModel& model,
+		float *& mu,
+		float *& X_mu,
+		float *& R,
+		float *& R_pc,
+		bool verbose);
+
+void ok_loop(
+		int p,
+		int m,
+		int n,
+		float * X,
+		float *& R, // = R in ok_init
+		float *& R_pc,
+		float *& X_mu, // = X_mu in ok_init
+		float *& B,
+		float *& D,
+		float *& DB,
+		float *& RX,
+		float *& RDB,
+		float *& XDB,
+		float *& S,
+		float *& V,
+		float *& U,
+		float *& mu,
+		int nthread,
+		bool verbose
+		);
 }
 
 #endif /* INCLUDE_OKMEANS_H_ */
