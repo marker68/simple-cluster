@@ -72,7 +72,9 @@ add_subdirectory(test/googletest)
 set(PROJECT_SRCS 
 ${PROJECT_SOURCE_DIR}/src/k-means.cpp 
 ${PROJECT_SOURCE_DIR}/src/utilities.cpp
+${PROJECT_SOURCE_DIR}/src/mat_utilities.cpp
 ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp 
+${PROJECT_SOURCE_DIR}/src/okmeans.cpp
 )
 
 # COMPLATION FLAGS

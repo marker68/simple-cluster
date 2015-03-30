@@ -32,6 +32,7 @@
 
 #include "rand.h"
 #include "utilities.h"
+#include "mat_utilities.h"
 
 using namespace std;
 using namespace SimpleCluster;
@@ -89,7 +90,28 @@ float * LapackeTest::z;
 float * LapackeTest::z_pc;
 int * LapackeTest::isuppz;
 
+TEST_F(LapackeTest, test0) {
+	float * a = (float *)::operator new((1 << 20) * sizeof(float));
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_real_distribution<float> real_dis(0.0, static_cast<float>(10000));
+
+	for(int i = 0; i < (1 << 20); i++) {
+		a[i] = real_dis(gen);
+	}
+	float * b;
+	mean(a,1 << 8,1 << 12,2,b,true);
+}
+
 TEST_F(LapackeTest, test1) {
+	float a[] = {0.1, 1.2, 3.5, 6.3};
+	float * b;
+	mean(a,2,2,2,b,true);
+	EXPECT_LT(fabs(b[0]-0.65),1e-04);
+	EXPECT_LT(fabs(b[1]-4.90),1e-04);
+}
+
+TEST_F(LapackeTest, test2) {
 	int found;
 	// Calculate m largest magnitude eigenvalues and corresponding eigenvectors
 	LAPACKE_ssyevr(
@@ -132,14 +154,14 @@ TEST_F(LapackeTest, test1) {
 	EXPECT_EQ(3, found);
 }
 
-TEST_F(LapackeTest, test2) {
+TEST_F(LapackeTest, test3) {
 	z_pc = (float *)::operator new(6 * sizeof(float));
 	cblas_scopy(3,z+6,1,z_pc,1);
 	cblas_scopy(3,z+3,1,z_pc+3,1);
 	EXPECT_LT(fabs(0.408248f - z_pc[3]), 1e-06);
 }
 
-TEST_F(LapackeTest, test3) {
+TEST_F(LapackeTest, test4) {
 	// Generate a random m * m matrix and decompose it by SVD
 	float * rm = (float *)::operator new(4 * sizeof(float));
 	rm[0] = 9.0f;
@@ -192,7 +214,7 @@ TEST_F(LapackeTest, test3) {
 	}
 }
 
-TEST_F(LapackeTest, test4) {
+TEST_F(LapackeTest, test5) {
 	// R_pc = z_pc * R
 	cblas_sgemm(
 			CblasColMajor,
@@ -215,7 +237,7 @@ TEST_F(LapackeTest, test4) {
 	}
 }
 
-TEST_F(LapackeTest, test5) {
+TEST_F(LapackeTest, test6) {
 	R2 = (float *)::operator new(6 * sizeof(float));
 
 	// R2 = R_pc'
@@ -231,7 +253,7 @@ TEST_F(LapackeTest, test5) {
 	}
 }
 
-TEST_F(LapackeTest, test6) {
+TEST_F(LapackeTest, test7) {
 	float * RX = (float *)::operator new(4 * sizeof(float));
 	// RX = R_pc * X = R2' * X
 //	cblas_sgemm(

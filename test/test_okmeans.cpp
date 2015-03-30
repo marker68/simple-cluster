@@ -15,45 +15,55 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- *  okmeans.h
+ *  test_okmeans.cpp
  *
- *  Created on: 2015/03/12
+ *  Created on: 2015/03/30
  *      Author: Nguyen Anh Tuan <t_nguyen@hal.t.u-tokyo.ac.jp>
  */
 
-#ifndef INCLUDE_OKMEANS_H_
-#define INCLUDE_OKMEANS_H_
 
 #include <iostream>
-#include <exception>
-#include <algorithm>
 #include <vector>
 #include <random>
-#include <cstring>
-#include <climits>
-#include <cstdlib>
 #include <cfloat>
+#include <gtest/gtest.h>
 #include <cmath>
-#include "utilities.h"
-#include "rand.h"
-
-// Use BLAS/LAPACK packages
-#include <lapacke.h>
+#include <cstdlib>
 #include <cblas.h>
+#include <lapacke.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include "rand.h"
+#include "utilities.h"
+#include "mat_utilities.h"
+#include "okmeans.h"
 
 using namespace std;
+using namespace SimpleCluster;
 
-namespace SimpleCluster {
+class OkmeansTest : public ::testing::Test {
+protected:
+	static void SetUpTestCase() {
 
-typedef struct {
-	int m;
-	int p;
-	int type;
-} CKModel;
+	}
+
+	static void TearDownTestCase() {
+
+	}
+
+	virtual void SetUp() {}
+	virtual void TearDown() {}
+public:
+	static float * X;
 }
 
-#endif /* INCLUDE_OKMEANS_H_ */
+int main(int argc, char * argv[])
+{
+	/*The method is initializes the Google framework and must be called before RUN_ALL_TESTS */
+	::testing::InitGoogleTest(&argc, argv);
+
+	/*RUN_ALL_TESTS automatically detects and runs all the tests defined using the TEST macro.
+	It's must be called only once in the code because multiple calls lead to conflicts and,
+	therefore, are not supported.
+	*/
+	return RUN_ALL_TESTS();
+}

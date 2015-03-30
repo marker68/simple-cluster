@@ -24,6 +24,17 @@
 #define INCLUDE_MAT_UTILITIES_H_
 
 #include <iostream>
+#include <vector>
+#include <exception>
+#include <cmath>
+#include <cstring>
+#include <cstdio>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+using namespace std;
 
 #include <cblas.h>
 #include <lapacke.h>
@@ -31,7 +42,75 @@
 using namespace std;
 
 namespace SimpleCluster {
+/**
+ * Find the mean vector of all values in each row or column of
+ * a matrix A.
+ */
+template<typename DataType>
+void mean(
+		DataType * A,
+		int m,
+		int n,
+		int type,
+		DataType *& B,
+		bool verbose) {
+	if(m <= 0 || n <= 0) return;
+	int size = 0;
+	int i, j;
+	if(type == 1)
+		size = n;
+	else if(type == 2)
+		size = m;
+	else size = m * n;
 
+	B = (DataType *)::operator new(size * sizeof(DataType));
+
+	if(type < 1 || type > 2) {
+		memcpy(B,A,size * sizeof(DataType));
+		return;
+	}
+
+	if(type == 2) {
+		// TODO Use OpenMP?
+		for(i = 0; i < m; i++) {
+			B[i] = 0;
+			for(j = 0; j < n; j++) {
+				B[i] += A[0];
+				A++;
+			}
+			B[i] /= n;
+		}
+		return;
+	}
+
+	if(type == 1) {
+		for(i = 0; i < n; i++) B[i] = 0;
+		// TODO Use OpenMP?
+		for(i = 0; i < m; i++) {
+			for(j = 0; j < n; j++) {
+				B[j] += A[0];
+				A++;
+			}
+		}
+		for(i = 0; i < n; i++) B[i] /= m;
+		return;
+	}
+}
+
+template<typename DataType>
+void transpose(
+		DataType * a,
+		DataType *& b,
+		int m,
+		int n,
+		bool verbose) {
+	int i, j;
+	for(i = 0; i < m; i++) {
+		for(j = 0; j < n; j++) {
+			b[j * m + i] = a[i * n + j];
+		}
+	}
+}
 }
 
 
