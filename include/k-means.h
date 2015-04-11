@@ -685,7 +685,19 @@ inline void greg_kmeans(
 	if (N < k) {
 		if(verbose)
 			cerr << "There will be some empty clusters!" << endl;
-		exit(1);
+		// Create a new infinite point
+		float * inf = (float *)::operator new(d * sizeof(float));
+		fill(inf, inf + d, FLT_MAX);
+		for(int i = 0; i < k; i++) {
+			label[i] = i;
+			if(i < N) {
+				memcpy(centers + i * d, data + i * d, d * sizeof(float));
+			} else {
+				memcpy(centers + i * d, inf, d * sizeof(float));
+			}
+		}
+
+		return;
 	}
 
 	if(seeds == nullptr) {
@@ -936,7 +948,19 @@ inline void simple_kmeans(
 	if (N < k) {
 		if(verbose)
 			cerr << "There will be some empty clusters!" << endl;
-		exit(1);
+		// Create a new infinite point
+		float * inf = (float *)::operator new(d * sizeof(float));
+		fill(inf, inf + d, FLT_MAX);
+		for(int i = 0; i < k; i++) {
+			label[i] = i;
+			if(i < N) {
+				memcpy(centers + i * d, data + i * d, d * sizeof(float));
+			} else {
+				memcpy(centers + i * d, inf, d * sizeof(float));
+			}
+		}
+
+		return;
 	}
 
 	if(seeds == nullptr) {
