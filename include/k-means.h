@@ -952,7 +952,7 @@ inline void simple_kmeans(
 		float * inf = (float *)::operator new(d * sizeof(float));
 		fill(inf, inf + d, FLT_MAX);
 		for(int i = 0; i < k; i++) {
-			label[i] = i;
+			labels[i] = i;
 			if(i < N) {
 				memcpy(centers + i * d, data + i * d, d * sizeof(float));
 			} else {
