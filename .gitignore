@@ -45,3 +45,7 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+/include/cblas.h
+/include/lapacke*
+/include/openblas_config.h
