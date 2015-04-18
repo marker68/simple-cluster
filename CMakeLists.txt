@@ -19,7 +19,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # PROJECT'S NAME
-project(simplecluster)
+project(simplecluster CXX)
 
 # DETECT THE SYSTEM
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
