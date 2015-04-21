@@ -57,7 +57,6 @@ void ok_init(
 		int n,
 		int p,
 		int nthread,
-		CKModel& model,
 		float *& mu,
 		float *& X_mu,
 		float *& C,

@@ -77,14 +77,12 @@ float * OkmeansTest::R_pc;
 float * OkmeansTest::C;
 
 TEST_F(OkmeansTest, test1) {
-	CKModel model;
 	ok_init(
 			X,
 			2,
 			3,
 			3,
 			1,
-			model,
 			mu,
 			X_mu,
 			C,

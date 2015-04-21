@@ -61,12 +61,16 @@ void mean(
 		size = n;
 	else if(type == 2)
 		size = m;
-	else size = m * n;
+	else size = 1;
 
 	B = (DataType *)::operator new(size * sizeof(DataType));
 
 	if(type < 1 || type > 2) {
-		memcpy(B,A,size * sizeof(DataType));
+		float sum = 0.0f;
+		for(i = 0; i < m * n; i++) {
+			sum += A[i];
+		}
+		B[0] = sum / (m * n);
 		return;
 	}
 
