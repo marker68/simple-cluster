@@ -46,6 +46,7 @@ local.properties
 # TeXlipse plugin
 .texlipse
 
+/include/f77blas.h
 /include/cblas.h
 /include/lapacke*
 /include/openblas_config.h
