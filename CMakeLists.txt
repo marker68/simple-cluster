@@ -57,11 +57,6 @@ include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #find_package(OpenCV)
 find_package(OpenMP)
-# This project uses OpenBLAS
-# To build this library, you need to
-# $ cd ./lib/OpenBLAS
-# $ make
-# $ make PREFIX=../.. install
 
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
@@ -106,6 +101,13 @@ target_link_libraries(${PROJECT_NAME}_static ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
+
+# BUILD OPENBLAS
+add_custom_target(
+    openblas
+    COMMAND make && make PREFIX=${PROJECT_SOURCE_DIR} install
+    WORKING_DIRECTORY ${CMAKE_LIBRARY_DIR}/OpenBLAS)
+add_dependencies(${PROJECT_NAME} openblas)
 
 # OUTPUT EXECUTABLES
 
