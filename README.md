@@ -1,11 +1,9 @@
 Simple Clustering
 ===============================
 
-[![Build Status](https://travis-ci.org/marker68/simple-cluster.svg?branch=master)](https://travis-ci.org/marker68/simple-cluster)
-
 ## What is this?
 
-This is a simple implementation of the state-of-the-art clustering methods such as k-means, EM algorithm, ... 
+This is a simple implementation of the state-of-the-art clustering methods such as k-means.
 The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
 If you need any other licenses, feel free to contact me at [t_nguyen@hal.t.u-tokyo.ac.jp](mailto:t_nguyen@hal.t.u-tokyo.ac.jp).
 The purpose of this project is to provide a more flexible interface for clustering methods.
@@ -45,13 +43,9 @@ libgtest.a  libsimplecluster.so  test_kmeans
 * `libsimplecluster.{so,dylib,dll}`: dynamic library(shared library) files for SimpleCluster.
 * `test_utilities, test_kdtree, test_kmeans`: test programs. See their source code in `test/` directory to know the basics of this library.
 
-## Samples
-
-Samples for the usage of this library could be found at: https://github.com/marker68/example-simplecluster
-
 ## Documentation
 
-This project uses Doxygen to generate its documentation. You cand find it in `doc/` or an online version at http://simplecluster.tech-codes.com/
+This project uses Doxygen to generate its documentation. 
 To generate the documentation:
 ```bash
 $ cd ./doc
