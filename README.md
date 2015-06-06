@@ -41,7 +41,7 @@ libgtest.a  libsimplecluster.so  test_kmeans
 ```
 * `libgtest_main.a,libgtest.a`: [Google Testing Framework](https://code.google.com/p/googletest/)'s static library files. We are using Google Test for testing.
 * `libsimplecluster.{so,dylib,dll}`: dynamic library(shared library) files for SimpleCluster.
-* `test_utilities, test_kdtree, test_kmeans`: test programs. See their source code in `test/` directory to know the basics of this library.
+* `test_utilities, test_kdtree, test_kmeans`: test programs. See their source code in `test/` directory to know how to use this library.
 
 ## Documentation
 
