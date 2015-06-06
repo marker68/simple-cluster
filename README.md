@@ -4,9 +4,7 @@ Simple Clustering
 ## What is this?
 
 This is a simple implementation of the state-of-the-art clustering methods such as k-means.
-The implementations based on many papers that are mentioned below. This project is under GNU GPL v3 License. Just read the license statement.
-If you need any other licenses, feel free to contact me at [t_nguyen@hal.t.u-tokyo.ac.jp](mailto:t_nguyen@hal.t.u-tokyo.ac.jp).
-The purpose of this project is to provide a more flexible interface for clustering methods.
+The implementations based on many papers that are mentioned below.
 
 ## Features
 
