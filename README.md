@@ -10,7 +10,7 @@ The purpose of this project is to provide a more flexible interface for clusteri
 
 ## Features
 
-* Supported k-means algorithm with the following specified terms
+* Supported k-means algorithm with the following specific terms
   * k-means++: see **[k-means++: the advantages of careful seeding](http://dl.acm.org/citation.cfm?id=1283494)**
   * Fast convergence with geometric prunning: see **[Making k-means even faster](http://epubs.siam.org/doi/pdf/10.1137/1.9781611972801.12)**
 * Supported [CMake](http://www.cmake.org/).
