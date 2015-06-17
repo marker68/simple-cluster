@@ -505,7 +505,7 @@ inline void find_farthest(
 		bool verbose) {
 	int i;
 	float d_tmp;
-	dfst = FLT_MIN;
+	dfst = -1.0f;
 	DataType * tmp = data;
 	for(i = 0; i < N; i++) {
 		if(labels[i] == id) {
@@ -540,7 +540,7 @@ inline void find_lonely(
 		bool verbose) {
 	int i;
 	float d_tmp;
-	dfst = FLT_MIN;
+	dfst = -1.0f;
 	DataType * tmp = data;
 	for(i = 0; i < N; i++) {
 		if(d_type == DistanceType::NORM_L2)
@@ -651,8 +651,9 @@ inline void greg_initialize(
 #ifdef _OPENMP
 	}
 #endif
-
-	size_t s_max, l_tmp, fst, base3, base4;
+	
+    size_t s_max, l_tmp, base3, base4;
+    int fst;
 	float dfst;
 	// Check for empty clusters
 	if(ea != EmptyActs::NONE) {
@@ -671,11 +672,11 @@ inline void greg_initialize(
 				base = i * d;
 				if(ea == EmptyActs::SINGLETON)
 					find_lonely<DataType>(data,centers,label,d_type,
-							dfst,(int&)fst,N,k,d,verbose);
+							dfst,fst,N,k,d,verbose);
 				else if(ea == EmptyActs::SINGLETON_2)
 					find_farthest<DataType>(data,centers + base,label,d_type,
-							s_max,dfst,(int&)fst,N,k,d,verbose);
-				base3 = fst * d;
+							s_max,dfst,fst,N,k,d,verbose);
+				base3 = static_cast<size_t>(fst) * d;
 				base4 = label[fst] * d;
 				for(int j = 0; j < d; j++) {
 					centers[base] = static_cast<float>(data[base3++]);
