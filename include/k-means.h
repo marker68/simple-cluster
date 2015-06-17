@@ -463,6 +463,30 @@ inline float distortion(
 	return sqrt(e);
 }
 
+
+template<typename DataType1, typename DataType2>
+inline float distortion(
+		DataType1 * data,
+		float * centers,
+		DataType2 * label,
+		DistanceType d_type,
+		int d,
+		int N,
+		int k,
+		bool verbose) {
+	float e = 0.0;
+	int j;
+	DataType1 * tmp = data;
+	for(j = 0; j < N; j++) {
+		if(d_type == DistanceType::NORM_L2)
+			e += distance_l2_square<DataType1,float>(tmp,centers + label[j] * d,d);
+		else if(d_type == DistanceType::NORM_L1)
+			e += distance_l1<DataType1,float>(tmp,centers + label[j] * d,d);
+		tmp += d;
+	}
+	return sqrt(e);
+}
+
 /**
  * Update the farthest distances
  */
