@@ -118,9 +118,9 @@ inline double distance_l2_simd(
 		DataType * y,
 		int d) {
 	int i;
-	double dis = 0.0/*, tmp = 0.0*/;
+	double dis = 0.0;
 #ifdef _OPENMP
-#pragma omp simd reduction(+:dis)
+#pragma omp parallel for simd reduction(+:dis)
 #endif
 	for(i = 0; i < d; i++) {
 		dis += (x[i] - y[i]) * (x[i] - y[i]);
@@ -136,9 +136,6 @@ inline double distance_l2(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-#ifdef _OPENMP
-#pragma omp simd reduction(+:dis)
-#endif
 	for(i = 0; i < d; i++) {
 		tmp = x[i] - y[i];
 		dis += tmp * tmp;
@@ -160,11 +157,8 @@ inline double distance_l2(
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
-#ifdef _OPENMP
-#pragma omp simd reduction(+:dis)
-#endif
 	for(i = 0; i < d; i++) {
-		tmp = static_cast<double>(x[i]) - static_cast<double>(y[i]);
+		tmp = static_cast<double>(x[i]-y[i]);
 		dis += tmp * tmp;
 	}
 

@@ -142,14 +142,16 @@ TEST_F(UtilTest, test6) {
 }
 
 TEST_F(UtilTest, test8) {
+	EXPECT_LT(fabs(distance_l2<float>(data[0],data[1],d) -
+			distance_l2_simd<float>(data[0],data[1],d)), 0.01);
 	for(int i = 0; i < 10000; i++) {
-		EXPECT_LT(0.0,distance_l2_square<float>(data[0],data[1],d));
+		EXPECT_LT(0.0,distance_l2<float>(data[0],data[1],d));
 	}
 }
 
 TEST_F(UtilTest, test9) {
 	for(int i = 0; i < 10000; i++) {
-		EXPECT_LT(0.0,distance_l2_square_simd<float>(data[0],data[1],d));
+		EXPECT_LT(0.0,distance_l2_simd<float>(data[0],data[1],d));
 	}
 }
 

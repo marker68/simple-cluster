@@ -199,7 +199,7 @@ inline void kmeans_pp_seeds(
 			float * d_tmp = seeds;
 			for(i = start; i < end; i++) {
 				if(d_type == DistanceType::NORM_L2)
-					distances[i] = distance_l2_square<DataType,float>(d_tmp2, d_tmp, d);
+					distances[i] = distance_l2<DataType,float>(d_tmp2, d_tmp, d);
 				else if(d_type == DistanceType::NORM_L1)
 					distances[i] = distance_l1<DataType,float>(d_tmp2, d_tmp, d);
 				sum_distances[i] = 0.0;
@@ -250,7 +250,7 @@ inline void kmeans_pp_seeds(
 					float * d_tmp = seeds + (count - 1) * d; // We only need to compare the old closest distances with the new one
 					for(i = start; i < end; i++) {
 						if(d_type == DistanceType::NORM_L2)
-							tmp2 = distance_l2_square<float,DataType>(d_tmp,d_tmp2,d);
+							tmp2 = distance_l2<float,DataType>(d_tmp,d_tmp2,d);
 						else if(d_type == DistanceType::NORM_L1)
 							tmp2 = distance_l1<float,DataType>(d_tmp,d_tmp2,d);
 						if(distances[i] > tmp2) distances[i] = tmp2;
@@ -308,7 +308,7 @@ inline void linear_assign(
 		d_tmp1 = centers;
 		for(j = 0; j < k; j++) {
 			if(d_type == DistanceType::NORM_L2)
-				min_tmp = distance_l2_square<DataType,float>(d_tmp,d_tmp1,d);
+				min_tmp = distance_l2<DataType,float>(d_tmp,d_tmp1,d);
 			else if(d_type == DistanceType::NORM_L1)
 				min_tmp = distance_l1<DataType,float>(d_tmp,d_tmp1,d);
 			if(min > min_tmp) {
@@ -455,7 +455,7 @@ inline float distortion(
 	DataType * tmp = data;
 	for(j = 0; j < N; j++) {
 		if(d_type == DistanceType::NORM_L2)
-			e += distance_l2_square<DataType,float>(tmp,centers + label[j] * d,d);
+			e += distance_l2<DataType,float>(tmp,centers + label[j] * d,d);
 		else if(d_type == DistanceType::NORM_L1)
 			e += distance_l1<DataType,float>(tmp,centers + label[j] * d,d);
 		tmp += d;
@@ -479,7 +479,7 @@ inline float distortion(
 	DataType1 * tmp = data;
 	for(j = 0; j < N; j++) {
 		if(d_type == DistanceType::NORM_L2)
-			e += distance_l2_square<DataType1,float>(tmp,centers + label[j] * d,d);
+			e += distance_l2<DataType1,float>(tmp,centers + label[j] * d,d);
 		else if(d_type == DistanceType::NORM_L1)
 			e += distance_l1<DataType1,float>(tmp,centers + label[j] * d,d);
 		tmp += d;
@@ -510,7 +510,7 @@ inline void find_farthest(
 	for(i = 0; i < N; i++) {
 		if(labels[i] == id) {
 			if(d_type == DistanceType::NORM_L2)
-				d_tmp = distance_l2_square<DataType,float>(tmp,centers,d);
+				d_tmp = distance_l2<DataType,float>(tmp,centers,d);
 			else if(d_type == DistanceType::NORM_L1)
 				d_tmp = distance_l1<DataType,float>(tmp,centers,d);
 			if(dfst < d_tmp) {
@@ -544,7 +544,7 @@ inline void find_lonely(
 	DataType * tmp = data;
 	for(i = 0; i < N; i++) {
 		if(d_type == DistanceType::NORM_L2)
-			d_tmp = distance_l2_square<DataType,float>(tmp,centers + labels[i] * d,d);
+			d_tmp = distance_l2<DataType,float>(tmp,centers + labels[i] * d,d);
 		else if(d_type == DistanceType::NORM_L1)
 			d_tmp = distance_l1<DataType,float>(tmp,centers + labels[i] * d,d);
 		if(dfst < d_tmp) {
@@ -619,7 +619,7 @@ inline void greg_initialize(
 				tmp = -1;
 				for(size_t j = 0; j < k; j++) {
 					if(d_type == DistanceType::NORM_L2) {
-						d_tmp = distance_l2_square<float,DataType>(centers + j * d,dt,d);
+						d_tmp = distance_l2<float,DataType>(centers + j * d,dt,d);
 					} else if(d_type == DistanceType::NORM_L1) {
 						d_tmp = distance_l1<float,DataType>(centers + j * d,dt,d);
 					}
@@ -782,7 +782,7 @@ inline void greg_kmeans(
 			for(j = 0; j < k; j++) {
 				if(j != i) {
 					if(d_type == DistanceType::NORM_L2)
-						min_tmp = distance_l2_square<float>(fpt1,fpt2,d);
+						min_tmp = distance_l2<float>(fpt1,fpt2,d);
 					else if(d_type == DistanceType::NORM_L1)
 						min_tmp = distance_l1<float>(fpt1,fpt2,d);
 					if(min > min_tmp) min = min_tmp;
@@ -824,7 +824,7 @@ inline void greg_kmeans(
 							fpt1 = centers;
 							for(j = 0; j < k; j++) {
 								if(d_type == DistanceType::NORM_L2)
-									d_tmp = distance_l2_square<float,DataType>(fpt1,data + i * d,d);
+									d_tmp = distance_l2<float,DataType>(fpt1,data + i * d,d);
 								else if(d_type == DistanceType::NORM_L1)
 									d_tmp = distance_l1<float,DataType>(fpt1,data + i * d,d);
 								if(min >= d_tmp) {
@@ -1083,7 +1083,7 @@ inline void simple_kmeans(
 				c_tmp[j] = centers[base];
 				centers[base] = sum[base++] / size[i];
 			}
-			e += distance_l2_square<float>(c_tmp,centers + (base - d),d);
+			e += distance_l2<float>(c_tmp,centers + (base - d),d);
 		}
 		e = sqrt(e);
 		count += (fabs(e-e_prev) < error? 1 : 0);
