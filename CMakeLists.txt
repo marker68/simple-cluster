@@ -70,7 +70,7 @@ endif()
 # BUILD OPENBLAS
 add_custom_target(
     openblas
-    COMMAND make && make PREFIX=${PROJECT_SOURCE_DIR} install
+    COMMAND make CXXFLAGS="-w" && make PREFIX=${PROJECT_SOURCE_DIR} install
     WORKING_DIRECTORY ${CMAKE_LIBRARY_DIR}/OpenBLAS)
 
 # OUTPUT LIBRARIES
@@ -98,7 +98,7 @@ target_link_libraries(test_utilities ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_utilities PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(test_utilities gtest_main)
+add_dependencies(test_utilities gtest_main openblas)
 add_executable(test_kdtree 
     ${PROJECT_SOURCE_DIR}/test/test_kdtree.cpp 
     ${PROJECT_SOURCE_DIR}/src/utilities.cpp 
@@ -107,7 +107,7 @@ target_link_libraries(test_kdtree ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_kdtree PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(test_kdtree gtest_main)
+add_dependencies(test_kdtree gtest_main openblas)
 add_executable(test_kmeans 
     ${PROJECT_SOURCE_DIR}/test/test_kmeans.cpp 
     ${PROJECT_SRCS} )
@@ -115,7 +115,7 @@ target_link_libraries(test_kmeans ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_kmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(test_kmeans gtest_main)
+add_dependencies(test_kmeans gtest_main openblas)
 
 ## A test for LAPACKE
 add_executable(test_lapacke 
@@ -125,7 +125,7 @@ target_link_libraries(test_lapacke ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_lapacke PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(test_lapacke gtest_main)
+add_dependencies(test_lapacke gtest_main openblas)
 
 ## A test for okmeans
 add_executable(test_okmeans 
@@ -135,7 +135,7 @@ target_link_libraries(test_okmeans ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(test_okmeans PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-add_dependencies(test_okmeans gtest_main)
+add_dependencies(test_okmeans gtest_main openblas)
 
 # Only build this example when found OpenCV
 # if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 2.4.0)
