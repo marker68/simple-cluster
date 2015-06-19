@@ -43,21 +43,7 @@
 #endif
 
 using namespace std;
-//using namespace cv;
 using namespace SimpleCluster;
-
-/**
- * A converter
- */
-/*void convert_array_to_mat(float ** data, Mat& result, int M, int N) {
-	for(int i = 0; i < M; i++) {
-		for(int j = 0; j < N; j++) {
-			result.push_back(data[i][j]);
-		}
-	}
-
-	result = result.reshape(1,static_cast<int>(M));
-}*/
 
 /**
  * Customized test case for testing
@@ -200,6 +186,34 @@ TEST_F(KmeansTest, test6) {
 			N,k,d,4,
 			false);
 	cout << "LINEAR: Distortion is " << distortion<float>(data,centers,label,DistanceType::NORM_L2,d,N,k,false) << endl;
+}
+
+TEST_F(KmeansTest, test7) {
+	KmeansCriteria criteria = {2.0,1.0,100};
+	float * _data, * _centers, * _seeds;
+	int * _labels;
+	init_array(_data,6);
+	_data[0] = _data[5] = 0.2f;
+	_data[1] = _data[4] = 0.1f;
+	_data[2] = _data[3] = 0.0f;
+	init_array(_centers,12);
+	init_array(_seeds,12);
+	init_array(_labels,6);
+
+	greg_kmeans<float>(
+			_data,_centers,_labels,_seeds,
+			KmeansType::KMEANS_PLUS_SEEDS,
+			criteria,
+			DistanceType::NORM_L2,
+			EmptyActs::SINGLETON,
+			3,6,2,4,
+			false);
+	cout << "LINEAR: Distortion is " << distortion<float>(_data,_centers,_labels,DistanceType::NORM_L2,2,3,6,false) << endl;
+	cout << "The content of _centers:" << endl;
+	for(int i = 0; i < 12; i++) {
+		cout << _centers[i] << " ";
+	}
+	cout << endl;
 }
 
 /*TEST_F(KmeansTest, test6) {

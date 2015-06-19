@@ -19,7 +19,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # PROJECT'S NAME
-project(simplecluster)
+project(simplecluster CXX)
 
 # DETECT THE SYSTEM
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -77,7 +77,7 @@ ${PROJECT_SOURCE_DIR}/src/okmeans.cpp
 if(NOT MSVC)
 	if (OPENMP_FOUND)
     	list (APPEND CMAKE_CXX_FLAGS 
-    	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
+    	"-fopenmp-simd -Wopenmp-simd -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
 	else()
     	list(APPEND CMAKE_CXX_FLAGS 
     	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")

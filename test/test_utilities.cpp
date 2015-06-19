@@ -57,8 +57,8 @@ protected:
 	// Called before the first test in this test case.
 	// Can be omitted if not needed.
 	static void SetUpTestCase() {
-		N = 10000;
-		d = 128;
+		N = 3;
+		d = 1 << 16;
 		int i, j;
 
 		// For generating random numbers
@@ -139,6 +139,18 @@ TEST_F(UtilTest, test6) {
 	unsigned char x[3] = {1,2,3};
 	unsigned char y[3] = {128,225,123};
 	EXPECT_LT(0.0,distance_l2<unsigned char>(x,y,3));
+}
+
+TEST_F(UtilTest, test8) {
+	for(int i = 0; i < 10000; i++) {
+		EXPECT_LT(0.0,distance_l2_square<float>(data[0],data[1],d));
+	}
+}
+
+TEST_F(UtilTest, test9) {
+	for(int i = 0; i < 10000; i++) {
+		EXPECT_LT(0.0,distance_l2_square_simd<float>(data[0],data[1],d));
+	}
 }
 
 int main(int argc, char * argv[])

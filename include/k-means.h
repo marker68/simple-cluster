@@ -463,6 +463,30 @@ inline float distortion(
 	return sqrt(e);
 }
 
+
+template<typename DataType1, typename DataType2>
+inline float distortion(
+		DataType1 * data,
+		float * centers,
+		DataType2 * label,
+		DistanceType d_type,
+		int d,
+		int N,
+		int k,
+		bool verbose) {
+	float e = 0.0;
+	int j;
+	DataType1 * tmp = data;
+	for(j = 0; j < N; j++) {
+		if(d_type == DistanceType::NORM_L2)
+			e += distance_l2_square<DataType1,float>(tmp,centers + label[j] * d,d);
+		else if(d_type == DistanceType::NORM_L1)
+			e += distance_l1<DataType1,float>(tmp,centers + label[j] * d,d);
+		tmp += d;
+	}
+	return sqrt(e);
+}
+
 /**
  * Update the farthest distances
  */
@@ -481,7 +505,7 @@ inline void find_farthest(
 		bool verbose) {
 	int i;
 	float d_tmp;
-	dfst = FLT_MIN;
+	dfst = -1.0f;
 	DataType * tmp = data;
 	for(i = 0; i < N; i++) {
 		if(labels[i] == id) {
@@ -516,7 +540,7 @@ inline void find_lonely(
 		bool verbose) {
 	int i;
 	float d_tmp;
-	dfst = FLT_MIN;
+	dfst = -1.0f;
 	DataType * tmp = data;
 	for(i = 0; i < N; i++) {
 		if(d_type == DistanceType::NORM_L2)
@@ -627,8 +651,9 @@ inline void greg_initialize(
 #ifdef _OPENMP
 	}
 #endif
-
-	size_t s_max, l_tmp, fst, base3, base4;
+	
+    size_t s_max, l_tmp, base3, base4;
+    int fst;
 	float dfst;
 	// Check for empty clusters
 	if(ea != EmptyActs::NONE) {
@@ -647,11 +672,11 @@ inline void greg_initialize(
 				base = i * d;
 				if(ea == EmptyActs::SINGLETON)
 					find_lonely<DataType>(data,centers,label,d_type,
-							dfst,(int&)fst,N,k,d,verbose);
+							dfst,fst,N,k,d,verbose);
 				else if(ea == EmptyActs::SINGLETON_2)
 					find_farthest<DataType>(data,centers + base,label,d_type,
-							s_max,dfst,(int&)fst,N,k,d,verbose);
-				base3 = fst * d;
+							s_max,dfst,fst,N,k,d,verbose);
+				base3 = static_cast<size_t>(fst) * d;
 				base4 = label[fst] * d;
 				for(int j = 0; j < d; j++) {
 					centers[base] = static_cast<float>(data[base3++]);
@@ -685,7 +710,19 @@ inline void greg_kmeans(
 	if (N < k) {
 		if(verbose)
 			cerr << "There will be some empty clusters!" << endl;
-		exit(1);
+		// Create a new infinite point
+		float * inf = (float *)::operator new(d * sizeof(float));
+		fill(inf, inf + d, FLT_MAX);
+		for(int i = 0; i < k; i++) {
+			label[i] = i;
+			if(i < N) {
+				memcpy(centers + i * d, data + i * d, d * sizeof(float));
+			} else {
+				memcpy(centers + i * d, inf, d * sizeof(float));
+			}
+		}
+
+		return;
 	}
 
 	if(seeds == nullptr) {
@@ -936,7 +973,19 @@ inline void simple_kmeans(
 	if (N < k) {
 		if(verbose)
 			cerr << "There will be some empty clusters!" << endl;
-		exit(1);
+		// Create a new infinite point
+		float * inf = (float *)::operator new(d * sizeof(float));
+		fill(inf, inf + d, FLT_MAX);
+		for(int i = 0; i < k; i++) {
+			labels[i] = i;
+			if(i < N) {
+				memcpy(centers + i * d, data + i * d, d * sizeof(float));
+			} else {
+				memcpy(centers + i * d, inf, d * sizeof(float));
+			}
+		}
+
+		return;
 	}
 
 	if(seeds == nullptr) {

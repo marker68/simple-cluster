@@ -192,17 +192,48 @@ inline double distance_l2(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
+inline double distance_l2_square_simd(
+		DataType * x,
+		DataType * y,
+		int d) {
+	int i;
+	double dis = 0.0/*, tmp = 0.0*/;
+	double tmp[d], dist[d];
+#ifdef _OPENMP
+#pragma omp simd
+#endif
+	for(i = 0; i < d; i++) {
+		tmp[i] = x[i] - y[i];
+		dist[i] = tmp[i] * tmp[i];
+	}
+
+//#ifdef _OPENMP
+//#pragma omp simd
+//#endif
+//	for(i = 0; i < d; i++) {
+//
+//	}
+
+	for(i = 0; i < d; i++)
+		dis += dist[i];
+
+	return dis;
+}
+
+template<typename DataType>
 inline double distance_l2_square(
 		DataType * x,
 		DataType * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
+#ifdef _OPENMP
+#pragma omp simd reduction(+:dis)
+#endif
 	for(i = 0; i < d; i++) {
 		tmp = x[i] - y[i];
 		dis += tmp * tmp;
 	}
-
 	return dis;
 }
 
@@ -223,76 +254,6 @@ inline double distance_l2_square(
 	for(i = 0; i < d; i++) {
 		tmp = static_cast<float>(x[i]) - static_cast<float>(y[i]);
 		dis += tmp * tmp;
-	}
-
-	return dis;
-}
-
-/**
- * Calculate the L2-metric distance between two vectors with multi-threading
- * @param x
- * @param y
- * @param d
- * @param n_thread number of threads
- * @return the distance between x and y in d dimensional space
- */
-template<typename DataType>
-inline double distance_l2_thread(
-		DataType * x,
-		DataType * y,
-		int d,
-		int n_thread) {
-#ifdef _WIN32
-	int i;
-#else
-	int i;
-#endif
-	int bs = d / n_thread, st;
-	double dis;
-	dis = 0.0;
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for
-		for(i = 0; i < n_thread; i++) {
-			st = bs * i;
-			dis += distance_l2_square<DataType>(x + st,y + st,bs);
-		}
-	}
-
-	return sqrt(dis);
-}
-
-/**
- * Calculate the L2-metric distance between two vectors with multi-threading
- * @param x
- * @param y
- * @param d
- * @param n_thread number of threads
- * @return the distance between x and y in d dimensional space
- */
-template<typename DataType>
-inline double distance_l2_square_thread(
-		DataType * x,
-		DataType * y,
-		int d,
-		int n_thread) {
-#ifdef _WIN32
-	int i;
-#else
-	int i;
-#endif
-	int bs = d / n_thread, st;
-	double dis;
-	dis = 0.0;
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for
-		for(i = 0; i < n_thread; i++) {
-			st = bs * i;
-			dis += distance_l2_square<DataType>(x + st,y + st,bs);
-		}
 	}
 
 	return dis;
