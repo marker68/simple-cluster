@@ -43,7 +43,9 @@ find_package(OpenMP)
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
 # of this distribution is 1.7.0.
-add_subdirectory(lib/googletest)
+if(BUILD_TEST)
+    add_subdirectory(lib/googletest)
+endif()
 
 # SOURCE FILES
 file(GLOB PROJECT_SRCS
@@ -89,7 +91,7 @@ endif()
 add_dependencies(${PROJECT_NAME}_static openblas)
 
 # OUTPUT EXECUTABLES
-
+if(BUILD_TEST)
 ## Basic tests
 add_executable(test_utilities 
     ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp 
@@ -155,3 +157,4 @@ add_dependencies(test_okmeans gtest_main openblas)
 #else()
 #    message(WARNING "You do not have OpenCV >= 2.4.0! Your OpenCV version is ${OpenCV_VERSION}")
 #endif()
+endif()
