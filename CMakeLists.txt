@@ -64,9 +64,9 @@ if(NOT MSVC)
 endif()
 
 if(NOT MSVC)
-    set(TEST_LIBS_FLAGS ${CMAKE_LIBRARY_DIR}/libgtest_main.a m gtest pthread ${CMAKE_LIBRARY_DIR}/libopenblas.a gfortran)
+    set(LIBS_FLAGS m pthread ${CMAKE_LIBRARY_DIR}/libopenblas.a gfortran)
 else()
-    set(TEST_LIBS_FLAGS gtest openblas gfortran)
+    set(LIBS_FLAGS m openblas gfortran)
 endif()
 
 # BUILD OPENBLAS
@@ -77,14 +77,14 @@ add_custom_target(
 
 # OUTPUT LIBRARIES
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
-target_link_libraries(${PROJECT_NAME} ${TEST_LIBS_FLAGS})
+target_link_libraries(${PROJECT_NAME} ${LIBS_FLAGS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
 add_dependencies(${PROJECT_NAME} openblas)
 
 add_library(${PROJECT_NAME}_static STATIC ${PROJECT_SRCS})
-target_link_libraries(${PROJECT_NAME}_static ${TEST_LIBS_FLAGS})
+target_link_libraries(${PROJECT_NAME}_static ${LIBS_FLAGS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
@@ -92,6 +92,11 @@ add_dependencies(${PROJECT_NAME}_static openblas)
 
 # OUTPUT EXECUTABLES
 if(BUILD_TEST)
+if(NOT MSVC)
+    set(TEST_LIBS_FLAGS ${CMAKE_LIBRARY_DIR}/libgtest_main.a m gtest  pthread ${CMAKE_LIBRARY_DIR}/libopenblas.a gfortran)
+else()
+    set(TEST_LIBS_FLAGS m gtest openblas gfortran)
+endif()
 ## Basic tests
 add_executable(test_utilities 
     ${PROJECT_SOURCE_DIR}/test/test_utilities.cpp 

@@ -18,5 +18,10 @@ rm -f ${HOME}/lib/*.dylib
 rm -f ${HOME}/lib/*.lib
 rm -f ${HOME}/lib/*.a
 
+rm -f ${HOME}/include/lapacke*
+rm -f ${HOME}/include/f77blas.h
+rm -f ${HOME}/include/cblas.h
+rm -f ${HOME}/include/openblas_config.h
+
 # Clean the submodules' directory
 cd ${HOME}/lib/OpenBLAS && make clean
