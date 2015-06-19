@@ -73,7 +73,7 @@ ${PROJECT_SOURCE_DIR}/src/kd-tree.cpp
 if(NOT MSVC)
 	if (OPENMP_FOUND)
     	list (APPEND CMAKE_CXX_FLAGS 
-    	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
+    	"-fopenmp-simd -Wopenmp-simd -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
 	else()
     	list(APPEND CMAKE_CXX_FLAGS 
     	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")

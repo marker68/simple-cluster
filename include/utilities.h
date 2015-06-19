@@ -98,7 +98,7 @@ inline double distance_l1(
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = static_cast<double>(x[i])
-													- static_cast<double>(y[i]);
+																	- static_cast<double>(y[i]);
 		dis += fabs(tmp);
 	}
 
@@ -178,7 +178,7 @@ inline double distance_l2(
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = static_cast<double>(x[i])
-													- static_cast<double>(y[i]);
+																	- static_cast<double>(y[i]);
 		dis += tmp * tmp;
 	}
 	return sqrt(dis);
@@ -192,6 +192,35 @@ inline double distance_l2(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
+inline double distance_l2_square_simd(
+		DataType * x,
+		DataType * y,
+		int d) {
+	int i;
+	double dis = 0.0/*, tmp = 0.0*/;
+	double tmp[d], dist[d];
+#ifdef _OPENMP
+#pragma omp simd
+#endif
+	for(i = 0; i < d; i++) {
+		tmp[i] = x[i] - y[i];
+		dist[i] = tmp[i] * tmp[i];
+	}
+
+//#ifdef _OPENMP
+//#pragma omp simd
+//#endif
+//	for(i = 0; i < d; i++) {
+//
+//	}
+
+	for(i = 0; i < d; i++)
+		dis += dist[i];
+
+	return dis;
+}
+
+template<typename DataType>
 inline double distance_l2_square(
 		DataType * x,
 		DataType * y,
@@ -202,7 +231,6 @@ inline double distance_l2_square(
 		tmp = x[i] - y[i];
 		dis += tmp * tmp;
 	}
-
 	return dis;
 }
 
@@ -222,7 +250,7 @@ inline double distance_l2_square(
 	double dis = 0.0, tmp = 0.0;
 	for(i = 0; i < d; i++) {
 		tmp = static_cast<float>(x[i])
-													- static_cast<float>(y[i]);
+																	- static_cast<float>(y[i]);
 		dis += tmp * tmp;
 	}
 
