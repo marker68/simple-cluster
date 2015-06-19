@@ -106,41 +106,6 @@ inline double distance_l1(
 }
 
 /**
- * Calculate the L1-metric distance between two vectors with multi-threading
- * @param x
- * @param y
- * @param d
- * @param n_thread number of threads
- * @return the distance between x and y in d dimensional space
- */
-template<typename DataType>
-inline double distance_l1_thread(
-		DataType * x,
-		DataType * y,
-		int d,
-		int n_thread) {
-#ifdef _WIN32
-	int i;
-#else
-	int i;
-#endif
-	int bs = d / n_thread, st;
-	double dis;
-	dis = 0.0;
-	SET_THREAD_NUM;
-#pragma omp parallel
-	{
-#pragma omp for
-		for(i = 0; i < n_thread; i++) {
-			st = bs * i;
-			dis += distance_l1<DataType>(x + st,y + st,bs);
-		}
-	}
-
-	return sqrt(dis);
-}
-
-/**
  * Calculate the L2-metric distance
  * @param x
  * @param y
@@ -148,80 +113,24 @@ inline double distance_l1_thread(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType>
-inline double distance_l2(
-		DataType * x,
-		DataType * y,
-		int d) {
-	int i;
-	double dis = 0.0, tmp = 0.0;
-	for(i = 0; i < d; i++) {
-		tmp = x[i] - y[i];
-		dis += tmp * tmp;
-	}
-
-	return sqrt(dis);
-}
-
-/**
- * Calculate the L2-metric distance with 2 different data types
- * @param x
- * @param y
- * @param d
- * @return the distance between x and y in d dimensional space
- */
-template<typename DataType1, typename DataType2>
-inline double distance_l2(
-		DataType1 * x,
-		DataType2 * y,
-		int d) {
-	int i;
-	double dis = 0.0, tmp = 0.0;
-	for(i = 0; i < d; i++) {
-		tmp = static_cast<double>(x[i])
-																	- static_cast<double>(y[i]);
-		dis += tmp * tmp;
-	}
-	return sqrt(dis);
-}
-
-/**
- * Calculate the L2-metric distance
- * @param x
- * @param y
- * @param d
- * @return the distance between x and y in d dimensional space
- */
-template<typename DataType>
-inline double distance_l2_square_simd(
+inline double distance_l2_simd(
 		DataType * x,
 		DataType * y,
 		int d) {
 	int i;
 	double dis = 0.0/*, tmp = 0.0*/;
-	double tmp[d], dist[d];
 #ifdef _OPENMP
-#pragma omp simd
+#pragma omp simd reduction(+:dis)
 #endif
 	for(i = 0; i < d; i++) {
-		tmp[i] = x[i] - y[i];
-		dist[i] = tmp[i] * tmp[i];
+		dis += (x[i] - y[i]) * (x[i] - y[i]);
 	}
-
-//#ifdef _OPENMP
-//#pragma omp simd
-//#endif
-//	for(i = 0; i < d; i++) {
-//
-//	}
-
-	for(i = 0; i < d; i++)
-		dis += dist[i];
 
 	return dis;
 }
 
 template<typename DataType>
-inline double distance_l2_square(
+inline double distance_l2(
 		DataType * x,
 		DataType * y,
 		int d) {
@@ -245,14 +154,17 @@ inline double distance_l2_square(
  * @return the distance between x and y in d dimensional space
  */
 template<typename DataType1, typename DataType2>
-inline double distance_l2_square(
+inline double distance_l2(
 		DataType1 * x,
 		DataType2 * y,
 		int d) {
 	int i;
 	double dis = 0.0, tmp = 0.0;
+#ifdef _OPENMP
+#pragma omp simd reduction(+:dis)
+#endif
 	for(i = 0; i < d; i++) {
-		tmp = static_cast<float>(x[i]) - static_cast<float>(y[i]);
+		tmp = static_cast<double>(x[i]) - static_cast<double>(y[i]);
 		dis += tmp * tmp;
 	}
 

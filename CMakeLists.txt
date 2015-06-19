@@ -21,24 +21,6 @@ cmake_minimum_required(VERSION 2.8)
 # PROJECT'S NAME
 project(simplecluster CXX)
 
-# DETECT THE SYSTEM
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	message(WARNING "64-bit system is detected")
-	set(EX_PLATFORM 64)
-	set(EX_PLATFORM_NAME "x64")
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-	message(WARNING "32-bit system is detected")
-	set(EX_PLATFORM 32)
-	set(EX_PLATFORM_NAME "x86")
-else()
-	message(WARNING "An ${CMAKE_SYSTEM_NAME} system is detected")
-	set(EX_PLATFORM CMAKE_SYSTEM_NAME)
-endif()
-
-# BUILD TYPE
-set(CMAKE_BUILD_TYPE Release)
-message(WARNING "A ${CMAKE_BUILD_TYPE} build configuration is detected")
-
 # THE LOCATION OF OUTPUT BINARIES
 set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
@@ -47,30 +29,25 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_LIBRARY_DIR})
  
 # INCLUDE DIRECTORIES
 set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
-include_directories("${PROJECT_INCLUDE_DIR}")
-include_directories("${PROJECT_SOURCE_DIR}")
+include_directories(${PROJECT_INCLUDE_DIR})
+include_directories(${PROJECT_SOURCE_DIR})
 # For googletest
-include_directories("${PROJECT_SOURCE_DIR}/test/googletest/include")
+include_directories(${CMAKE_LIBRARY_DIR}/googletest/include)
 
 # CHECK FOR SUBMODULES AND LIBS
 # Check for OpenCV, just for comparing with our methods
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 #find_package(OpenCV)
 find_package(OpenMP)
 
 # This project uses Google Testing Framework and
 # we added GoogleTest as a sub-project. The version
 # of this distribution is 1.7.0.
-add_subdirectory(test/googletest)
+add_subdirectory(lib/googletest)
 
 # SOURCE FILES
-set(PROJECT_SRCS 
-${PROJECT_SOURCE_DIR}/src/k-means.cpp 
-${PROJECT_SOURCE_DIR}/src/utilities.cpp
-${PROJECT_SOURCE_DIR}/src/mat_utilities.cpp
-${PROJECT_SOURCE_DIR}/src/rand_utilities.cpp
-${PROJECT_SOURCE_DIR}/src/kd-tree.cpp 
-${PROJECT_SOURCE_DIR}/src/okmeans.cpp
+file(GLOB PROJECT_SRCS
+    ${PROJECT_SOURCE_DIR}/src/*.cpp
 )
 
 # COMPLATION FLAGS
@@ -90,24 +67,26 @@ else()
     set(TEST_LIBS_FLAGS gtest openblas gfortran)
 endif()
 
+# BUILD OPENBLAS
+add_custom_target(
+    openblas
+    COMMAND make && make PREFIX=${PROJECT_SOURCE_DIR} install
+    WORKING_DIRECTORY ${CMAKE_LIBRARY_DIR}/OpenBLAS)
+
 # OUTPUT LIBRARIES
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS})
 target_link_libraries(${PROJECT_NAME} ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
+add_dependencies(${PROJECT_NAME} openblas)
+
 add_library(${PROJECT_NAME}_static STATIC ${PROJECT_SRCS})
 target_link_libraries(${PROJECT_NAME}_static ${TEST_LIBS_FLAGS})
 if(MSVC)
     set_target_properties(${PROJECT_NAME}_static PROPERTIES COMPILE_FLAGS "/MT ${OpenMP_CXX_FLAGS}")
 endif()
-
-# BUILD OPENBLAS
-add_custom_target(
-    openblas
-    COMMAND make && make PREFIX=${PROJECT_SOURCE_DIR} install
-    WORKING_DIRECTORY ${CMAKE_LIBRARY_DIR}/OpenBLAS)
-add_dependencies(${PROJECT_NAME} openblas)
+add_dependencies(${PROJECT_NAME}_static openblas)
 
 # OUTPUT EXECUTABLES
 
