@@ -21,6 +21,15 @@ cmake_minimum_required(VERSION 2.8)
 # PROJECT'S NAME
 project(simplecluster CXX)
 
+# Mac OSX need a special configuration to make the executable files run
+message(STATUS "Our System is ${CMAKE_SYSTEM_NAME}")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    # enable @rpath in the install name for any shared library being built
+    # note: it is planned that a future version of CMake will enable this by default
+    set(CMAKE_MACOSX_RPATH 1)
+    set_property(GLOBAL PROPERTY MACOSX_RPATH 1)
+endif()
+
 # THE LOCATION OF OUTPUT BINARIES
 set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
@@ -56,10 +65,10 @@ file(GLOB PROJECT_SRCS
 if(NOT MSVC)
 	if (OPENMP_FOUND)
     	list (APPEND CMAKE_CXX_FLAGS 
-    	"-fopenmp-simd -Wopenmp-simd -O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs ${OpenMP_CXX_FLAGS}")
+    	"-fopenmp-simd -Wopenmp-simd -O3 -std=c++0x ${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 	else()
     	list(APPEND CMAKE_CXX_FLAGS 
-    	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
+    	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS}")
 	endif()
 endif()
 
