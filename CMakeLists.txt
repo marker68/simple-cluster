@@ -64,10 +64,10 @@ file(GLOB PROJECT_SRCS
 # COMPLATION FLAGS
 if(NOT MSVC)
 	if (OPENMP_FOUND)
-    	list (APPEND CMAKE_CXX_FLAGS 
+    	set (CMAKE_CXX_FLAGS 
     	"-fopenmp-simd -Wopenmp-simd -O3 -std=c++0x ${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 	else()
-    	list(APPEND CMAKE_CXX_FLAGS 
+    	set(CMAKE_CXX_FLAGS 
     	"-O3 -std=c++0x ${CMAKE_CXX_FLAGS}")
 	endif()
 endif()
